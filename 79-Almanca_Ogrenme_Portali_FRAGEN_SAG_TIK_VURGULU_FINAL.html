@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Almanca Öğrenme Portalı</title>
+<style>
+:root{--bg:#090a0f;--panel:#13151c;--panel-glass:rgba(19, 21, 28, 0.85);--panel2:#1a1d26;--text:#f8fafc;--muted:#94a3b8;--blue:#3b82f6;--blue-light:#60a5fa;--green:#22c55e;--green-bg:rgba(34, 197, 94, 0.15);--red:#ef4444;--red-bg:rgba(239, 68, 68, 0.15);--line:#272a37;--reader-font-size:16px;--quiz-font-size:16px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0%,#1e1b4b 0%,var(--bg) 50%);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif}button,input{font:inherit}button:focus-visible,input:focus-visible,.resizer:focus-visible,.drop-zone:focus-visible,.sentence:focus-visible,.selectable-word:focus-visible{outline:2px solid var(--blue-light);outline-offset:2px}
+.app{max-width:1450px;margin:auto;padding:24px 24px 60px}
+
+/* Üst Kısım (Header) Modern Glassmorphism */
+.header-top{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px;flex-wrap:wrap;background:var(--panel-glass);backdrop-filter:blur(12px);padding:20px 28px;border:1px solid rgba(255,255,255,0.07);border-radius:22px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.head{text-align:left}.head h1{margin:0 0 4px;font-size:24px;letter-spacing:-0.5px;background:linear-gradient(135deg,#fff,var(--muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.head p{margin:0;color:var(--muted);font-size:13px}
+
+.header-actions{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.header-actions-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.file-panel{display:none} 
+
+/* Gelişmiş Zaman Seçici Alanı */
+.countdown-timer{display:flex;align-items:center;gap:8px;background:var(--panel2);padding:6px 12px;border-radius:14px;border:1px solid var(--line);box-shadow:inset 0 2px 4px rgba(0,0,0,.2)}
+.countdown-input{width:92px;padding:6px;background:transparent;color:var(--text);border:0;text-align:center;font-weight:700;font-size:14px;letter-spacing:.5px;cursor:pointer}
+.countdown-input:hover{color:var(--blue-light)}
+
+/* Mobil Uyumlu Zaman Seçici Modal / Popover */
+.time-picker-popover{position:fixed;z-index:10050;display:flex;flex-direction:column;gap:12px;background:#181b24;border:1px solid rgba(255,255,255,0.1);padding:18px;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.7);backdrop-filter:blur(16px)}
+.time-picker-wheels{display:flex;gap:12px;justify-content:center;align-items:center}
+.time-wheel-col{display:flex;flex-direction:column;align-items:center;gap:6px}
+.time-wheel-col label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase}
+.time-select{background:#0d0f14;color:#fff;border:1px solid var(--line);padding:8px 12px;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer}
+.time-select:focus{border-color:var(--blue)}
+
+.drop-zone{width:min(780px,100%);margin:35px auto 20px;padding:42px 28px;border:2px dashed rgba(96,165,250,0.3);border-radius:24px;color:var(--muted);text-align:center;cursor:pointer;transition:.3s;background:var(--panel);box-shadow:0 8px 25px rgba(0,0,0,.2)}
+.drop-zone:hover{border-color:var(--blue-light);background:rgba(59,130,246,0.04);color:#fff;transform:translateY(-2px)}
+.drop-zone.dragging{border-color:var(--blue);background:rgba(59,130,246,0.1);color:#fff}
+.nav,.language-tabs{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.btn,.language-tab{border:0;padding:10px 18px;background:var(--panel2);color:#fff;border-radius:14px;font-weight:600;font-size:13.5px;cursor:pointer;transition:all .25s cubic-bezier(0.4,0,0.2,1);box-shadow:0 4px 12px rgba(0,0,0,.2);border:1px solid rgba(255,255,255,0.04)}
+.btn:hover,.language-tab:hover{background:#252a38;transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.3);border-color:rgba(255,255,255,0.1)}
+.btn.primary,.language-tab.active{background:linear-gradient(135deg,#3b82f6,#2563eb);box-shadow:0 4px 16px rgba(59,130,246,0.4);border-color:transparent}
+.btn.primary:hover{background:linear-gradient(135deg,#60a5fa,#3b82f6)}
+.btn.success{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 4px 16px rgba(34,197,94,0.3)}
+.btn.secondary{background:#1f2430}
+.btn.danger{background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 4px 16px rgba(239,68,68,0.3)}
+.btn.active-mode{background:linear-gradient(135deg,#8b5cf6,#6d28d9)!important;border-color:#c4b5fd!important}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.hidden,.view.hidden{display:none!important}
+
+/* Modern Karşılama Alanı */
+.welcome{max-width:700px;margin:45px auto;padding:50px 35px;background:var(--panel);border:1px solid rgba(255,255,255,0.07);border-radius:28px;text-align:center;box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.welcome-icon{font-size:48px;margin-bottom:16px;filter:drop-shadow(0 4px 12px rgba(59,130,246,0.3))}
+.welcome h2{margin:0 0 12px;font-size:22px}
+.welcome p{color:var(--muted);line-height:1.65;font-size:14.5px;margin:0}
+
+.workspace-container{display:flex;align-items:stretch;justify-content:center;position:relative;width:100%;margin-top:20px;transition:all .3s ease}
+.workspace-left{width:45%;min-width:260px;max-width:75%;position:sticky;top:20px;align-self:flex-start;transition:all .3s ease}
+.workspace-right{flex:1;min-width:260px;padding-left:18px;transition:all .3s ease}
+.resizer{width:10px;margin:0 10px;background:var(--line);border-radius:5px;cursor:col-resize;user-select:none;touch-action:none;transition:background .2s}
+.resizer:hover,.resizer.dragging{background:var(--blue)}
+.font-controls{display:flex;align-items:center;gap:6px;width:max-content;margin-bottom:12px;padding:4px 10px;background:var(--panel2);border-radius:10px;border:1px solid var(--line)}
+.font-label{color:var(--muted);font-size:12px}
+.font-btn{border:0;padding:4px 10px;background:#272d3d;color:#fff;border-radius:7px;font-weight:bold;cursor:pointer;transition:.2s}
+.font-btn:hover{background:var(--blue)}
+.readCard,.result{width:100%;padding:30px;background:var(--panel);border:1px solid rgba(255,255,255,0.07);border-radius:24px;line-height:1.78;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.reader-text{font-size:var(--reader-font-size);line-height:1.8}
+.reader-text p{margin:0 0 20px}
+.language-tabs{justify-content:flex-start;margin:0;gap:10px;flex-wrap:nowrap}
+.translation-controls{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:16px}
+.language-tab{padding:7px 16px;font-size:12.5px;border-radius:12px}
+.translation-control{display:flex;align-items:center;gap:10px;margin:4px 0;padding:6px 12px;width:max-content;background:var(--panel2);border-radius:12px;border:1px solid var(--line)}
+.translation-control-label{color:var(--muted);font-size:12px;font-weight:600}
+.toggle{position:relative;width:44px;height:24px;border:0;padding:0;background:#2d3343;border-radius:20px;cursor:pointer;flex:none;transition:background .25s}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .25s cubic-bezier(0.4,0,0.2,1);box-shadow:0 2px 4px rgba(0,0,0,0.2)}
+.toggle.on{background:var(--blue)}
+.toggle.on::after{transform:translateX(20px)}
+.toggle-state{font-size:11px;font-weight:800;min-width:24px;color:var(--muted)}
+.toggle.on+.toggle-state{color:var(--blue-light)}
+
+/* Akıllı Okuma Akışı Efektleri (Dimming & Hover Focus) */
+.reader-text.dim-mode .sentence { opacity: 0.35; transition: opacity 0.25s ease; }
+.reader-text.dim-mode .sentence:hover,
+.reader-text.dim-mode .sentence.active { opacity: 1; background: rgba(59,130,246,0.2); }
+
+/* Odak Modu (Focus Mode) Aktifken */
+body.focus-mode .workspace-right,
+body.focus-mode .header-top { display: none !important; }
+body.focus-mode .workspace-left { width: 100% !important; max-width: 900px; margin: 20px auto; position: static; }
+body.focus-mode .workspace-container { display: block; }
+body.focus-mode .resizer { display: none; }
+
+.sentence{position:relative;cursor:pointer;border-radius:6px;transition:background .15s}
+.sentence:hover,.sentence.active{background:rgba(59,130,246,0.15)}
+.sentence-tooltip,.word-translation-tooltip{position:fixed;z-index:10000;width:min(440px,calc(100vw - 24px));padding:16px;background:#151821;border:1px solid rgba(255,255,255,0.12);border-radius:16px;box-shadow:0 16px 40px rgba(0,0,0,0.7);pointer-events:none;opacity:0;transform:translateY(6px);transition:all .2s cubic-bezier(0.4,0,0.2,1)}
+.sentence-tooltip{max-width:440px}.word-translation-tooltip{z-index:10025;width:min(320px,calc(100vw - 24px))}
+.sentence-tooltip.visible,.word-translation-tooltip.visible{opacity:1;transform:translateY(0)}
+.tooltip-row{margin:0 0 10px}.tooltip-row:last-child{margin-bottom:0}
+.tooltip-label,.word-tooltip-category{display:block;margin-bottom:4px;color:var(--blue-light);font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.tooltip-text,.word-tooltip-translation{color:#f1f5f9;font-size:13.5px;line-height:1.5}
+.word-tooltip-term{margin-bottom:4px;color:var(--blue-light);font-size:17px;font-weight:800}
+.selectable-word{display:inline;border-radius:4px;cursor:pointer;transition:background .1s}
+.selectable-word:hover,.selectable-word.saved-word{background:rgba(34,197,94,0.2);color:#86efac}
+.selectable-word.word-translation-enabled{text-decoration:underline dotted var(--blue-light);text-underline-offset:3px;cursor:help}
+.selectable-word.word-translation-enabled:hover,.selectable-word.word-translation-enabled:focus{background:rgba(59,130,246,0.2);color:#fff}
+.sentence.context-translation-target{background:rgba(59,130,246,.28)!important;color:#f8fbff;box-shadow:inset 3px 0 0 #60a5fa,0 0 0 1px rgba(96,165,250,.22)}
+.selectable-word.context-translation-target{background:rgba(34,197,94,.30)!important;color:#dcfce7!important;box-shadow:0 0 0 2px rgba(34,197,94,.20);border-radius:4px}
+.wordcount{margin-top:20px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px}
+.nav{margin-top:30px}
+.progress{display:flex;align-items:center;gap:14px;margin:20px 0}
+.track{flex:1;height:8px;background:var(--panel2);border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-light));border-radius:6px;transition:width .35s}
+.score{white-space:nowrap;font-size:13.5px;font-weight:600}
+.quizCard{font-size:var(--quiz-font-size)}
+.qNo{margin-bottom:8px;font-weight:700;color:var(--muted);font-size:13.5px}
+.qType{display:inline-block;margin-bottom:14px;padding:5px 12px;background:rgba(59,130,246,0.12);color:var(--blue-light);border-radius:10px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;border:1px solid rgba(59,130,246,0.2)}
+.question{margin-bottom:22px;font-size:calc(var(--quiz-font-size) + 3px);font-weight:700;line-height:1.5}
+.option{display:flex;align-items:center;width:100%;margin:10px 0;padding:16px;background:var(--panel);border:1px solid rgba(255,255,255,0.06);color:var(--text);border-radius:16px;cursor:pointer;transition:all .2s}
+.option:hover:not(.disabled){background:var(--panel2);border-color:rgba(255,255,255,0.15);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+.option.correct{background:var(--green-bg);border-color:var(--green)}
+.option.wrong{background:var(--red-bg);border-color:var(--red)}
+.option input{margin-right:14px;accent-color:var(--blue);width:18px;height:18px}
+.option-text{flex:1}
+.badge{margin-left:auto;padding:5px 12px;color:#fff;border-radius:20px;font-size:11.5px;font-weight:800}
+.correct .badge{background:var(--green)}.wrong .badge{background:var(--red)}
+.feedback{margin-top:16px;padding:16px;background:#151821;border-left:4px solid var(--blue-light);border-radius:14px;border:1px solid rgba(255,255,255,0.08);border-left-width:4px}
+.result-details{margin-top:26px}
+.result-item{margin:14px 0;padding:18px;background:#151821;border-radius:16px;border:1px solid rgba(255,255,255,0.07)}
+.correct-result{border-left:4px solid var(--green)}.wrong-result{border-left:4px solid var(--red)}
+.error-box{display:none;max-width:850px;margin:16px auto;padding:16px;background:var(--red-bg);border:1px solid var(--red);border-radius:14px;white-space:pre-wrap;font-size:13.5px}
+.footer{margin-top:45px;color:var(--muted);font-size:12.5px;text-align:center}
+.pool-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;margin-left:6px;padding:0 6px;background:#fff;color:var(--blue);border-radius:11px;font-size:11.5px;font-weight:900}
+.word-selection-popover{position:fixed;z-index:10020;width:min(400px,calc(100vw - 24px));padding:18px;background:#151821;border:1px solid rgba(255,255,255,0.12);border-radius:18px;box-shadow:0 20px 45px rgba(0,0,0,0.8)}
+.word-selection-popover h3{margin:0 0 8px;font-size:17px}
+.word-selection-popover p{margin:8px 0;color:var(--muted);font-size:12.5px}
+.selected-context{padding:12px;background:#0d0f14;border-radius:12px;border:1px solid var(--line)}
+.popover-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+.pool-overlay{position:fixed;inset:0;z-index:10030;display:flex;justify-content:flex-end;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px)}
+.pool-panel{width:min(640px,100%);height:100%;padding:28px;background:#13151c;border-left:1px solid rgba(255,255,255,0.08);overflow-y:auto;box-shadow:-15px 0 40px rgba(0,0,0,0.6)}
+.pool-header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.pool-header h2{margin:0 0 4px;font-size:22px}
+.pool-header p{margin:0;color:var(--muted);font-size:13px}
+.pool-close{border:0;width:38px;height:38px;background:var(--panel2);color:#fff;border-radius:50%;font-size:22px;cursor:pointer;transition:.2s;border:1px solid rgba(255,255,255,0.06)}
+.pool-close:hover{background:#272d3d}
+.pool-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+.pool-list{display:grid;gap:14px}
+.pool-item{padding:18px;background:var(--panel);border-left:4px solid var(--blue);border-radius:16px;border:1px solid rgba(255,255,255,0.06);border-left-width:4px}
+.pool-item-head{display:flex;justify-content:space-between;align-items:center}
+.pool-term{font-size:18px;font-weight:800}
+.pool-remove{border:0;background:var(--red-bg);color:#fca5a5;border-radius:9px;padding:6px 12px;font-size:12.5px;cursor:pointer;transition:.2s;border:1px solid rgba(239,68,68,0.2)}
+.pool-remove:hover{background:rgba(239,68,68,0.3)}
+.pool-empty,.pool-help{padding:22px;border:1px dashed rgba(255,255,255,0.1);border-radius:16px;color:var(--muted);text-align:center;font-size:13.5px}
+.pool-context{margin:10px 0;font-size:14px}
+.pool-source{color:var(--muted);font-size:12px}
+.topic-tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0 6px}
+.topic-tabs.hidden{display:none}
+.topic-tab{display:flex;align-items:center;gap:10px;padding:9px 14px 9px 18px;background:var(--panel);color:#fff;border-radius:18px;font-weight:600;font-size:13.5px;cursor:pointer;border:1px solid rgba(255,255,255,0.07);max-width:250px;transition:.2s}
+.topic-tab span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topic-tab:hover{background:var(--panel2);border-color:rgba(255,255,255,0.15)}
+.topic-tab.active{background:var(--blue);border-color:var(--blue-light);box-shadow:0 4px 14px rgba(59,130,246,0.4)}
+.topic-tab-close{border:0;flex:none;width:22px;height:22px;background:rgba(255,255,255,0.12);color:#fff;border-radius:50%;font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.topic-tab-close:hover{background:rgba(255,255,255,0.3)}
+.print-area{display:none}
+@media(max-width:900px){.workspace-container{display:block}.workspace-left{position:static;width:100%!important;max-width:none}.workspace-right{padding-left:0}.resizer{display:none}}
+@page{size:A4 portrait;margin:10mm}
+@media print{html,body{width:100%;min-height:auto;margin:0;padding:0;background:#fff!important;color:#15171c!important;font-family:Inter,sans-serif;print-color-adjust:exact;-webkit-print-color-adjust:exact}body>.app>*:not(.print-area){display:none!important}.app{width:100%;max-width:none;margin:0;padding:0}.print-area{display:block!important;width:100%;margin:0;padding:0;background:#fff!important;color:#15171c!important}.print-header{margin:0 0 5mm;padding:0 0 4mm;border-bottom:1px solid #d7dbea}.print-header-accent{width:28mm;height:1.4mm;margin-bottom:3mm;background:#3b82f6!important;border-radius:2mm}.print-header h1{margin:0 0 2mm;font-size:19pt}.print-meta{display:flex;gap:4mm;color:#626878!important;font-size:8.3pt;font-weight:600}.print-meta span{padding:1.1mm 2.4mm;background:#f0f3fb!important;border:1px solid #dce2f5;border-radius:4mm}.print-area h2{margin:0 0 3.5mm;padding:0 0 2mm;color:#263764!important;border-bottom:1px solid #d9deec;font-size:11.5pt;break-after:avoid-page}.print-first-section{display:grid;grid-template-columns:minmax(0,65fr) minmax(0,35fr);gap:6mm;align-items:start;margin:0 0 8mm}.print-reading-column{min-width:0;padding-right:5mm;border-right:1px solid #d7dbe5}.print-quiz-column{min-width:0}#printStory{font-size:9.3pt;line-height:1.5}#printStory p{margin:0 0 3.2mm;orphans:3;widows:3}.print-question{margin:0 0 4mm;padding:2.5mm;background:#f7f8fc!important;border:1px solid #e0e3ed;border-left:2.2mm solid #3b82f6;border-radius:2mm;break-inside:avoid}.print-question-type{color:#3b82f6!important;font-size:6.4pt;font-weight:800;text-transform:uppercase}.print-question-title{margin:1.2mm 0 1.8mm;font-size:8.1pt;font-weight:700;line-height:1.35}.print-option{position:relative;margin:.8mm 0 0;padding-left:4.7mm;font-size:7.3pt;line-height:1.3}.print-option-letter{position:absolute;left:0;display:inline-flex;align-items:center;justify-content:center;width:3.6mm;height:3.6mm;background:#e5e9f7!important;color:#3b82f6!important;border-radius:50%;font-size:6.2pt;font-weight:800}.print-answer-section{break-before:page;page-break-before:always;width:100%;margin:8mm 0 0}#printAnswers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3.5mm 5mm}.print-answer-item{min-width:0;padding:3mm;background:#f8faf8!important;border:1px solid #d7e4d8;border-left:2mm solid #22c55e;border-radius:2.2mm;break-inside:avoid}.print-answer-question{margin:0 0 1.7mm;font-size:8.2pt;font-weight:700}.print-correct-answer{margin:0 0 1.6mm;padding:1.3mm 1.8mm;background:#e9f5eb!important;color:#176b2c!important;border-radius:1.5mm;font-size:7.7pt;font-weight:750}.print-explanation{margin:0;font-size:7.5pt;line-height:1.4}.print-document-footer{display:flex;justify-content:space-between;margin-top:8mm;padding-top:2.5mm;color:#808592!important;border-top:1px solid #d9dce4;font-size:6.8pt}.sentence-tooltip,.word-translation-tooltip,.word-selection-popover,.pool-overlay{display:none!important}}
+.selectable-word.word-translation-enabled {text-decoration:none!important;text-underline-offset:0!important}
+
+/* Cümle seslendirme: masaüstünde solda yüzer, mobilde işlem paneli */
+.sentence{position:relative}
+.sentence-audio-button{position:fixed;left:0;top:0;display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;padding:0;border:1px solid rgba(96,165,250,.45);border-radius:50%;background:#172033;color:#93c5fd;cursor:pointer;opacity:0;visibility:hidden;transform:scale(.86);transition:opacity .12s,transform .12s,background .15s;box-shadow:0 3px 10px rgba(0,0,0,.38);z-index:10015}
+.sentence-audio-button::before{content:"\1F50A";font-size:13px;line-height:1}
+.sentence-audio-button.audio-visible,.sentence-audio-button:focus,.sentence-audio-button.playing{opacity:1;visibility:visible;transform:scale(1)}
+.sentence-audio-button:hover{background:#1d4ed8;color:#fff}
+.sentence-audio-button.playing{background:#166534;color:#fff;border-color:#22c55e}
+.mobile-sentence-actions{position:fixed;z-index:10040;left:12px;right:12px;bottom:14px;display:none;gap:8px;padding:12px;background:rgba(21,24,33,.97);border:1px solid rgba(255,255,255,.13);border-radius:17px;box-shadow:0 18px 45px rgba(0,0,0,.75);backdrop-filter:blur(14px)}
+.mobile-sentence-actions.visible{display:flex}
+.mobile-sentence-actions .btn{flex:1;padding:10px 7px;font-size:12px}
+@media(hover:none),(pointer:coarse){.sentence-audio-button{display:none!important}.sentence{cursor:pointer}.mobile-sentence-actions.visible{display:flex}}
+@media print{.sentence-audio-button,.mobile-sentence-actions{display:none!important}}
+
+/* Kompakt ve tek satıra daha kolay sığan okuma kontrolleri */
+.translation-controls{gap:7px;margin-bottom:12px;align-items:center}
+.translation-control{gap:6px;margin:2px 0;padding:4px 7px;border-radius:9px}
+.translation-control-label{font-size:10.5px;white-space:nowrap}
+.translation-control .toggle{width:34px;height:19px}
+.translation-control .toggle::after{top:2px;left:2px;width:15px;height:15px}
+.translation-control .toggle.on::after{transform:translateX(15px)}
+.translation-control .toggle-state{font-size:9.5px;min-width:20px}
+.reader-font-toolbar{display:flex;justify-content:flex-end;margin:0 0 10px}
+.reader-font-toolbar .font-controls{margin:0}
+@media(max-width:650px){.translation-controls{gap:5px}.language-tabs{width:100%;overflow-x:auto}.translation-control{padding:3px 6px}.translation-control-label{font-size:10px}}
+
+
+/* Instagram benzeri paragraf akışı */
+.reader-text.paragraph-flow{height:520px;max-height:520px!important;overflow-y:auto!important;scroll-snap-type:y mandatory;scroll-behavior:smooth;overscroll-behavior-y:contain;padding-right:7px!important}
+.reader-text.paragraph-flow>p{min-height:100%;margin:0!important;padding:26px 18px;display:flex;align-items:center;align-content:center;flex-wrap:wrap;scroll-snap-align:start;scroll-snap-stop:always;border-radius:16px;background:linear-gradient(180deg,rgba(59,130,246,.055),rgba(139,92,246,.025));border:1px solid rgba(255,255,255,.045)}
+.reader-text.paragraph-flow>p+p{margin-top:10px!important}
+.paragraph-flow-status{margin-left:auto;color:var(--muted);font-size:11px;font-weight:700;white-space:nowrap}
+@media(max-width:650px){.reader-text.paragraph-flow{height:62vh;max-height:62vh!important}.reader-text.paragraph-flow>p{padding:20px 12px}}
+
+
+/* Sağ üstte düzenli 2x2 seçenek paneli */
+.readCard{position:relative;padding-top:30px}
+.readCard>div:first-child{min-height:66px;padding-right:min(510px,52%);align-items:flex-start!important}
+.toggle-dashboard{position:absolute;z-index:5;top:22px;right:24px;width:min(470px,50%);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.toggle-dashboard .translation-control{width:100%;min-width:0;margin:0;justify-content:flex-end;padding:5px 8px}
+.toggle-dashboard .translation-control-label{margin-right:auto;overflow:hidden;text-overflow:ellipsis}
+.translation-controls{display:block;margin:8px 0 14px}
+.translation-controls .language-tabs{justify-content:flex-start}
+
+/* Akış modunda her cümle yeni satırdan başlar */
+.reader-text.paragraph-flow>p{display:block!important;padding-top:32px;padding-bottom:32px}
+.reader-text.paragraph-flow .sentence{display:block;width:100%;margin:0 0 12px;line-height:1.75}
+.reader-text.paragraph-flow .sentence:last-child{margin-bottom:0}
+
+/* Yerel kaydırma çubuğunu gizle, özel akış kumandasını göster */
+.reader-text.paragraph-flow{scrollbar-width:none;-ms-overflow-style:none;padding-right:5px!important}
+.reader-text.paragraph-flow::-webkit-scrollbar{display:none;width:0;height:0}
+.paragraph-flow-nav{position:absolute;z-index:8;right:12px;top:50%;display:none;flex-direction:column;gap:8px;transform:translateY(-50%)}
+.readCard.flow-active .paragraph-flow-nav{display:flex}
+.flow-nav-btn{display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:1px solid rgba(148,163,184,.24);border-radius:11px;background:rgba(26,29,38,.9);color:#cbd5e1;cursor:pointer;box-shadow:0 5px 16px rgba(0,0,0,.28);backdrop-filter:blur(8px);transition:.2s}
+.flow-nav-btn:hover:not(:disabled){color:#fff;background:#2563eb;border-color:#60a5fa;transform:scale(1.06)}
+.flow-nav-btn:disabled{opacity:.25;cursor:default}
+.flow-nav-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:900px){.readCard>div:first-child{min-height:0;padding-right:0}.toggle-dashboard{position:static;width:100%;margin:10px 0 8px}.paragraph-flow-nav{right:9px}}
+@media(max-width:520px){.toggle-dashboard{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.toggle-dashboard .translation-control{padding:4px 6px}.toggle-dashboard .translation-control-label{font-size:9.5px}.flow-nav-btn{width:29px;height:29px}}
+
+
+/* Son yerleşim sıkılaştırmaları */
+.readCard{padding-top:22px}
+.readCard>div:first-child{min-height:48px;padding-right:min(410px,47%)}
+.toggle-dashboard{top:14px;right:18px;width:min(390px,46%);gap:5px}
+.toggle-dashboard .translation-control{padding:3px 6px;min-height:30px;border-radius:8px;gap:4px}
+.toggle-dashboard .translation-control-label{font-size:9.5px}
+.toggle-dashboard .toggle{width:30px;height:17px}
+.toggle-dashboard .toggle::after{top:2px;left:2px;width:13px;height:13px}
+.toggle-dashboard .toggle.on::after{transform:translateX(13px)}
+.toggle-dashboard .toggle-state{font-size:8.5px;min-width:18px}
+.readCard>div:nth-of-type(2){margin-top:2px!important;margin-bottom:7px!important}
+.translation-controls{margin:2px 0 10px}
+.language-tab{padding:7px 14px}
+
+/* Normal ve akış görünümünde modern ince kaydırma çubuğu */
+.reader-text{scrollbar-width:thin;scrollbar-color:#475569 transparent;scrollbar-gutter:stable}
+.reader-text::-webkit-scrollbar{width:8px}
+.reader-text::-webkit-scrollbar-track{background:rgba(15,23,42,.22);border-radius:10px}
+.reader-text::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#64748b,#334155);border:2px solid #13151c;border-radius:10px}
+.reader-text::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#60a5fa,#2563eb)}
+.reader-text::-webkit-scrollbar-button{display:none;width:0;height:0}
+.reader-text.paragraph-flow{scrollbar-width:none}
+.reader-text.paragraph-flow::-webkit-scrollbar{display:none}
+@media(max-width:900px){.readCard{padding-top:22px}.readCard>div:first-child{min-height:0}.toggle-dashboard{margin:6px 0;width:100%}}
+
+
+/* Daha dengeli ve kompakt 2x2 seçenek paneli */
+.toggle-dashboard{width:344px;max-width:44%;grid-template-columns:repeat(2,168px);justify-content:end;gap:6px}
+.toggle-dashboard .translation-control{width:168px;min-height:34px;display:grid;grid-template-columns:minmax(0,1fr) 38px 22px;align-items:center;column-gap:5px;padding:4px 7px}
+.toggle-dashboard .translation-control-label{font-size:11px;font-weight:650;line-height:1.1;margin:0;overflow:visible;text-overflow:clip}
+.toggle-dashboard .toggle{width:38px;height:21px}
+.toggle-dashboard .toggle::after{top:2px;left:2px;width:17px;height:17px}
+.toggle-dashboard .toggle.on::after{transform:translateX(17px)}
+.toggle-dashboard .toggle-state{font-size:9.5px;min-width:22px;text-align:left}
+@media(max-width:900px){.toggle-dashboard{max-width:none;width:344px;margin-left:auto}.toggle-dashboard .translation-control{width:168px}}
+@media(max-width:430px){.toggle-dashboard{width:100%;grid-template-columns:repeat(2,minmax(0,1fr))}.toggle-dashboard .translation-control{width:100%;grid-template-columns:minmax(0,1fr) 34px 20px}.toggle-dashboard .toggle{width:34px;height:19px}.toggle-dashboard .toggle::after{width:15px;height:15px}.toggle-dashboard .toggle.on::after{transform:translateX(15px)}}
+
+/* Tek global hoparlör: cümle DOM'undan bağımsız olduğu için kaçmaz */
+#globalSentenceAudioButton{position:fixed;z-index:10060;left:0;top:0;display:none;align-items:center;justify-content:center;width:30px;height:30px;padding:0;border:1px solid rgba(96,165,250,.55);border-radius:50%;background:#172033;color:#bfdbfe;cursor:pointer;box-shadow:0 5px 16px rgba(0,0,0,.48);transition:background .15s,transform .15s,opacity .15s}
+#globalSentenceAudioButton.visible{display:flex}
+#globalSentenceAudioButton:hover,#globalSentenceAudioButton.playing{background:#2563eb;color:#fff;transform:scale(1.06)}
+#globalSentenceAudioButton::before{content:"\1F50A";font-size:15px}
+@media(hover:none),(pointer:coarse){#globalSentenceAudioButton{display:none!important}}
+@media print{#globalSentenceAudioButton{display:none!important}}
+
+
+/* Ses hızı ve kelime sağ tık menüsü */
+.audio-control-box{grid-template-rows:auto auto;row-gap:3px}
+.audio-control-box .speech-rate-control{grid-column:1/-1;display:flex;align-items:center;justify-content:flex-end;gap:5px;padding-top:2px;border-top:1px solid rgba(255,255,255,.06)}
+.speech-rate-control button{display:flex;align-items:center;justify-content:center;width:22px;height:18px;padding:0;border:1px solid rgba(148,163,184,.22);border-radius:6px;background:#252b3a;color:#e2e8f0;cursor:pointer;font-weight:800;line-height:1}
+.speech-rate-control button:hover{background:#2563eb;color:#fff}
+.speech-rate-control span{min-width:38px;text-align:center;color:#93c5fd;font-size:9.5px;font-weight:800}
+.word-audio-menu{position:fixed;z-index:10100;width:210px;padding:7px;background:rgba(21,24,33,.98);border:1px solid rgba(255,255,255,.12);border-radius:13px;box-shadow:0 18px 42px rgba(0,0,0,.7);backdrop-filter:blur(12px)}
+.word-audio-menu-title{padding:7px 9px 8px;color:#93c5fd;font-size:13px;font-weight:800;border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.word-audio-menu button{display:flex;align-items:center;width:100%;margin-top:4px;padding:8px 9px;border:0;border-radius:8px;background:transparent;color:#f1f5f9;text-align:left;cursor:pointer;font-size:12px}
+.word-audio-menu button:hover{background:rgba(59,130,246,.18)}
+@media(max-width:430px){.speech-rate-control button{width:20px}.word-audio-menu{display:none!important}}
+@media print{.word-audio-menu{display:none!important}}
+
+
+/* Google veya tarayıcı ses kaynağı seçimi */
+.audio-control-box .voice-source-control{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding-top:3px;border-top:1px solid rgba(255,255,255,.06)}
+.voice-source-control button{height:20px;padding:0 5px;border:1px solid rgba(148,163,184,.20);border-radius:6px;background:#202635;color:#94a3b8;cursor:pointer;font-size:9px;font-weight:750}
+.voice-source-control button:hover{color:#fff;border-color:#60a5fa}
+.voice-source-control button.active{background:#2563eb;color:#fff;border-color:#60a5fa;box-shadow:0 2px 7px rgba(37,99,235,.28)}
+.audio-control-box:has(#audioToggle:not(.on)) .speech-rate-control,.audio-control-box:has(#audioToggle:not(.on)) .voice-source-control{opacity:.45}
+
+
+/* Kelime Seçimi kutusu tekrar kompakt */
+
+/* Dinleme sırasında dinamik kelime takibi */
+.sentence.reading-active{background:rgba(59,130,246,.055);box-shadow:inset 2px 0 0 rgba(96,165,250,.42);transition:background .2s ease,box-shadow .2s ease}
+.selectable-word.reading-word{background:rgba(96,165,250,.24)!important;color:#eaf4ff!important;border-radius:4px;box-shadow:0 0 0 2px rgba(96,165,250,.10);transition:background .16s ease,color .16s ease,box-shadow .16s ease}
+@media print{.sentence.reading-active,.selectable-word.reading-word{background:transparent!important;box-shadow:none!important;color:inherit!important}}
+@media print{.sentence.context-translation-target,.selectable-word.context-translation-target{background:transparent!important;box-shadow:none!important;color:inherit!important}}
+
+
+/* Cümle ve Kelime Çevirisi kutuları aynı ölçüde */
+.toggle-dashboard>.translation-control:nth-child(1),
+.toggle-dashboard>#wordTranslationControl{width:168px!important;min-width:168px!important;max-width:168px!important}
+
+/* Yalnızca Paragraf Akışı modunda cümle sonu hoparlörü */
+.inline-sentence-speaker{display:none;align-items:center;justify-content:center;width:25px;height:25px;margin-left:7px;padding:0;border:1px solid rgba(96,165,250,.36);border-radius:50%;background:#1d2637;color:#bfdbfe;cursor:pointer;vertical-align:middle;box-shadow:0 2px 8px rgba(0,0,0,.26);transition:background .16s,color .16s,transform .16s,border-color .16s}
+.reader-text.paragraph-flow .inline-sentence-speaker{display:inline-flex}
+.inline-sentence-speaker::before{content:"\1F50A";font-size:13px;line-height:1}
+.inline-sentence-speaker:hover,.inline-sentence-speaker.playing{background:#2563eb;color:#fff;border-color:#60a5fa;transform:scale(1.06)}
+.inline-sentence-speaker:focus-visible{outline:2px solid var(--blue-light);outline-offset:2px}
+@media(hover:none),(pointer:coarse){.reader-text.paragraph-flow .inline-sentence-speaker{display:inline-flex;width:28px;height:28px}}
+@media print{.inline-sentence-speaker{display:none!important}}
+
+
+/* Kelime Seçimi, Cümle Çevirisi ile birebir aynı yapı ve ölçü */
+.toggle-dashboard>.translation-control:has(#wordSelectionToggle){width:168px!important;min-width:168px!important;max-width:168px!important;justify-self:stretch!important}
+@media(max-width:430px){.toggle-dashboard>.translation-control:has(#wordSelectionToggle){width:100%!important;min-width:0!important;max-width:none!important}}
+
+
+/* Paragraf Akışı sayacı: her zaman okunaklı ve görünür */
+.paragraph-flow-status{display:none!important;align-items:center;justify-content:center;min-width:50px;height:28px;margin-left:2px;padding:0 10px;border:1px solid rgba(96,165,250,.24);border-radius:14px;background:rgba(30,41,59,.88);color:#dbeafe;font-size:11px;font-weight:850;letter-spacing:.25px;box-shadow:0 3px 10px rgba(0,0,0,.24)}
+.readCard.flow-active .paragraph-flow-status{display:inline-flex!important}
+
+/* Tarayıcı sağ tık için kısa bilgi bildirimi */
+.browser-context-toast{position:fixed;z-index:10200;left:50%;bottom:24px;transform:translateX(-50%);max-width:calc(100vw - 24px);padding:10px 14px;border:1px solid rgba(96,165,250,.32);border-radius:12px;background:rgba(15,23,42,.96);color:#e2e8f0;box-shadow:0 12px 30px rgba(0,0,0,.5);font-size:12px;font-weight:650;pointer-events:none}
+@media print{.browser-context-toast{display:none!important}}
+
+
+/* Paragraf sayacı metin alanının üst ortasında */
+.readCard{position:relative}
+.paragraph-flow-status{position:absolute!important;z-index:12;left:50%;top:152px;transform:translateX(-50%);display:none!important;align-items:center;justify-content:center;min-width:58px;height:30px;margin:0!important;padding:0 12px;border:1px solid rgba(96,165,250,.27);border-radius:15px;background:rgba(20,29,45,.86);color:#dbeafe;font-size:12px;font-weight:850;letter-spacing:.35px;box-shadow:0 5px 16px rgba(0,0,0,.30);backdrop-filter:blur(8px);pointer-events:none}
+.readCard.flow-active .paragraph-flow-status{display:inline-flex!important}
+@media(max-width:900px){.paragraph-flow-status{top:226px}}
+@media(max-width:520px){.paragraph-flow-status{top:220px;min-width:54px;height:28px;font-size:11px}}
+
+
+/* Sağ soru alanını sol metnin başlangıç çizgisine hizala */
+.workspace-right{position:relative}
+.question-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px;padding:0 2px}
+.question-header h2{margin:0;color:#f8fafc;font-size:18px;line-height:32px;letter-spacing:-.2px}
+.question-header .font-controls{margin:0}
+#questionProgress{margin-top:0}
+@media(max-width:900px){.workspace-right{padding-top:18px!important}.question-header{margin-top:0}}
+
+
+/* Örnekteki gibi: Fragen üstte, ilerleme çizgisi metin başlangıcıyla aynı seviyede */
+.workspace-right{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#334155 transparent}
+.workspace-right::-webkit-scrollbar{width:6px}
+.workspace-right::-webkit-scrollbar-thumb{background:#334155;border-radius:6px}
+.question-header{min-height:40px;margin:0 0 8px;padding:0;display:flex;align-items:center;justify-content:space-between}
+.question-header h2{font-size:20px;line-height:32px;font-weight:800}
+#questionProgress{margin:0 0 20px}
+#s1-quizCard{padding-top:0}
+@media(max-width:900px){.workspace-right{position:static;max-height:none;overflow:visible;padding-top:18px!important}.question-header{min-height:38px}}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="header-top">
+  <div class="head">
+    <h1>Almanca Öğrenme Portalı</h1>
+    <p id="fileInfo">Güvenli JSON tabanlı dinamik öğrenme seti</p>
+  </div>
+  
+  <div class="header-actions">
+    <input type="file" id="jsonFileInput" accept=".json,application/json" multiple hidden>
+    <input type="file" id="jsonFolderInput" accept=".json,application/json" webkitdirectory directory hidden>
+    <input type="file" id="wordPoolImportInput" accept=".json,application/json" hidden>
+
+    <div class="header-actions-row">
+      <button class="btn secondary" id="selectFileButton" type="button">📁 Dosya Seç</button>
+      <button class="btn secondary" id="selectFolderButton" type="button">📂 Klasör</button>
+      <button class="btn success" id="printButton" type="button" disabled>📄 Yazdır</button>
+    </div>
+
+    <div class="header-actions-row">
+      <div class="countdown-timer" aria-label="Geri sayım sayacı">
+        <input id="countdownInput" class="countdown-input" type="text" inputmode="numeric" value="00:30:00" readonly title="Süre seçmek için tıklayın">
+        <button class="btn primary" id="countdownStartButton" type="button" style="padding:6px 12px;font-size:12px">Başlat</button>
+        <button class="btn secondary" id="countdownResetButton" type="button" style="padding:6px 10px;font-size:12px">Sıfırla</button>
+      </div>
+      <button class="btn danger" id="clearProgressButton" type="button" disabled>İlerlemeyi Sıfırla</button>
+      <button class="btn primary" id="wordPoolButton" type="button">Kelimelerim <span id="wordPoolCount" class="pool-count">0</span></button>
+    </div>
+  </div>
+</header>
+
+<div id="dropZone" class="drop-zone" role="button" tabindex="0" aria-label="JSON dosyasını seç veya buraya sürükle">
+  <div style="font-size:36px;margin-bottom:10px">📥</div>
+  <div style="font-weight:700;font-size:16px;color:#f8fafc;margin-bottom:6px">JSON Dosyalarını Sürükleyip Bırakın</div>
+  <div style="font-size:13.5px">veya yukarıdaki "Dosya Seç" / "Klasör" butonlarını kullanın</div>
+</div>
+
+<div id="topicTabs" class="topic-tabs hidden" role="tablist" aria-label="Açık konular"></div>
+<div id="errorBox" class="error-box" role="alert" aria-live="assertive"></div>
+
+<section id="welcome" class="welcome">
+  <div class="welcome-icon">🇩🇪</div>
+  <h2>Çalışmaya Hazır</h2>
+  <p>Başlamak için doğrulanabilir konu JSON dosyalarınızı yukarıdan seçin veya bu alana sürükleyip bırakın.</p>
+</section>
+
+<section id="s1-quiz" class="view hidden">
+  <div class="workspace-container" id="workspaceContainer">
+    <div class="workspace-left" id="workspaceLeft">
+      <div class="reader-font-toolbar"><div class="font-controls"><span class="font-label">Metin:</span><button class="font-btn" data-font-delta="-1">A-</button><button class="font-btn" data-font-delta="1">A+</button></div></div>
+      <article class="readCard">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <h2 id="quizStoryTitle" style="font-size:18px;margin:0"></h2>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;margin:12px 0;flex-wrap:wrap;">
+          <button id="focusModeBtn" class="btn secondary" type="button" style="font-size:12px;padding:6px 12px;" title="Sadece metne odaklan (Diğer panelleri gizle)">🧘 Odak Modu</button>
+          <button id="dimModeBtn" class="btn secondary" type="button" style="font-size:12px;padding:6px 12px;" title="İmlecin dışındaki satırları karart">💡 Satır Vurgu</button>
+          <button id="autoScrollBtn" class="btn secondary" type="button" style="font-size:12px;padding:6px 12px;" title="Paragrafları kaydırarak tek tek göster">▤ Paragraf Akışı</button>
+        </div>
+
+        <div class="toggle-dashboard" aria-label="Okuma seçenekleri">
+          <div class="translation-control"><span class="translation-control-label">Cümle Çevirisi</span><button id="translationToggle" class="toggle" type="button" role="switch" aria-checked="false"></button><span id="translationToggleState" class="toggle-state">OFF</span></div>
+          <div id="wordTranslationControl" class="translation-control hidden"><span class="translation-control-label">Kelime Çevirisi</span><button id="wordTranslationToggle" class="toggle" type="button" role="switch" aria-checked="false"></button><span id="wordTranslationToggleState" class="toggle-state">OFF</span></div>
+          <div class="translation-control"><span class="translation-control-label">Kelime Seçimi</span><button id="wordSelectionToggle" class="toggle" type="button" role="switch" aria-checked="true"></button><span id="wordSelectionToggleState" class="toggle-state">ON</span></div>
+          <div class="translation-control audio-control-box"><span class="translation-control-label">Ses Dinleme</span><button id="audioToggle" class="toggle" type="button" role="switch" aria-checked="true"></button><span id="audioToggleState" class="toggle-state">ON</span><div class="speech-rate-control" aria-label="Ses hızı"><button id="speechRateDown" type="button" aria-label="Sesi yavaşlat">−</button><span id="speechRateValue">0.90×</span><button id="speechRateUp" type="button" aria-label="Sesi hızlandır">+</button></div><div class="voice-source-control" role="group" aria-label="Ses kaynağı"><button id="voiceSourceGoogle" type="button" data-source="google">Google</button><button id="voiceSourceBrowser" type="button" data-source="browser">Browser</button></div></div>
+        </div>
+        <div class="translation-controls"><div class="language-tabs"><button class="language-tab active" data-language="de">Deutsch</button><button class="language-tab" data-language="tr">Türkçe</button><button class="language-tab" data-language="en">English</button></div></div>
+        <div id="quizStoryText" class="reader-text" style="max-height:520px;overflow-y:auto;padding-right:5px;margin-top:2px"></div>
+        <div id="paragraphFlowNav" class="paragraph-flow-nav" aria-label="Paragraf gezinme">
+          <button id="paragraphPrevBtn" class="flow-nav-btn" type="button" aria-label="Önceki paragraf" title="Önceki paragraf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+          <button id="paragraphNextBtn" class="flow-nav-btn" type="button" aria-label="Sonraki paragraf" title="Sonraki paragraf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+        </div>
+        <div class="wordcount" id="quizWordCountContainer"></div>
+      </article>
+    </div>
+    
+    <div class="resizer" id="dragResizer" role="separator" aria-orientation="vertical" aria-label="Metin dan quiz genişliğini ayarla" aria-valuemin="20" aria-valuemax="75" aria-valuenow="45" tabindex="0"></div>
+    
+    <div class="workspace-right" id="workspaceRight">
+      <div id="questionHeader" class="question-header"><h2>Fragen</h2><div class="font-controls"><span class="font-label">Fragen:</span><button class="font-btn" data-quiz-font-delta="-1">A-</button><button class="font-btn" data-quiz-font-delta="1">A+</button></div></div>
+      <div class="progress" id="questionProgress"><div class="track"><div id="s1-fill" class="fill"></div></div><div class="score"><span id="s1-pos">1 / 10</span> &nbsp; <span style="color:var(--red)">✕ <b id="s1-w">0</b></span> &nbsp; <span style="color:var(--green)">✓ <b id="s1-r">0</b></span></div></div>
+      <div id="s1-quizCard" class="quizCard"></div>
+    </div>
+  </div>
+</section>
+
+<section id="printArea" class="print-area" aria-hidden="true">
+  <header class="print-header"><div class="print-header-accent"></div><h1 id="printTitle"></h1><div class="print-meta"><span id="printLevel"></span><span id="printWordCount"></span></div></header>
+  <section class="print-first-section"><article class="print-reading-column"><h2>1 Lesetext</h2><div id="printStory"></div></article><article class="print-quiz-column"><h2>2 Fragen</h2><div id="printQuestions"></div></article></section>
+  <section class="print-answer-section"><h2>3 Lösungen und Erklärungen</h2><div id="printAnswers"></div></section>
+  <footer class="print-document-footer"><span>Almanca Öğrenme Portalı</span><span id="printFooterTitle"></span></footer>
+</section>
+
+<div id="wordPoolOverlay" class="pool-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="wordPoolTitle">
+  <aside class="pool-panel">
+    <div class="pool-header">
+      <div><h2 id="wordPoolTitle">Kelimelerim</h2><p>Seçtiğin kelime ve ifadeler tarayıcınızda saklanır.</p></div>
+      <button id="wordPoolCloseButton" class="pool-close" type="button" aria-label="Kelime havuzunu kapat">×</button>
+    </div>
+    <div class="pool-toolbar">
+      <button id="wordPoolExportButton" class="btn primary">JSON Olarak İndir</button>
+      <button id="wordPoolImportButton" class="btn secondary">Havuz JSON'u Yükle</button>
+      <button id="wordPoolClearButton" class="btn danger">Havuzu Temizle</button>
+    </div>
+    <div id="wordPoolList" class="pool-list"></div>
+    <div class="pool-help" style="margin-top:16px">Kelime çevirisi açıkken tıklayınca anlamı gösterir. Metin içinden seçerek de havuza ekleyebilirsiniz.</div>
+  </aside>
+</div>
+
+<footer class="footer">JSON tabanlıdır. Yüklenen içerik güvenli biçimde işlenir.</footer>
+</div>
+
+<script>
+"use strict";
+const OPTION_LABELS=["A","B","C","D"], ALLOWED_LANGUAGES=new Set(["de","tr","en"]), ALLOWED_QUIZ_TYPES=new Set(["Detail","Activity","Sequence","Reason","Vocabulary","Conclusion","Inference"]), WORD_CATEGORIES=["Nomen","Verb","Adjektiv","Adverb","Pronomen","Präposition","Konjunktion"];
+let portalData=null,topics=[],activeTopicId=null,state=createInitialState(10),currentFontSize=Number(safeGet("germanPortalFontSize"))||16,currentQuizFontSize=Number(safeGet("germanPortalQuizFontSize"))||16,currentLanguage=safeGet("germanPortalLanguage")||"de",translationEnabled=safeGet("germanPortalTranslationEnabled")==="true",wordTranslationEnabled=safeGet("germanPortalWordTranslationEnabled")==="true",wordSelectionEnabled=safeGet("germanPortalWordSelectionEnabled")!=="false",audioEnabled=safeGet("germanPortalAudioEnabled")!=="false",paragraphFlowEnabled=safeGet("germanPortalParagraphFlowEnabled")==="true";
+if(!ALLOWED_LANGUAGES.has(currentLanguage))currentLanguage="de";
+const $=id=>document.getElementById(id),jsonFileInput=$("jsonFileInput"),jsonFolderInput=$("jsonFolderInput"),selectFileButton=$("selectFileButton"),selectFolderButton=$("selectFolderButton"),printButton=$("printButton"),clearProgressButton=$("clearProgressButton"),errorBox=$("errorBox"),resizer=$("dragResizer"),leftSide=$("workspaceLeft"),workspaceContainer=$("workspaceContainer"),dropZone=$("dropZone"),topicTabs=$("topicTabs"),wordPoolButton=$("wordPoolButton"),wordPoolCount=$("wordPoolCount"),wordPoolOverlay=$("wordPoolOverlay"),wordPoolList=$("wordPoolList"),wordPoolImportInput=$("wordPoolImportInput"),translationToggle=$("translationToggle"),translationToggleState=$("translationToggleState"),wordTranslationControl=$("wordTranslationControl"),wordTranslationToggle=$("wordTranslationToggle"),wordTranslationToggleState=$("wordTranslationToggleState"),wordSelectionToggle=$("wordSelectionToggle"),wordSelectionToggleState=$("wordSelectionToggleState"),audioToggle=$("audioToggle"),audioToggleState=$("audioToggleState"),speechRateDown=$("speechRateDown"),speechRateUp=$("speechRateUp"),speechRateValue=$("speechRateValue"),voiceSourceGoogle=$("voiceSourceGoogle"),voiceSourceBrowser=$("voiceSourceBrowser");
+document.documentElement.style.setProperty("--reader-font-size",currentFontSize+"px");document.documentElement.style.setProperty("--quiz-font-size",currentQuizFontSize+"px");
+
+const countdownInput=$("countdownInput"),countdownStartButton=$("countdownStartButton"),countdownResetButton=$("countdownResetButton");
+let countdownInterval=null,countdownRemaining=0,timePickerPopover=null;
+
+let focusModeActive = false;
+let dimModeActive = false;
+let autoScrollActive = false;
+let autoScrollInterval = null;
+
+function parseCountdown(value){const raw=String(value).trim();if(!raw)return 0;const parts=raw.split(":").slice(0,3);while(parts.length<3)parts.unshift("");if(parts.some(v=>v!==""&&!/^\d+$/.test(v)))return null;const hours=Number(parts[0]||0),minutes=Number(parts[1]||0),seconds=Number(parts[2]||0);if(minutes>59||seconds>59)return null;return hours*3600+minutes*60+seconds}
+function formatCountdown(total){total=Math.max(0,total);const hours=Math.floor(total/3600),minutes=Math.floor(total%3600/60),seconds=total%60;return [hours,minutes,seconds].map(v=>String(v).padStart(2,"0")).join(":")}
+
+function openTimePicker(e){
+  if(countdownInterval) return;
+  if(timePickerPopover) timePickerPopover.remove();
+  const currentVal=parseCountdown(countdownInput.value)||1800;
+  let curH=Math.floor(currentVal/3600), curM=Math.floor((currentVal%3600)/60), curS=currentVal%60;
+  const pop=el("div","time-picker-popover"), wheels=el("div","time-picker-wheels");
+  function createWheel(label, max, val, onChange){
+    const col=el("div","time-wheel-col");
+    col.append(el("label","",label));
+    const select=document.createElement("select");
+    select.className="time-select";
+    for(let i=0;i<=max;i++){
+      const opt=document.createElement("option");
+      opt.value=i; opt.textContent=String(i).padStart(2,"0");
+      if(i===val) opt.selected=true;
+      select.append(opt);
+    }
+    select.addEventListener("change",()=>onChange(Number(select.value)));
+    col.append(select); return col;
+  }
+  wheels.append(createWheel("Saat", 5, curH, v=>{curH=v}), createWheel("Dakika", 59, curM, v=>{curM=v}), createWheel("Saniye", 59, curS, v=>{curS=v}));
+  const btnRow=el("div","popover-actions");
+  btnRow.style.marginTop="4px";
+  btnRow.append(button("İptal","btn secondary",()=>hideTimePicker()),button("Tamam","btn primary",()=>{const total=curH*3600+curM*60+curS;countdownInput.value=formatCountdown(total);hideTimePicker()}));
+  pop.append(wheels,btnRow); document.body.append(pop); timePickerPopover=pop;
+  const r=countdownInput.getBoundingClientRect(); let l=r.left, top=r.bottom+8;
+  if(l+pop.offsetWidth>innerWidth-12) l=innerWidth-pop.offsetWidth-12;
+  if(top+pop.offsetHeight>innerHeight-12) top=r.top-pop.offsetHeight-8;
+  pop.style.left=Math.max(12,l)+"px"; pop.style.top=Math.max(12,top)+"px";
+}
+
+function hideTimePicker(){if(timePickerPopover)timePickerPopover.remove();timePickerPopover=null}
+countdownInput.addEventListener("click",openTimePicker);
+document.addEventListener("click",e=>{if(timePickerPopover&&!e.target.closest(".time-picker-popover")&&!e.target.closest("#countdownInput"))hideTimePicker()});
+
+function startCountdown(){const seconds=parseCountdown(countdownInput.value);if(seconds===null||seconds<=0){alert("Lütfen geçerli bir süre seç.");return}if(countdownInterval)clearInterval(countdownInterval);countdownRemaining=seconds;countdownInput.value=formatCountdown(countdownRemaining);countdownInput.disabled=true;countdownStartButton.disabled=true;countdownInterval=setInterval(()=>{countdownRemaining--;countdownInput.value=formatCountdown(countdownRemaining);if(countdownRemaining<=0){clearInterval(countdownInterval);countdownInterval=null;countdownInput.disabled=false;countdownStartButton.disabled=false;alert("Süre doldu!")}},1000)}
+function resetCountdown(){if(countdownInterval)clearInterval(countdownInterval);countdownInterval=null;countdownRemaining=0;countdownInput.value="00:30:00";countdownInput.disabled=false;countdownStartButton.disabled=false}
+countdownStartButton.addEventListener("click",startCountdown);
+countdownResetButton.addEventListener("click",resetCountdown);
+
+function createInitialState(length){return{index:0,selected:Array(length).fill(null),right:0,wrong:0,retryMode:false,retryIndexes:[]}}
+function safeGet(k){try{return localStorage.getItem(k)}catch{return null}}function safeSet(k,v){try{localStorage.setItem(k,v);return true}catch{return false}}function safeRemove(k){try{localStorage.removeItem(k);return true}catch{return false}}
+function showError(m){errorBox.textContent=Array.isArray(m)?m.join("\n"):String(m);errorBox.style.display="block"}function clearError(){errorBox.textContent="";errorBox.style.display="none"}function normalizeText(v){return typeof v==="string"?v.trim():""}function normalizeKey(v){return normalizeText(v).normalize("NFC").toLocaleLowerCase("de-DE")}
+function topicId(data){if(data.id)return normalizeKey(data.id).replace(/\s+/g,"-");const seed=[data.storyTitle,data.storyLevel,...data.storyParagraphs].join("|");let h=2166136261;for(let i=0;i<seed.length;i++){h^=seed.charCodeAt(i);h=Math.imul(h,16777619)}return"topic-"+(h>>>0).toString(16)}
+function getStorageKey(){return portalData?`germanPortalState:${portalData.id}`:null}
+function splitSentences(text){const value=String(text||"").trim();if(!value)return[];const matches=value.match(/[^.!?]+(?:[.!?]+(?=\s|$)|$)/g);return(matches||[value]).map(x=>x.trim()).filter(Boolean)}
+function validateTranslationStructure(data){const e=[],t=data.storyTranslations;if(!t||typeof t!=="object"||Array.isArray(t))return["storyTranslations bir nesne olmalıdır."];for(const lang of ["tr","en"]){if(!Array.isArray(t[lang])){e.push(`storyTranslations.${lang} bir dizi olmalıdır.`);continue}if(t[lang].length!==data.storyParagraphs.length)e.push(`${lang.toUpperCase()} çeviri paragraf sayısı Almanca ile aynı olmalıdır.`);t[lang].forEach((p,i)=>{if(typeof p!=="string"||!p.trim())e.push(`${lang.toUpperCase()} çeviri paragraf ${i+1} geçersizdir.`)});if(t[lang].length===data.storyParagraphs.length)data.storyParagraphs.forEach((p,i)=>{if(splitSentences(p).length!==splitSentences(t[lang][i]).length)e.push(`Paragraf ${i+1}: Almanca ve ${lang.toUpperCase()} cümle sayıları eşleşmiyor.`.trim())})}return e}
+function validateWordData(w){const e=[];if(!w||typeof w!=="object"||Array.isArray(w))return["wordData bir nesne olmalıdır."];Object.keys(w).forEach(c=>{if(!WORD_CATEGORIES.includes(c))e.push(`wordData içinde izin verilmeyen kategori: ${c}`)});WORD_CATEGORIES.forEach(c=>{const a=w[c];if(!Array.isArray(a)){e.push(`wordData.${c} bir dizi olmalıdır.`);return}a.forEach((x,i)=>{const p=`wordData.${c}[${i}]`;if(!x||typeof x!=="object"||Array.isArray(x)){e.push(`${p} geçerli bir nesne olmalıdır.`);return}if(!normalizeText(x.translation))e.push(`${p}.translation geçerli olmalıdır.`);if(c==="Nomen"){if(!["der","die","das"].includes(normalizeText(x.article)))e.push(`${p}.article der, die veya das olmalıdır.`);if(!normalizeText(x.lemma))e.push(`${p}.lemma geçerli olmalıdır.`);if(!Array.isArray(x.occurrences)||!x.occurrences.length||x.occurrences.some(v=>!normalizeText(v)))e.push(`${p}.occurrences boş olmayan metin dizisi olmalıdır.`)}else if(c==="Verb"){if(!normalizeText(x.lemma))e.push(`${p}.lemma geçerli olmalıdır.`);if(!Array.isArray(x.occurrences)||!x.occurrences.length||x.occurrences.some(v=>!normalizeText(v)))e.push(`${p}.occurrences boş olmayan metin dizisi olmalıdır.`)}else if(!normalizeText(x.surface))e.push(`${p}.surface geçerli olmalıdır.`)})});return e}
+function validatePortalData(data){const e=[];if(!data||typeof data!=="object"||Array.isArray(data))return["Dosyanın ana yapısı bir JSON nesnesi olmalıdır."];const expected=["id","storyTitle","storyLevel","storyParagraphs","storyTranslations","quizData","wordData"],required=["storyTitle","storyLevel","storyParagraphs","storyTranslations","quizData","wordData"];Object.keys(data).forEach(k=>{if(!expected.includes(k))e.push(`İzin verilmeyen alan: ${k}`)});required.forEach(k=>{if(!(k in data))e.push(`Eksik alan: ${k}`)});if("id"in data&&(typeof data.id!=="string"||!data.id.trim()))e.push("id geçersiz.");if(typeof data.storyTitle!=="string"||!data.storyTitle.trim())e.push("storyTitle geçersiz.");if(!new Set(["A1.1","A1.2","A2.1","A2.2","B1.1","B1.2"]).has(normalizeText(data.storyLevel)))e.push(`Geçersiz seviye: ${data.storyLevel}`);if(!Array.isArray(data.storyParagraphs)||!data.storyParagraphs.length)e.push("storyParagraphs boş olamaz.");else data.storyParagraphs.forEach((p,i)=>{if(typeof p!=="string"||!p.trim())e.push(`Paragraf ${i+1} geçersiz.`);});if(Array.isArray(data.storyParagraphs))e.push(...validateTranslationStructure(data));if("wordData"in data)e.push(...validateWordData(data.wordData));if(!Array.isArray(data.quizData)||data.quizData.length!==10)e.push("quizData tam 10 soru olmalıdır.");else data.quizData.forEach((q,i)=>{const n=i+1;if(!q||typeof q!=="object"||Array.isArray(q)){e.push(`Quiz ${n} geçersiz.`);return}const fields=Object.keys(q),valid=["type","q","o","a","e"];fields.forEach(k=>{if(!valid.includes(k))e.push(`Quiz ${n}: izin verilmeyen alan ${k}.`)});valid.forEach(k=>{if(!(k in q))e.push(`Quiz ${n}: eksik alan ${k}.`)});if(typeof q.type!=="string"||!ALLOWED_QUIZ_TYPES.has(q.type.trim()))e.push(`Quiz ${n}: type geçersiz.`);if(typeof q.q!=="string"||!q.q.trim())e.push(`Quiz ${n}: soru metni geçersiz.`);if(!Array.isArray(q.o)||q.o.length!==4)e.push(`Quiz ${n}: 4 seçenek olmalı.`);else{q.o.forEach((o,j)=>{if(typeof o!=="string"||!o.trim())e.push(`Quiz ${n}, seçenek ${j+1} geçersiz.`);});if(new Set(q.o.map(normalizeKey)).size!==4)e.push(`Quiz ${n}: seçenekler farklı olmalı.`);}if(!Number.isInteger(q.a)||q.a<0||q.a>3)e.push(`Quiz ${n}: a 0-3 arası olmalı.`);if(typeof q.e!=="string"||!q.e.trim())e.push(`Quiz ${n}: açıklama geçersiz.`);});return e}
+function normalizeWordData(w){const o={};WORD_CATEGORIES.forEach(c=>{o[c]=(w[c]||[]).map(x=>c==="Nomen"?{article:normalizeText(x.article),lemma:normalizeText(x.lemma),translation:normalizeText(x.translation),occurrences:x.occurrences.map(normalizeText).filter(Boolean)}:c==="Verb"?{lemma:normalizeText(x.lemma),translation:normalizeText(x.translation),occurrences:x.occurrences.map(normalizeText).filter(Boolean)}:{surface:normalizeText(x.surface),translation:normalizeText(x.translation)})});return o}
+function createWordIndex(w){const m=new Map(),add=(form,entry)=>{const k=normalizeKey(form);if(k&&!m.has(k))m.set(k,entry)};WORD_CATEGORIES.forEach(c=>(w[c]||[]).forEach(x=>{const z={...x,category:c};if(c==="Nomen"||c==="Verb"){add(x.lemma,z);x.occurrences.forEach(v=>add(v,z))}else add(x.surface,z)}));return m}function hasWordData(){return!!portalData&&WORD_CATEGORIES.some(c=>portalData.wordData[c].length)}function findWordTranslation(v){return portalData?.wordTranslationIndex.get(normalizeKey(v))||null}
+function countWords(text,locale="de"){if(!text.trim())return 0;if("Segmenter"in Intl)return[...new Intl.Segmenter(locale,{granularity:"word"}).segment(text)].filter(x=>x.isWordLike).length;return text.trim().split(/\s+/).length}
+function el(tag,cls="",text=""){const x=document.createElement(tag);if(cls)x.className=cls;if(text!=="")x.textContent=text;return x}function button(text,cls,fn){const b=el("button",cls,text);b.type="button";b.addEventListener("click",fn);return b}
+function updateTranslationToggle(){translationToggle.classList.toggle("on",translationEnabled);translationToggle.setAttribute("aria-checked",String(translationEnabled));translationToggleState.textContent=translationEnabled?"ON":"OFF"}function setTranslationEnabled(v){translationEnabled=Boolean(v);safeSet("germanPortalTranslationEnabled",String(v));updateTranslationToggle();hideSentenceTooltip()}
+let activeWordTranslationTooltip=null,activeTranslatedWord=null,wordTranslationPinned=false;function hideWordTranslationTooltip(force=true){if(!force&&wordTranslationPinned)return;if(activeWordTranslationTooltip)activeWordTranslationTooltip.remove();if(activeTranslatedWord)activeTranslatedWord.classList.remove("context-translation-target");activeWordTranslationTooltip=activeTranslatedWord=null;wordTranslationPinned=false}function positionFloating(node,t){const r=node.getBoundingClientRect(),q=t.getBoundingClientRect(),m=12;let l=Math.max(m,Math.min(r.left+r.width/2-q.width/2,innerWidth-q.width-m)),top=r.bottom+m;if(t.classList.contains("word-translation-tooltip"))top=r.top-q.height-m;if(top<m)top=r.bottom+m;if(top+q.height>innerHeight-m)top=Math.max(m,innerHeight-q.height-m);t.style.left=Math.round(l)+"px";t.style.top=Math.round(Math.max(m,top))+"px"}
+function showWordTranslationTooltip(node,info,options={}){if(!info)return;hideWordTranslationTooltip();wordTranslationPinned=options.pinned===true;const t=el("div","word-translation-tooltip"),name=info.category==="Nomen"?[info.article,info.lemma].filter(Boolean).join(" "):info.lemma||info.surface||node.textContent;t.append(el("div","word-tooltip-term",name),el("div","word-tooltip-category",info.category),el("div","word-tooltip-translation",info.translation));document.body.append(t);activeWordTranslationTooltip=t;activeTranslatedWord=node;if(wordTranslationPinned)node.classList.add("context-translation-target");positionFloating(node,t);requestAnimationFrame(()=>t.classList.add("visible"))}
+function updateWordTranslationToggle(){const available=hasWordData();wordTranslationControl.classList.toggle("hidden",!available);wordTranslationToggle.disabled=!available;wordTranslationToggle.classList.toggle("on",available&&wordTranslationEnabled);wordTranslationToggle.setAttribute("aria-checked",String(available&&wordTranslationEnabled));wordTranslationToggleState.textContent=available&&wordTranslationEnabled?"ON":"OFF";document.querySelectorAll(".selectable-word").forEach(w=>w.classList.toggle("word-translation-enabled",available&&wordTranslationEnabled&&!!findWordTranslation(w.textContent)))}function setWordTranslationEnabled(v){wordTranslationEnabled=Boolean(v);safeSet("germanPortalWordTranslationEnabled",String(v));hideWordTranslationTooltip();updateWordTranslationToggle()}
+function updateWordSelectionToggle(){wordSelectionToggle.classList.toggle("on",wordSelectionEnabled);wordSelectionToggle.setAttribute("aria-checked",String(wordSelectionEnabled));wordSelectionToggleState.textContent=wordSelectionEnabled?"ON":"OFF";document.querySelectorAll(".selectable-word").forEach(w=>{w.style.cursor=wordSelectionEnabled?"pointer":"text"})}
+function setWordSelectionEnabled(v){wordSelectionEnabled=Boolean(v);safeSet("germanPortalWordSelectionEnabled",String(wordSelectionEnabled));hideWordPopover();hideWordTranslationTooltip();const sel=getSelection();if(sel)sel.removeAllRanges();updateWordSelectionToggle()}
+const WORD_POOL_KEY="germanPortalWordPool:v1";let activeWordPopover=null;function cleanSelectedText(v){return String(v||"").replace(/^[\s.,!?;:„“”"'()\[\]{}]+|[\s.,!?;:„“”"'()\[\]{}]+$/g,"").replace(/\s+/g," ").trim()}function wordPoolId(term,sentence,topic){const seed=[normalizeKey(term),normalizeKey(sentence),topic||""].join("|");let h=2166136261;for(let i=0;i<seed.length;i++){h^=seed.charCodeAt(i);h=Math.imul(h,16777619)}return"word-"+(h>>>0).toString(16)}
+function normalizePoolItem(x){if(typeof x.selectedText==="string")return x;if(typeof x.term==="string")return{id:x.id||wordPoolId(x.term,x.sentence||"",x.topicId||""),selectedText:x.term,normalizedText:normalizeKey(x.term),sentence:x.sentence||"",storyTitle:x.title||x.storyTitle||"",storyLevel:x.storyLevel||"",topicId:x.topicId||"",addedAt:x.addedAt||new Date().toISOString(),status:x.status||"new"};return null}
+function getWordPool(){const raw=safeGet(WORD_POOL_KEY)||safeGet("gp:wordPool");if(!raw)return{version:1,updatedAt:null,words:[]};try{const d=JSON.parse(raw);if(!d||!Array.isArray(d.words))throw Error();return{version:1,updatedAt:d.updatedAt||null,words:d.words.map(normalizePoolItem).filter(x=>x&&x.selectedText&&x.sentence)}}catch{return{version:1,updatedAt:null,words:[]}}}
+function saveWordPool(p){p.version=1;p.updatedAt=new Date().toISOString();safeSet(WORD_POOL_KEY,JSON.stringify(p));updateWordPoolUI();refreshSavedWordMarks()}
+function updateWordPoolUI(){const p=getWordPool();wordPoolCount.textContent=String(p.words.length);renderWordPool(p)}
+function renderWordPool(p=getWordPool()){wordPoolList.replaceChildren();if(!p.words.length){wordPoolList.append(el("div","pool-empty","Henüz kelime seçmedin."));return}p.words.slice().reverse().forEach(item=>{const box=el("article","pool-item"),head=el("div","pool-item-head"),term=el("div","pool-term",item.selectedText),remove=button("Sil","pool-remove",()=>removeWordFromPool(item.id));head.append(term,remove);box.append(head,el("div","pool-context",item.sentence),el("div","pool-source",`${item.storyTitle||"Metin"} · ${item.storyLevel||""}`));wordPoolList.append(box)})}
+function isInWordPool(term,sentence){return getWordPool().words.some(x=>x.id===wordPoolId(term,sentence,portalData?portalData.id:""))}
+function addWordToPool(term,sentence){term=cleanSelectedText(term);sentence=String(sentence||"").trim();if(!term||!sentence||!portalData)return;const p=getWordPool(),id=wordPoolId(term,sentence,portalData.id);if(!p.words.some(x=>x.id===id)){p.words.push({id,selectedText:term,normalizedText:normalizeKey(term),sentence,storyTitle:portalData.storyTitle,storyLevel:portalData.storyLevel,topicId:portalData.id,addedAt:new Date().toISOString(),status:"new"});saveWordPool(p)}hideWordPopover()}
+function removeWordFromPool(id){const p=getWordPool();p.words=p.words.filter(x=>x.id!==id);saveWordPool(p);hideWordPopover()}
+function refreshSavedWordMarks(){document.querySelectorAll(".selectable-word").forEach(w=>{const s=w.closest(".sentence");w.classList.toggle("saved-word",!!s&&isInWordPool(w.textContent,s.textContent))})}
+function hideWordPopover(){if(activeWordPopover)activeWordPopover.remove();activeWordPopover=null}
+function showWordPopover(term,sentence,rect){term=cleanSelectedText(term);if(!term)return;hideSentenceTooltip();hideWordTranslationTooltip();hideWordPopover();const pop=el("div","word-selection-popover"),saved=isInWordPool(term,sentence),title=el("h3","",term),context=el("p","selected-context",sentence),actions=el("div","popover-actions");actions.append(button("Kapat","btn secondary",hideWordPopover));if(saved){const id=wordPoolId(term,sentence,portalData.id);actions.append(button("Havuzdan Çıkar","btn danger",()=>removeWordFromPool(id)))}else actions.append(button("Havuza Ekle","btn primary",()=>addWordToPool(term,sentence)));pop.append(title,el("p","","Seçilen bağlam:"),context,actions);document.body.append(pop);activeWordPopover=pop;const pr=pop.getBoundingClientRect(),m=12;let l=Math.max(m,Math.min(rect.left+rect.width/2-pr.width/2,innerWidth-pr.width-m)),top=rect.bottom+m;if(top+pr.height>innerHeight-m)top=rect.top-pr.height-m;pop.style.left=Math.round(l)+"px";pop.style.top=Math.round(Math.max(m,top))+"px"}
+function openWordPool(){hideWordPopover();hideSentenceTooltip();hideWordTranslationTooltip();wordPoolOverlay.classList.remove("hidden");updateWordPoolUI();document.body.style.overflow="hidden";$("wordPoolCloseButton").focus()}
+function closeWordPool(){wordPoolOverlay.classList.add("hidden");document.body.style.overflow="";wordPoolButton.focus()}
+function exportWordPool(){const p=getWordPool();if(!p.words.length){alert("Kelime havuzu boş.");return}const u=URL.createObjectURL(new Blob([JSON.stringify(p,null,2)],{type:"application/json;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download=`german_word_pool_${new Date().toISOString().slice(0,10)}.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+function importWordPool(file){if(!file)return;const r=new FileReader();r.onload=e=>{try{const incoming=JSON.parse(e.target.result);if(!incoming||!Array.isArray(incoming.words))throw Error();const p=getWordPool(),map=new Map(p.words.map(x=>[x.id,x]));incoming.words.map(normalizePoolItem).filter(Boolean).forEach(x=>map.set(x.id,x));p.words=[...map.values()];saveWordPool(p);alert("Havuz birleştirildi.")}catch(err){showError(`Hata: ${err.message}`)}};r.readAsText(file,"utf-8")}
+function clearWordPool(){if(getWordPool().words.length&&confirm("Temizlensin mi?")){safeRemove(WORD_POOL_KEY);safeRemove("gp:wordPool");updateWordPoolUI();refreshSavedWordMarks()}}
+function appendTokenizedSentence(span,sentence){sentence.split(/([\p{L}\p{M}]+(?:[-’'][\p{L}\p{M}]+)*)/u).forEach(part=>{if(!/^[\p{L}\p{M}]+(?:[-’'][\p{L}\p{M}]+)*$/u.test(part)){span.append(document.createTextNode(part));return}const w=el("span","selectable-word",part),info=findWordTranslation(part);w.tabIndex=info?0:-1;w.addEventListener("mouseenter",()=>{if(wordTranslationEnabled&&info)showWordTranslationTooltip(w,info)});w.addEventListener("mouseleave",()=>hideWordTranslationTooltip(false));w.addEventListener("focus",()=>{if(wordTranslationEnabled&&info)showWordTranslationTooltip(w,info)});w.addEventListener("blur",()=>hideWordTranslationTooltip(false));w.addEventListener("click",ev=>{if(!wordSelectionEnabled)return;ev.preventDefault();ev.stopPropagation();showWordPopover(part,sentence,w.getBoundingClientRect())});w.addEventListener("contextmenu",ev=>{
+  if(nativeContextMenuArmed){
+    nativeContextMenuArmed=false;
+    if(nativeContextArmTimer)clearTimeout(nativeContextArmTimer);
+    nativeContextArmTimer=null;
+    hideWordAudioMenu();
+    return
+  }
+  ev.preventDefault();
+  ev.stopPropagation();
+  hideSentenceTooltip();
+  hideWordTranslationTooltip();
+  showWordAudioMenu(part,sentence,ev.clientX,ev.clientY)
+});span.append(w)})}
+let activeTooltip=null,activeSentence=null,sentenceTranslationPinned=false;function hideSentenceTooltip(force=true){if(!force&&sentenceTranslationPinned)return;if(activeTooltip)activeTooltip.remove();if(activeSentence)activeSentence.classList.remove("active","context-translation-target");activeTooltip=activeSentence=null;sentenceTranslationPinned=false}
+function showSentenceTooltip(s,options={}){if(!translationEnabled&&!options.force)return;const tr=s.dataset.tr||"",en=s.dataset.en||"";if(!tr&&!en)return;hideSentenceTooltip();sentenceTranslationPinned=options.pinned===true;const t=el("div","sentence-tooltip");for(const [label,value]of[["ENGLISH",en],["TÜRKÇE",tr]]){const row=el("div","tooltip-row");row.append(el("span","tooltip-label",label),el("div","tooltip-text",value));t.append(row)}document.body.append(t);activeTooltip=t;activeSentence=s;s.classList.add("active");if(sentenceTranslationPinned)s.classList.add("context-translation-target");positionFloating(s,t);requestAnimationFrame(()=>t.classList.add("visible"))}
+
+// Cümle seslendirme: Önce Google Translate TTS denenir, başarısızsa cihazın Almanca sesi kullanılır.
+const VOICE_SOURCES=new Set(["google","browser"]);let voiceSource=safeGet("germanPortalVoiceSource")||"google";if(!VOICE_SOURCES.has(voiceSource))voiceSource="google";
+function updateVoiceSourceUI(){voiceSourceGoogle.classList.toggle("active",voiceSource==="google");voiceSourceBrowser.classList.toggle("active",voiceSource==="browser");voiceSourceGoogle.setAttribute("aria-pressed",String(voiceSource==="google"));voiceSourceBrowser.setAttribute("aria-pressed",String(voiceSource==="browser"))}
+function setVoiceSource(source){if(!VOICE_SOURCES.has(source))return;stopSentenceAudio();voiceSource=source;safeSet("germanPortalVoiceSource",voiceSource);updateVoiceSourceUI()}
+const SPEECH_RATES=[0.75,0.9,1,1.15];let speechRate=Number(safeGet("germanPortalSpeechRate"))||0.9;if(!SPEECH_RATES.includes(speechRate))speechRate=0.9;
+function updateSpeechRateUI(){speechRateValue.textContent=speechRate.toFixed(2)+"×";speechRateDown.disabled=speechRate===SPEECH_RATES[0];speechRateUp.disabled=speechRate===SPEECH_RATES[SPEECH_RATES.length-1]}
+function changeSpeechRate(delta){let i=SPEECH_RATES.indexOf(speechRate);i=Math.max(0,Math.min(SPEECH_RATES.length-1,i+delta));speechRate=SPEECH_RATES[i];safeSet("germanPortalSpeechRate",String(speechRate));updateSpeechRateUI()}
+function updateAudioToggle(){audioToggle.classList.toggle("on",audioEnabled);audioToggle.setAttribute("aria-checked",String(audioEnabled));audioToggleState.textContent=audioEnabled?"ON":"OFF";document.body.classList.toggle("audio-disabled",!audioEnabled);if(!audioEnabled)hideGlobalAudio()}
+function setAudioEnabled(v){audioEnabled=Boolean(v);safeSet("germanPortalAudioEnabled",String(audioEnabled));if(!audioEnabled){stopSentenceAudio();hideMobileSentenceActions()}updateAudioToggle()}
+let sentenceAudio=null, sentenceAudioButton=null;
+function stopSentenceAudio(){
+  clearReadingTracking();
+  if(sentenceAudio){sentenceAudio.pause();sentenceAudio.src="";sentenceAudio=null}
+  if("speechSynthesis" in window)window.speechSynthesis.cancel();
+  if(sentenceAudioButton){sentenceAudioButton.classList.remove("playing");scheduleGlobalAudioHide()}
+  sentenceAudioButton=null;
+}
+let readingTrackTimers=[],readingTrackSentence=null,readingTrackWord=null;
+function clearReadingTracking(){
+  readingTrackTimers.forEach(clearTimeout);readingTrackTimers=[];
+  if(readingTrackSentence)readingTrackSentence.classList.remove("reading-active");
+  if(readingTrackWord)readingTrackWord.classList.remove("reading-word");
+  readingTrackSentence=readingTrackWord=null;
+}
+function findReadingSentence(text,preferred=null){
+  if(preferred&&preferred.isConnected)return preferred;
+  const key=String(text||"").replace(/\s+/g," ").trim();
+  return [...document.querySelectorAll("#quizStoryText .sentence")].find(s=>s.textContent.replace(/\s+/g," ").trim()===key)||null;
+}
+function setReadingWord(sentence,index){
+  if(readingTrackWord)readingTrackWord.classList.remove("reading-word");
+  const words=sentence?[...sentence.querySelectorAll(".selectable-word")]:[];
+  readingTrackWord=words[Math.max(0,Math.min(words.length-1,index))]||null;
+  if(readingTrackWord)readingTrackWord.classList.add("reading-word");
+}
+function startEstimatedReadingTracking(text,durationSeconds,preferred=null){
+  clearReadingTracking();const sentence=findReadingSentence(text,preferred);if(!sentence)return;
+  const words=[...sentence.querySelectorAll(".selectable-word")];if(!words.length)return;
+  readingTrackSentence=sentence;sentence.classList.add("reading-active");
+  const weights=words.map(w=>Math.max(1.6,w.textContent.length));const total=weights.reduce((a,b)=>a+b,0);
+  let elapsed=0;words.forEach((w,i)=>{const delay=durationSeconds*1000*elapsed/total;readingTrackTimers.push(setTimeout(()=>setReadingWord(sentence,i),delay));elapsed+=weights[i]});
+}
+function startBoundaryReadingTracking(text,preferred=null){
+  clearReadingTracking();const sentence=findReadingSentence(text,preferred);if(!sentence)return null;
+  readingTrackSentence=sentence;sentence.classList.add("reading-active");return sentence;
+}
+function startAudioProgressTracking(audio,text,preferred=null){
+  clearReadingTracking();const sentence=findReadingSentence(text,preferred);if(!sentence)return()=>{};
+  const words=[...sentence.querySelectorAll(".selectable-word")];if(!words.length)return()=>{};
+  readingTrackSentence=sentence;sentence.classList.add("reading-active");
+  const weights=words.map(w=>Math.max(1.4,w.textContent.length*.82));
+  const cumulative=[];let total=0;weights.forEach(weight=>{total+=weight;cumulative.push(total)});
+  let frame=0,lastIndex=-1,stopped=false;
+  const tick=()=>{
+    if(stopped||audio.ended)return;
+    const duration=Number.isFinite(audio.duration)&&audio.duration>0?audio.duration:Math.max(1,text.split(/\s+/).length*.42);
+    const progress=Math.max(0,Math.min(1,(audio.currentTime+.10)/duration));
+    const target=progress*total;let index=cumulative.findIndex(value=>value>=target);if(index<0)index=words.length-1;
+    if(index!==lastIndex){setReadingWord(sentence,index);lastIndex=index}
+    frame=requestAnimationFrame(tick)
+  };
+  frame=requestAnimationFrame(tick);
+  return()=>{stopped=true;if(frame)cancelAnimationFrame(frame)}
+}
+function speakWithDeviceGerman(text,btn){
+  if(!("speechSynthesis" in window)){alert("Bu tarayıcı sesli okumayı desteklemiyor.");btn.classList.remove("playing");return}
+  const u=new SpeechSynthesisUtterance(text);u.lang="de-DE";u.rate=speechRate;
+  const voices=window.speechSynthesis.getVoices();
+  u.voice=voices.find(v=>String(v.lang).toLowerCase()==="de-de")||voices.find(v=>String(v.lang).toLowerCase().startsWith("de"))||null;
+  const tracked=startBoundaryReadingTracking(text,globalAudioOwner);let boundaryIndex=0;
+  u.onboundary=e=>{if(e.name==="word"&&tracked)setReadingWord(tracked,boundaryIndex++)};
+  u.onend=u.onerror=()=>{clearReadingTracking();btn.classList.remove("playing");scheduleGlobalAudioHide();if(sentenceAudioButton===btn)sentenceAudioButton=null};
+  window.speechSynthesis.speak(u);
+}
+function playGermanSentence(text,btn){
+  if(!audioEnabled)return;stopSentenceAudio();text=String(text||"").trim();if(!text)return;
+  sentenceAudioButton=btn;if(globalAudioHideTimer)clearTimeout(globalAudioHideTimer);globalAudioHideTimer=null;btn.classList.add("playing","visible");
+  if(voiceSource==="browser"||!navigator.onLine){speakWithDeviceGerman(text,btn);return}
+  const url="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&q="+encodeURIComponent(text);
+  const audio=new Audio(url);sentenceAudio=audio;let stopProgressTrack=()=>{};
+  audio.addEventListener("playing",()=>{stopProgressTrack();stopProgressTrack=startAudioProgressTracking(audio,text,globalAudioOwner)},{once:true});
+  audio.onended=()=>{stopProgressTrack();clearReadingTracking();btn.classList.remove("playing");scheduleGlobalAudioHide();sentenceAudio=null;sentenceAudioButton=null};
+  audio.onerror=()=>{sentenceAudio=null;speakWithDeviceGerman(text,btn)};
+  audio.play().catch(()=>{sentenceAudio=null;speakWithDeviceGerman(text,btn)});
+}
+let mobileSentenceActions=null;
+function isTouchSentenceUI(){return matchMedia("(hover: none), (pointer: coarse)").matches}
+function hideMobileSentenceActions(){if(mobileSentenceActions)mobileSentenceActions.remove();mobileSentenceActions=null}
+function showMobileSentenceActions(sentenceNode,sentenceText){
+  hideMobileSentenceActions();hideSentenceTooltip();hideWordTranslationTooltip();hideWordPopover();
+  const panel=el("div","mobile-sentence-actions visible");
+  const listen=button("🔊 Dinle","btn primary",()=>{playGermanSentence(sentenceText,listen)});
+  const translate=button("🌐 Çeviri","btn secondary",()=>{hideMobileSentenceActions();if(translationEnabled)showSentenceTooltip(sentenceNode);else alert("Önce Cümle Çevirisi seçeneğini açın.")});
+  const save=button("➕ Kaydet","btn success",()=>{addWordToPool(sentenceText,sentenceText);hideMobileSentenceActions()});
+  if(audioEnabled)panel.append(listen);panel.append(translate,save);document.body.append(panel);mobileSentenceActions=panel;
+}
+let globalAudioButton=null,globalAudioShowTimer=null,globalAudioHideTimer=null,globalAudioText="",globalAudioOwner=null;
+function clearGlobalAudioTimers(){
+  if(globalAudioShowTimer)clearTimeout(globalAudioShowTimer);
+  if(globalAudioHideTimer)clearTimeout(globalAudioHideTimer);
+  globalAudioShowTimer=globalAudioHideTimer=null;
+}
+function ensureGlobalAudioButton(){
+  if(globalAudioButton)return globalAudioButton;
+  const b=el("button");b.id="globalSentenceAudioButton";b.type="button";b.title="Almanca dinle";b.setAttribute("aria-label","Bu cümleyi Almanca dinle");
+  b.addEventListener("click",ev=>{ev.preventDefault();ev.stopPropagation();if(audioEnabled&&globalAudioText)playGermanSentence(globalAudioText,b)});
+  document.body.append(b);globalAudioButton=b;return b;
+}
+function hideGlobalAudio(){
+  if(globalAudioHideTimer)clearTimeout(globalAudioHideTimer);globalAudioHideTimer=null;
+  if(globalAudioButton&&!globalAudioButton.classList.contains("playing"))globalAudioButton.classList.remove("visible");
+  globalAudioOwner=null;
+}
+function scheduleGlobalAudioHide(){
+  if(globalAudioHideTimer)clearTimeout(globalAudioHideTimer);
+  globalAudioHideTimer=setTimeout(()=>{if(!globalAudioButton?.classList.contains("playing"))hideGlobalAudio()},2000);
+}
+function beginGlobalAudioWait(sentenceNode,sentenceText,ev){
+  if(!audioEnabled||isTouchSentenceUI())return;
+  clearGlobalAudioTimers();hideGlobalAudio();
+  globalAudioOwner=sentenceNode;globalAudioText=sentenceText;
+  const pointerX=ev.clientX,pointerY=ev.clientY;
+  globalAudioShowTimer=setTimeout(()=>{
+    globalAudioShowTimer=null;
+    if(globalAudioOwner!==sentenceNode||!sentenceNode.matches(":hover")||!audioEnabled)return;
+    const b=ensureGlobalAudioButton(),size=30,gap=10,margin=8;
+    let left=pointerX+gap,top=pointerY+gap;
+    if(left+size>innerWidth-margin)left=pointerX-size-gap;
+    if(top+size>innerHeight-margin)top=pointerY-size-gap;
+    b.style.left=Math.round(Math.max(margin,left))+"px";
+    b.style.top=Math.round(Math.max(margin,top))+"px";
+    b.classList.add("visible");
+    scheduleGlobalAudioHide();
+  },1500);
+}
+function cancelGlobalAudioWait(sentenceNode){
+  if(globalAudioOwner!==sentenceNode)return;
+  if(globalAudioShowTimer){clearTimeout(globalAudioShowTimer);globalAudioShowTimer=null;globalAudioOwner=null}
+}
+function bindSentenceAudioPointer(sentenceNode,sentenceText){
+  sentenceNode.addEventListener("mouseenter",ev=>beginGlobalAudioWait(sentenceNode,sentenceText,ev));
+  sentenceNode.addEventListener("mousemove",ev=>{if(!globalAudioButton?.classList.contains("visible"))beginGlobalAudioWait(sentenceNode,sentenceText,ev)});
+  sentenceNode.addEventListener("mouseleave",()=>cancelGlobalAudioWait(sentenceNode));
+}
+let activeWordAudioMenu=null,nativeContextMenuArmed=false,nativeContextArmTimer=null;
+function hideWordAudioMenu(){if(activeWordAudioMenu)activeWordAudioMenu.remove();activeWordAudioMenu=null}
+function showBrowserContextToast(message){
+  document.querySelectorAll(".browser-context-toast").forEach(n=>n.remove());
+  const toast=el("div","browser-context-toast",message);document.body.append(toast);setTimeout(()=>toast.remove(),2600)
+}
+function armNativeContextMenu(){
+  hideWordAudioMenu();nativeContextMenuArmed=true;
+  if(nativeContextArmTimer)clearTimeout(nativeContextArmTimer);
+  nativeContextArmTimer=setTimeout(()=>{nativeContextMenuArmed=false;nativeContextArmTimer=null},6000);
+  showBrowserContextToast("Tarayıcı menüsü hazır: Aynı yerde bir kez daha sağ tıklayın.")
+}
+function speakWordText(text,rate=speechRate,repeats=1,contextSentence=""){
+  stopSentenceAudio();text=String(text||"").trim();if(!text)return;
+  let count=0;
+  const deviceFallback=()=>{
+    if(!("speechSynthesis" in window)){alert("Bu tarayıcı sesli okumayı desteklemiyor.");return}
+    const u=new SpeechSynthesisUtterance(text);u.lang="de-DE";u.rate=rate;
+    const voices=speechSynthesis.getVoices();u.voice=voices.find(v=>String(v.lang).toLowerCase()==="de-de")||voices.find(v=>String(v.lang).toLowerCase().startsWith("de"))||null;
+    const preferred=findReadingSentence(contextSentence||text),tracked=startBoundaryReadingTracking(contextSentence||text,preferred);let boundaryIndex=0;
+    if(contextSentence&&text!==contextSentence&&tracked){const words=[...tracked.querySelectorAll(".selectable-word")],idx=words.findIndex(w=>w.textContent.trim()===text.trim());if(idx>=0){setReadingWord(tracked,idx);boundaryIndex=idx}}
+    u.onboundary=e=>{if(e.name==="word"&&tracked&&text===contextSentence)setReadingWord(tracked,boundaryIndex++)};
+    u.onend=()=>{clearReadingTracking();count++;if(count<repeats)setTimeout(playNext,450)};speechSynthesis.speak(u)
+  };
+  const playNext=()=>{
+    if(count>=repeats)return;
+    if(voiceSource==="browser"||!navigator.onLine){deviceFallback();return}
+    const url="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&q="+encodeURIComponent(text);
+    const audio=new Audio(url);sentenceAudio=audio;audio.playbackRate=rate;audio.defaultPlaybackRate=rate;let stopProgressTrack=()=>{};
+    audio.addEventListener("playing",()=>{const preferred=findReadingSentence(contextSentence||text);if(contextSentence&&text!==contextSentence){clearReadingTracking();readingTrackSentence=preferred;if(preferred){preferred.classList.add("reading-active");const words=[...preferred.querySelectorAll(".selectable-word")],idx=words.findIndex(w=>w.textContent.trim()===text.trim());if(idx>=0)setReadingWord(preferred,idx)}}else stopProgressTrack=startAudioProgressTracking(audio,text,preferred)},{once:true});
+    audio.onended=()=>{stopProgressTrack();clearReadingTracking();sentenceAudio=null;count++;if(count<repeats)setTimeout(playNext,450)};
+    audio.onerror=()=>{sentenceAudio=null;deviceFallback()};
+    audio.play().catch(()=>{sentenceAudio=null;deviceFallback()});
+  };
+  playNext();
+}
+function showWordAudioMenu(word,sentence,x,y){
+  hideWordAudioMenu();hideWordPopover();hideSentenceTooltip();hideWordTranslationTooltip();
+  const m=el("div","word-audio-menu"),title=el("div","word-audio-menu-title",word);
+  const add=(label,fn)=>{
+    const b=button(label,"",ev=>{
+      ev.preventDefault();
+      ev.stopPropagation();
+      hideWordAudioMenu();
+      requestAnimationFrame(fn)
+    });
+    m.append(b)
+  };
+  const sentenceNode=[...document.querySelectorAll(".sentence")].find(node=>node.textContent.replace(/\s+/g," ").trim()===sentence.replace(/\s+/g," ").trim());
+  const wordNode=sentenceNode?[...sentenceNode.querySelectorAll(".selectable-word")].find(node=>normalizeKey(node.textContent)===normalizeKey(word)):null;
+  m.append(title);
+  add("🗣️ Cümleyi dinle",()=>speakWordText(sentence,speechRate,1,sentence));
+  add("🌐 Cümle çeviri",()=>{
+    if(sentenceNode)showSentenceTooltip(sentenceNode,{force:true,pinned:true});
+    else alert("Bu cümle için çeviri bulunamadı.")
+  });
+  add("🔊 Kelime dinle",()=>speakWordText(word,speechRate,1,sentence));
+  add("📘 Kelime çeviri",()=>{
+    const info=findWordTranslation(word);
+    if(wordNode&&info)showWordTranslationTooltip(wordNode,info,{pinned:true});
+    else alert("Bu kelime için çeviri bulunamadı.")
+  });
+  add("➕ Kelimelerime ekle",()=>addWordToPool(word,sentence));
+  add("🖱️ Browser sağ tuş",armNativeContextMenu);
+  document.body.append(m);
+  activeWordAudioMenu=m;
+  positionWordAudioMenu(m,x,y)
+}
+function positionWordAudioMenu(m,x,y){
+  const r=m.getBoundingClientRect(),margin=10;let left=x,top=y;
+  if(left+r.width>innerWidth-margin)left=innerWidth-r.width-margin;
+  if(top+r.height>innerHeight-margin)top=innerHeight-r.height-margin;
+  m.style.left=Math.max(margin,left)+"px";
+  m.style.top=Math.max(margin,top)+"px"
+}
+function createInlineSentenceSpeaker(sentenceText,sentenceNode){
+  const b=el("button","inline-sentence-speaker");b.type="button";b.title="Cümleyi Almanca dinle";b.setAttribute("aria-label","Bu cümleyi Almanca dinle");
+  b.addEventListener("click",ev=>{
+    ev.preventDefault();ev.stopPropagation();
+    if(!audioEnabled){alert("Önce Ses Dinleme seçeneğini açın.");return}
+    globalAudioOwner=sentenceNode;
+    playGermanSentence(sentenceText,b)
+  });
+  return b
+}
+function createTranslatedParagraphs(c,ps){c.replaceChildren();ps.forEach(t=>c.append(el("p","",t)))}
+
+function createGermanParagraphsWithTranslations(c,de,tr,en){
+  c.replaceChildren();
+  de.forEach((text,pi)=>{
+    const p=el("p"),ds=splitSentences(text),ts=splitSentences(tr[pi]),es=splitSentences(en[pi]);
+    ds.forEach((sentence,i)=>{
+      const s=el("span","sentence");
+      appendTokenizedSentence(s,sentence);
+      bindSentenceAudioPointer(s,sentence);
+      s.append(createInlineSentenceSpeaker(sentence,s));
+      s.tabIndex=0;
+      s.dataset.tr=ts[i]||"";
+      s.dataset.en=es[i]||"";
+      
+      s.addEventListener("click",ev=>{
+        if(ev.target!==s)return;
+        if(isTouchSentenceUI()){ev.stopPropagation();showMobileSentenceActions(s,sentence)}
+      });
+      s.addEventListener("mouseenter",()=>{if(!isTouchSentenceUI()&&translationEnabled)showSentenceTooltip(s)});
+      s.addEventListener("mouseleave",()=>hideSentenceTooltip(false));
+      s.addEventListener("focus",()=>{if(translationEnabled)showSentenceTooltip(s)});
+      s.addEventListener("blur",()=>hideSentenceTooltip(false));
+      p.append(s);
+      if(i<ds.length-1)p.append(document.createTextNode(" "))
+    });
+    c.append(p)
+  })
+}
+
+function setLanguage(lang){if(!portalData)return;if(!ALLOWED_LANGUAGES.has(lang))lang="de";currentLanguage=lang;safeSet("germanPortalLanguage",lang);document.querySelectorAll(".language-tab").forEach(b=>{const active=b.dataset.language===lang;b.classList.toggle("active",active);b.setAttribute("aria-selected",String(active))});hideSentenceTooltip();hideWordTranslationTooltip();const c=$("quizStoryText");if(lang==="de"){createGermanParagraphsWithTranslations(c,portalData.storyParagraphs,portalData.storyTranslations.tr,portalData.storyTranslations.en);refreshSavedWordMarks();updateWordTranslationToggle()}else createTranslatedParagraphs(c,portalData.storyTranslations[lang]);applyParagraphFlow(true);requestAnimationFrame(syncQuestionAreaToText)}
+function loadPortalData(data,fileName=""){const errors=validatePortalData(data);if(errors.length){showError(["Doğrulama hataları:",...errors]);return false}clearError();const built={id:topicId(data),storyTitle:data.storyTitle.trim(),storyLevel:data.storyLevel.trim(),storyParagraphs:data.storyParagraphs.map(x=>x.trim()),storyTranslations:{tr:data.storyTranslations.tr.map(x=>x.trim()),en:data.storyTranslations.en.map(x=>x.trim())},wordData:normalizeWordData(data.wordData),quizData:data.quizData.map(q=>({type:q.type.trim(),q:q.q.trim(),o:q.o.map(x=>x.trim()),a:q.a,e:q.e.trim()}))};built.wordTranslationIndex=createWordIndex(built.wordData);const idx=topics.findIndex(t=>t.id===built.id);if(idx>=0)topics[idx]={id:built.id,portalData:built,fileName:fileName||topics[idx].fileName};else topics.push({id:built.id,portalData:built,fileName});activateTopic(built.id);return true}
+function activateTopic(id){const t=topics.find(x=>x.id===id);if(!t)return;activeTopicId=id;portalData=t.portalData;state=createInitialState(10);restoreProgress();initializeContent();$("fileInfo").textContent=t.fileName?`Yüklendi: ${t.fileName}`:`${portalData.storyTitle} yüklendi.`;printButton.disabled=false;clearProgressButton.disabled=false;$("welcome").classList.add("hidden");dropZone.classList.add("hidden");$("s1-quiz").classList.remove("hidden");renderQuiz();renderTopicTabs()}
+function closeTopic(id){const idx=topics.findIndex(x=>x.id===id);if(idx<0)return;const wasActive=id===activeTopicId;topics.splice(idx,1);if(!topics.length){activeTopicId=null;portalData=null;state=createInitialState(10);printButton.disabled=true;clearProgressButton.disabled=true;$("fileInfo").textContent="Güvenli JSON tabanlı dinamik öğrenme seti";$("s1-quiz").classList.add("hidden");$("welcome").classList.remove("hidden");dropZone.classList.remove("hidden");renderTopicTabs();return}if(wasActive)activateTopic((topics[idx]||topics[idx-1]||topics[0]).id);else renderTopicTabs()}
+function renderTopicTabs(){topicTabs.replaceChildren();topicTabs.classList.toggle("hidden",!topics.length);topics.forEach(t=>{const active=t.id===activeTopicId,tab=el("div",`topic-tab${active?" active":""}`);tab.setAttribute("role","tab");tab.setAttribute("aria-selected",String(active));tab.tabIndex=0;const label=el("span","",t.portalData.storyTitle||t.fileName||"Konu"),close=button("×","topic-tab-close",ev=>{ev.stopPropagation();closeTopic(t.id)});tab.append(label,close);tab.addEventListener("click",()=>{if(t.id!==activeTopicId)activateTopic(t.id)});topicTabs.append(tab)})}
+function initializeContent(){$("quizStoryTitle").textContent=`${portalData.storyTitle} (${portalData.storyLevel})`;$("quizWordCountContainer").textContent=`Kelime Sayısı: ${countWords(portalData.storyParagraphs.join(" "))} | Seviye: ${portalData.storyLevel}`;setLanguage(currentLanguage);updateTranslationToggle();updateWordTranslationToggle();requestAnimationFrame(syncQuestionAreaToText)}
+function adjustFont(d){currentFontSize=Math.max(12,Math.min(28,currentFontSize+d));document.documentElement.style.setProperty("--reader-font-size",currentFontSize+"px");safeSet("germanPortalFontSize",String(currentFontSize));requestAnimationFrame(syncQuestionAreaToText)}
+function adjustQuizFont(d){currentQuizFontSize=Math.max(12,Math.min(28,currentQuizFontSize+d));document.documentElement.style.setProperty("--quiz-font-size",currentQuizFontSize+"px");safeSet("germanPortalQuizFontSize",String(currentQuizFontSize));requestAnimationFrame(syncQuestionAreaToText)}
+function syncQuestionAreaToText(){
+  const right=$("workspaceRight"),text=$("quizStoryText"),progress=$("questionProgress");
+  if(!right||!text||!progress)return;
+  if(innerWidth<=900){right.style.paddingTop="18px";return}
+  const align=()=>{
+    right.style.paddingTop="0px";
+    const naturalProgressTop=progress.getBoundingClientRect().top;
+    const textTop=text.getBoundingClientRect().top;
+    right.style.paddingTop=Math.max(0,Math.round(textTop-naturalProgressTop))+"px";
+  };
+  align();
+  requestAnimationFrame(()=>{
+    const delta=text.getBoundingClientRect().top-progress.getBoundingClientRect().top;
+    if(Math.abs(delta)>1)right.style.paddingTop=Math.max(0,Math.round(parseFloat(right.style.paddingTop||0)+delta))+"px"
+  });
+}
+function activeQ(){return state.retryMode?state.retryIndexes[state.index]:state.index}
+function renderQuiz(){if(!portalData)return;requestAnimationFrame(syncQuestionAreaToText);const total=state.retryMode?state.retryIndexes.length:10;if(!total||state.index>=total){renderResult();return}const qi=activeQ(),q=portalData.quizData[qi],sel=state.selected[qi],done=sel!==null,indexes=state.retryMode?state.retryIndexes:Array.from({length:10},(_,i)=>i),completed=indexes.filter(i=>state.selected[i]!==null).length;$("s1-pos").textContent=`${state.index+1} / ${total}`;$("s1-fill").style.width=`${completed/total*100}%`;$("s1-r").textContent=state.right;$("s1-w").textContent=state.wrong;const c=$("s1-quizCard");c.replaceChildren();c.append(el("div","qNo",`Frage ${state.index+1}`),el("div","qType",q.type),el("div","question",q.q));q.o.forEach((txt,i)=>{const label=el("label","option");if(done){label.classList.add("disabled");if(i===q.a)label.classList.add("correct");else if(i===sel)label.classList.add("wrong")}const input=document.createElement("input");input.type="radio";input.name="current_q";input.value=String(i);input.disabled=done;input.checked=sel===i;const span=el("span","option-text");span.append(el("strong","",`${OPTION_LABELS[i]}. `),document.createTextNode(txt));label.append(input,span);if(done&&(i===q.a||i===sel))label.append(el("span","badge",i===q.a?"✓ Doğru":"✕ Yanlış"));c.append(label)});if(done)c.append(el("div","feedback",q.e));const nav=el("div","nav"),prev=button("Zurück","btn",()=>{if(state.index>0){state.index--;saveProgress();renderQuiz()}}),check=button("Check","btn primary",checkAnswer),next=button(state.index===total-1?"Result":"Weiter","btn primary",()=>{if(state.selected[activeQ()]!==null){state.index++;saveProgress();renderQuiz()}});prev.disabled=state.index===0;check.disabled=done;next.hidden=!done;nav.append(prev,check,next);c.append(nav)}
+function checkAnswer(){const qi=activeQ();if(state.selected[qi]!==null)return;const checked=document.querySelector('input[name="current_q"]:checked');if(!checked){alert("Lütfen seçenek seç.");return}const s=Number(checked.value);state.selected[qi]=s;s===portalData.quizData[qi].a?state.right++:state.wrong++;saveProgress();renderQuiz()}
+function renderResult(){const c=$("s1-quizCard");c.replaceChildren();const indexes=state.retryMode?state.retryIndexes:Array.from({length:10},(_,i)=>i),correct=indexes.filter(i=>state.selected[i]===portalData.quizData[i].a).length,wrong=[],result=el("div","result"),rate=el("div","",`Başarı: ${indexes.length?Math.round(correct/indexes.length*100):0}%`);rate.style.cssText="font-size:32px;font-weight:bold;margin-bottom:10px";result.append(rate,el("div","",`${correct} / ${indexes.length} doğru`),el("h2","","Quiz tamamlandı"));const details=el("div","result-details");indexes.forEach((qi,k)=>{const q=portalData.quizData[qi],s=state.selected[qi],ok=s===q.a;if(!ok)wrong.push(qi);const item=el("div",`result-item ${ok?"correct-result":"wrong-result"}`);item.append(el("p","",`${k+1}. ${q.q}`),el("p","",s===null?"Cevaplanmadı":`Senin cevabın: ${OPTION_LABELS[s]}. ${q.o[s]}`),el("p","",`Doğru: ${OPTION_LABELS[q.a]}. ${q.o[q.a]}`),el("p","",`Açıklama: ${q.e}`));details.append(item)});result.append(details);const nav=el("div","nav");nav.append(button("Yeniden Başlat","btn",restartQuiz));if(wrong.length)nav.append(button("Sadece Yanlışlar","btn primary",()=>startWrongAnswers(wrong)));result.append(nav);c.append(result)}
+function restartQuiz(){state=createInitialState(10);saveProgress();renderQuiz()}
+function startWrongAnswers(indexes){state=createInitialState(10);state.retryMode=true;state.retryIndexes=[...new Set(indexes)].filter(i=>Number.isInteger(i)&&i>=0&&i<10);saveProgress();renderQuiz()}
+function saveProgress(){const k=getStorageKey();if(k)safeSet(k,JSON.stringify(state))}
+function restoreProgress(){const raw=safeGet(getStorageKey());if(!raw)return;try{const p=JSON.parse(raw),len=10,selected=Array.isArray(p.selected)&&p.selected.length===len?p.selected.map(v=>v===null?null:Number.isInteger(v)&&v>=0&&v<=3?v:null):Array(len).fill(null),retry=Array.isArray(p.retryIndexes)?[...new Set(p.retryIndexes)].filter(i=>Number.isInteger(i)&&i>=0&&i<len):[],retryMode=p.retryMode===true&&retry.length>0,total=retryMode?retry.length:len,index=Number.isInteger(p.index)?Math.max(0,Math.min(p.index,total)):0;state={index,selected,right:selected.filter((v,i)=>v!==null&&v===portalData.quizData[i].a).length,wrong:selected.filter((v,i)=>v!==null&&v!==portalData.quizData[i].a).length,retryMode,retryIndexes:retry}}catch{safeRemove(getStorageKey())}}
+function clearCurrentProgress(){if(!portalData)return;safeRemove(getStorageKey());restartQuiz();alert("İlerleme temizlendi.")}
+function preparePrintContent(){const story=$("printStory"),questions=$("printQuestions"),answers=$("printAnswers");story.replaceChildren();questions.replaceChildren();answers.replaceChildren();$("printTitle").textContent=portalData.storyTitle;$("printLevel").textContent=`Seviye: ${portalData.storyLevel}`;$("printWordCount").textContent=`Kelime: ${countWords(portalData.storyParagraphs.join(" "))}`;$("printFooterTitle").textContent=`${portalData.storyTitle} · ${portalData.storyLevel}`;portalData.storyParagraphs.forEach(t=>story.append(el("p","",t)));portalData.quizData.forEach((q,qi)=>{const box=el("article","print-question");box.append(el("div","print-question-type",q.type),el("div","print-question-title",`${qi+1}. ${q.q}`));q.o.forEach((o,i)=>{const line=el("div","print-option");line.append(el("span","print-option-letter",OPTION_LABELS[i]),el("span","",o));box.append(line)});questions.append(box)});portalData.quizData.forEach((q,i)=>{const item=el("article","print-answer-item");item.append(el("div","print-answer-question",`${i+1}. ${q.q}`),el("div","print-correct-answer",`Doğru: ${OPTION_LABELS[q.a]}. ${q.o[q.a]}`),el("p","print-explanation",`Açıklama: ${q.e}`));answers.append(item)})}
+function printPortal(){if(!portalData)return;preparePrintContent();const original=document.title;document.title=`${portalData.storyTitle} - ${portalData.storyLevel}`;addEventListener("afterprint",()=>document.title=original,{once:true});requestAnimationFrame(()=>print())}
+
+function handleFiles(files){
+  clearError();
+  if(!files || files.length===0) return;
+  const fileArray = Array.from(files).filter(file => file.name.toLocaleLowerCase("tr-TR").endsWith(".json"));
+  if(fileArray.length === 0){
+    showError("Seçilen dosyalar arasında geçerli .json uzantılı dosya bulunamadı.");
+    return;
+  }
+  fileArray.forEach(file=>{
+    if(file.size > 5*1024*1024) return;
+    const r=new FileReader();
+    r.onload=e=>{
+      try{
+        loadPortalData(JSON.parse(e.target.result), file.name);
+      }catch(err){}
+    };
+    r.readAsText(file,"utf-8");
+  });
+}
+
+selectFileButton.addEventListener("click",()=>jsonFileInput.click());
+jsonFileInput.addEventListener("change",e=>{handleFiles(e.target.files);e.target.value=""});
+selectFolderButton.addEventListener("click",()=>jsonFolderInput.click());
+jsonFolderInput.addEventListener("change",e=>{handleFiles(e.target.files);e.target.value=""});
+
+dropZone.addEventListener("click",()=>jsonFileInput.click());
+dropZone.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();jsonFileInput.click()}});
+["dragenter","dragover"].forEach(n=>dropZone.addEventListener(n,e=>{e.preventDefault();dropZone.classList.add("dragging")}));
+["dragleave","drop"].forEach(n=>dropZone.addEventListener(n,e=>{e.preventDefault();dropZone.classList.remove("dragging")}));
+dropZone.addEventListener("drop",e=>{
+  e.preventDefault();
+  if(e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    handleFiles(e.dataTransfer.files);
+  }
+});
+
+const focusModeBtn = $("focusModeBtn");
+const dimModeBtn = $("dimModeBtn");
+const autoScrollBtn = $("autoScrollBtn");
+
+focusModeBtn.addEventListener("click", () => {
+  focusModeActive = !focusModeActive;
+  document.body.classList.toggle("focus-mode", focusModeActive);
+  focusModeBtn.classList.toggle("active-mode", focusModeActive);
+  focusModeBtn.textContent = focusModeActive ? "🧘 Normal Mod" : "🧘 Odak Modu";
+});
+
+dimModeBtn.addEventListener("click", () => {
+  dimModeActive = !dimModeActive;
+  $("quizStoryText").classList.toggle("dim-mode", dimModeActive);
+  dimModeBtn.classList.toggle("active-mode", dimModeActive);
+});
+
+function updateParagraphFlowStatus(){
+  let badge=document.querySelector(".paragraph-flow-status");
+  if(!badge){badge=el("span","paragraph-flow-status");$("quizStoryText").insertAdjacentElement("beforebegin",badge)}
+  const c=$("quizStoryText"),ps=[...c.children].filter(x=>x.tagName==="P");
+  if(!paragraphFlowEnabled||!ps.length){badge.textContent="";return}
+  let index=0,best=Infinity;const viewportCenter=c.scrollTop+c.clientHeight/2;
+  ps.forEach((p,i)=>{const paragraphCenter=p.offsetTop+p.offsetHeight/2,distance=Math.abs(paragraphCenter-viewportCenter);if(distance<best){best=distance;index=i}});
+  badge.textContent=`${index+1} / ${ps.length}`;
+  const prev=$("paragraphPrevBtn"),next=$("paragraphNextBtn");
+  if(prev)prev.disabled=index===0;if(next)next.disabled=index===ps.length-1;
+}
+function applyParagraphFlow(reset=false){
+  const c=$("quizStoryText");
+  c.classList.toggle("paragraph-flow",paragraphFlowEnabled);
+  c.closest(".readCard").classList.toggle("flow-active",paragraphFlowEnabled);
+  autoScrollBtn.classList.toggle("active-mode",paragraphFlowEnabled);
+  autoScrollBtn.textContent=paragraphFlowEnabled?"▦ Normal Metin":"▤ Paragraf Akışı";
+  autoScrollBtn.title=paragraphFlowEnabled?"Normal metin görünümüne dön":"Paragrafları kaydırarak tek tek göster";
+  if(reset)c.scrollTop=0;
+  requestAnimationFrame(()=>{updateParagraphFlowStatus();syncQuestionAreaToText();setTimeout(()=>{updateParagraphFlowStatus();syncQuestionAreaToText()},100)});
+}
+autoScrollBtn.addEventListener("click",()=>{
+  paragraphFlowEnabled=!paragraphFlowEnabled;
+  safeSet("germanPortalParagraphFlowEnabled",String(paragraphFlowEnabled));
+  applyParagraphFlow(true);
+});
+$("quizStoryText").addEventListener("scroll",()=>{if(paragraphFlowEnabled)updateParagraphFlowStatus()},{passive:true});
+function currentFlowParagraphIndex(){const c=$("quizStoryText"),ps=[...c.children].filter(x=>x.tagName==="P");let index=0,best=Infinity;ps.forEach((p,i)=>{const d=Math.abs(p.offsetTop-c.scrollTop);if(d<best){best=d;index=i}});return{c,ps,index}}
+function goToFlowParagraph(delta){if(!paragraphFlowEnabled)return;const {c,ps,index}=currentFlowParagraphIndex(),target=ps[Math.max(0,Math.min(ps.length-1,index+delta))];if(target)c.scrollTo({top:target.offsetTop,behavior:"smooth"})}
+$("paragraphPrevBtn").addEventListener("click",()=>goToFlowParagraph(-1));
+$("paragraphNextBtn").addEventListener("click",()=>goToFlowParagraph(1));
+printButton.addEventListener("click",printPortal);
+clearProgressButton.addEventListener("click",clearCurrentProgress);
+document.querySelectorAll(".language-tab").forEach(b=>b.addEventListener("click",()=>setLanguage(b.dataset.language)));
+document.querySelectorAll("[data-font-delta]").forEach(b=>b.addEventListener("click",()=>adjustFont(Number(b.dataset.fontDelta))));
+document.querySelectorAll("[data-quiz-font-delta]").forEach(b=>b.addEventListener("click",()=>adjustQuizFont(Number(b.dataset.quizFontDelta))));
+translationToggle.addEventListener("click",()=>setTranslationEnabled(!translationEnabled));
+wordTranslationToggle.addEventListener("click",()=>setWordTranslationEnabled(!wordTranslationEnabled));
+wordSelectionToggle.addEventListener("click",()=>setWordSelectionEnabled(!wordSelectionEnabled));
+audioToggle.addEventListener("click",()=>setAudioEnabled(!audioEnabled));
+speechRateDown.addEventListener("click",()=>changeSpeechRate(-1));
+speechRateUp.addEventListener("click",()=>changeSpeechRate(1));
+voiceSourceGoogle.addEventListener("click",()=>setVoiceSource("google"));
+voiceSourceBrowser.addEventListener("click",()=>setVoiceSource("browser"));
+document.addEventListener("click",e=>{if(!e.target.closest(".sentence")&&!e.target.closest(".sentence-tooltip"))hideSentenceTooltip();if(!e.target.closest(".selectable-word")&&!e.target.closest(".word-translation-tooltip"))hideWordTranslationTooltip();if(activeWordPopover&&!e.target.closest(".word-selection-popover")&&!e.target.closest(".selectable-word"))hideWordPopover();if(activeWordAudioMenu&&!e.target.closest(".word-audio-menu"))hideWordAudioMenu();if(mobileSentenceActions&&!e.target.closest(".mobile-sentence-actions")&&!e.target.closest(".sentence"))hideMobileSentenceActions()});
+addEventListener("scroll",()=>{if(activeTooltip&&activeSentence)positionFloating(activeSentence,activeTooltip);if(activeWordTranslationTooltip&&activeTranslatedWord)positionFloating(activeTranslatedWord,activeWordTranslationTooltip)},true);
+addEventListener("resize",()=>{if(activeTooltip&&activeSentence)positionFloating(activeSentence,activeTooltip);if(activeWordTranslationTooltip&&activeTranslatedWord)positionFloating(activeTranslatedWord,activeWordTranslationTooltip);syncQuestionAreaToText()});
+wordPoolButton.addEventListener("click",openWordPool);
+$("wordPoolCloseButton").addEventListener("click",closeWordPool);
+$("wordPoolExportButton").addEventListener("click",exportWordPool);
+$("wordPoolImportButton").addEventListener("click",()=>wordPoolImportInput.click());
+$("wordPoolClearButton").addEventListener("click",clearWordPool);
+wordPoolImportInput.addEventListener("change",e=>{importWordPool(e.target.files[0]);e.target.value=""});
+wordPoolOverlay.addEventListener("click",e=>{if(e.target===wordPoolOverlay)closeWordPool()});
+$("quizStoryText").addEventListener("mouseup",()=>setTimeout(()=>{if(!wordSelectionEnabled||currentLanguage!=="de"||!portalData)return;const sel=getSelection();if(!sel||sel.isCollapsed||!sel.rangeCount)return;const range=sel.getRangeAt(0),container=$("quizStoryText");if(!container.contains(range.commonAncestorContainer))return;const term=cleanSelectedText(sel.toString());if(!term||term.length>120)return;const startEl=range.startContainer.nodeType===1?range.startContainer:range.startContainer.parentElement,endEl=range.endContainer.nodeType===1?range.endContainer:range.endContainer.parentElement,startSentence=startEl.closest(".sentence"),endSentence=endEl.closest(".sentence");if(!startSentence||startSentence!==endSentence)return;showWordPopover(term,startSentence.textContent,range.getBoundingClientRect());sel.removeAllRanges()},0));
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){hideSentenceTooltip();hideWordTranslationTooltip();hideWordPopover();hideWordAudioMenu();hideMobileSentenceActions();if(!wordPoolOverlay.classList.contains("hidden"))closeWordPool();hideTimePicker()}});
+let startX=0,startLeftWidth=0;function setLeftWidth(n){n=Math.max(20,Math.min(75,n));leftSide.style.width=n+"%";resizer.setAttribute("aria-valuenow",String(Math.round(n)));safeSet("germanPortalLeftWidth",n+"%")}
+resizer.addEventListener("pointerdown",e=>{if(innerWidth<=900)return;startX=e.clientX;startLeftWidth=leftSide.getBoundingClientRect().width;resizer.classList.add("dragging");resizer.setPointerCapture(e.pointerId)});
+resizer.addEventListener("pointermove",e=>{if(resizer.classList.contains("dragging"))setLeftWidth((startLeftWidth+e.clientX-startX)/workspaceContainer.getBoundingClientRect().width*100)});
+function pointerUp(e){resizer.classList.remove("dragging");if(resizer.hasPointerCapture(e.pointerId))resizer.releasePointerCapture(e.pointerId)}
+resizer.addEventListener("pointerup",pointerUp);resizer.addEventListener("pointercancel",pointerUp);
+resizer.addEventListener("keydown",e=>{if(!["ArrowLeft","ArrowRight"].includes(e.key))return;e.preventDefault();setLeftWidth(parseFloat(leftSide.style.width||safeGet("germanPortalLeftWidth")||"45")+(e.key==="ArrowRight"?2:-2))});
+const savedWidth=parseFloat(safeGet("germanPortalLeftWidth"));if(Number.isFinite(savedWidth))setLeftWidth(savedWidth);
+document.addEventListener("keydown",e=>{if(e.key!=="Enter"||$("s1-quiz").classList.contains("hidden")||["BUTTON","TEXTAREA","SELECT"].includes(e.target.tagName))return;const checked=document.querySelector('input[name="current_q"]:checked');if(checked&&!checked.disabled)checkAnswer()});
+updateWordPoolUI();updateTranslationToggle();updateWordTranslationToggle();updateWordSelectionToggle();updateAudioToggle();updateSpeechRateUI();updateVoiceSourceUI();applyParagraphFlow(false);
+</script>
+</body>
+</html>
