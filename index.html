@@ -1678,7 +1678,7 @@ let seconds=1800,timerId=null;const timerValue=timerView.querySelector('.r7-time
 function actionButton(label,fn,disabled=false){const b=el('button','r7-action-button');b.type='button';b.textContent=label;b.disabled=disabled;b.addEventListener('click',()=>{if(fn)fn()});return b}
 function closeActions(){lock('r7-actions-open',false)}actions.querySelector('.r7-sheet-close').addEventListener('click',closeActions);actions.addEventListener('click',e=>{if(e.target===actions)closeActions()});
 function openActions(sentence,wordNode){if(!touchLayout())return;setAudioEnabled(true);const sentenceText=[...sentence.childNodes].filter(n=>!n.classList?.contains?.('inline-sentence-speaker')).map(n=>n.textContent||'').join('').trim();const word=wordNode?.textContent?.trim()||'';actions.querySelector('.r7-sheet-title').textContent=word||sentenceText;const left=actions.querySelector('.r7-left'),right=actions.querySelector('.r7-right');left.replaceChildren();right.replaceChildren();
-left.append(actionButton('Cümleyi Dinle',()=>{closeActions();requestAnimationFrame(()=>speakWordText(sentenceText,speechRate,1,sentenceText))}),actionButton('Kelimeyi Dinle',()=>{closeActions();requestAnimationFrame(()=>word&&speakWordText(word,speechRate,1,sentenceText))},!word),actionButton('Kelimelere Ekle',()=>{word?addWordToPool(word,sentenceText):addWordToPool(sentenceText,sentenceText);closeActions();window.mobileV9AddedToast?.()}));
+left.append(actionButton('Cümleyi Dinle',()=>speakWordText(sentenceText,speechRate,1,sentenceText)),actionButton('Kelimeyi Dinle',()=>word&&speakWordText(word,speechRate,1,sentenceText),!word),actionButton('Kelimelere Ekle',()=>word?addWordToPool(word,sentenceText):addWordToPool(sentenceText,sentenceText)),actionButton('Cümleyi Seç',()=>{closeActions();requestAnimationFrame(()=>selectSentenceText(sentence))}),actionButton('Kelimeyi Seç',()=>{closeActions();requestAnimationFrame(()=>wordNode&&selectElementText(wordNode))},!word));
 right.append(actionButton('Cümle Çevirisi',()=>{closeActions();requestAnimationFrame(()=>showSentenceTooltip(sentence,{force:true,pinned:true}))}),actionButton('Kelime Çevirisi',()=>{const info=word&&findWordTranslation(word);closeActions();requestAnimationFrame(()=>info?showWordTranslationTooltip(wordNode,info,{pinned:true}):alert('Bu kelime için çeviri bulunamadı.'))},!word),actionButton(dimModeActive?'Satır Vurgusu: Açık':'Satır Vurgusu: Kapalı',()=>{setDimMode(!dimModeActive);openActions(sentence,wordNode)}));
 const rate=el('div','r7-rate','<button type="button" data-rate="down">−</button><span>Ses Hızı<br>'+speechRate.toFixed(2)+'×</span><button type="button" data-rate="up">+</button>');rate.querySelector('[data-rate="down"]').addEventListener('click',()=>{changeSpeechRate(-1);openActions(sentence,wordNode)});rate.querySelector('[data-rate="up"]').addEventListener('click',()=>{changeSpeechRate(1);openActions(sentence,wordNode)});right.append(rate);lock('r7-actions-open',true)}
 const reader=document.getElementById('quizStoryText');reader.addEventListener('pointerdown',e=>{if(!touchLayout()||e.pointerType==='mouse')return;const sentence=e.target.closest('.sentence'),word=e.target.closest('.selectable-word');if(!sentence)return;pressStart={x:e.clientX,y:e.clientY};clearTimeout(pressTimer);pressTimer=setTimeout(()=>{suppressUntil=Date.now()+650;navigator.vibrate?.(15);openActions(sentence,word)},520)},{passive:true});reader.addEventListener('pointermove',e=>{if(pressStart&&Math.hypot(e.clientX-pressStart.x,e.clientY-pressStart.y)>9){clearTimeout(pressTimer);pressStart=null}},{passive:true});['pointerup','pointercancel','pointerleave'].forEach(type=>reader.addEventListener(type,()=>{clearTimeout(pressTimer);pressStart=null},{passive:true}));reader.addEventListener('click',e=>{if(touchLayout()&&Date.now()<suppressUntil){e.preventDefault();e.stopImmediatePropagation()}},true);reader.addEventListener('contextmenu',e=>{if(!touchLayout())return;e.preventDefault();const sentence=e.target.closest('.sentence'),word=e.target.closest('.selectable-word');if(sentence)openActions(sentence,word)},true);
@@ -1688,112 +1688,43 @@ if(touchLayout())setAudioEnabled(true);updateMenu();
 
 </script>
 
-<style id="mobile-v9-requested-patch">
-/* v9: applies only to touch phones and tablets. Desktop/PC behavior is unchanged. */
-.mobile-v9-font-controls,.mobile-v9-toast{display:none}
+<style id="mobile-v10-session-patch">
+.mobile-v10-font-controls,.mobile-v10-toast{display:none}
 @media (max-width:1024px) and (pointer:coarse){
-  html{overscroll-behavior-y:none}
-  body{overscroll-behavior-y:none}
-  body.r7-test-view,body:has(#s1-quiz:not(.hidden)){overscroll-behavior-y:none}
-  #quizStoryText,.workspace-right,.r7-drawer,.r7-sheet,.pool-panel{overscroll-behavior-y:contain}
-  body.r7-actions-open #quizStoryText,
-  body.r7-actions-open .sentence,
-  body.r7-actions-open .selectable-word{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
-  .mobile-v9-font-controls{position:fixed;z-index:29960;left:calc(14px + env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));display:flex;gap:7px;padding:5px;border:1px solid rgba(255,255,255,.10);border-radius:16px;background:rgba(20,24,33,.94);box-shadow:0 9px 26px rgba(0,0,0,.48);backdrop-filter:blur(12px)}
-  .mobile-v9-font-controls button{display:flex;align-items:center;justify-content:center;width:44px;height:40px;padding:0;border:1px solid rgba(148,163,184,.22);border-radius:11px;background:#283142;color:#fff;font-weight:850;font-size:14px}
-  body.r7-drawer-open .mobile-v9-font-controls,body.r7-actions-open .mobile-v9-font-controls,body.r7-topics-open .mobile-v9-font-controls,body.r7-timer-open .mobile-v9-font-controls{visibility:hidden;pointer-events:none}
-  .mobile-v9-toast{position:fixed;z-index:30350;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));display:block;max-width:calc(100vw - 28px);padding:10px 14px;border:1px solid rgba(74,222,128,.35);border-radius:13px;background:rgba(20,83,45,.96);color:#dcfce7;font-size:12px;font-weight:800;box-shadow:0 12px 30px rgba(0,0,0,.5);transform:translateX(-50%);pointer-events:none}
-  .readCard.flow-active .paragraph-flow-status{position:relative!important;z-index:12!important;display:flex!important;top:auto!important;left:auto!important;transform:none!important;width:max-content!important;margin:2px auto 8px!important}
-  #quizStoryText.paragraph-flow>p{justify-content:flex-start!important;padding-top:clamp(16px,3.5vw,28px)!important}
+ html,body{overscroll-behavior-y:none}
+ #quizStoryText,.workspace-right,.r7-drawer,.r7-sheet,.pool-panel{overscroll-behavior-y:contain}
+ body.r7-actions-open #quizStoryText,body.r7-actions-open .sentence,body.r7-actions-open .selectable-word{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+ .mobile-v10-font-controls{position:fixed;z-index:29960;left:calc(14px + env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));display:flex;gap:7px;padding:5px;border:1px solid rgba(255,255,255,.10);border-radius:16px;background:rgba(20,24,33,.94);box-shadow:0 9px 26px rgba(0,0,0,.48);backdrop-filter:blur(12px)}
+ .mobile-v10-font-controls button{display:flex;align-items:center;justify-content:center;width:44px;height:40px;padding:0;border:1px solid rgba(148,163,184,.22);border-radius:11px;background:#283142;color:#fff;font-weight:850;font-size:14px}
+ body.r7-drawer-open .mobile-v10-font-controls,body.r7-actions-open .mobile-v10-font-controls,body.r7-topics-open .mobile-v10-font-controls,body.r7-timer-open .mobile-v10-font-controls{visibility:hidden;pointer-events:none}
+ .mobile-v10-toast{position:fixed;z-index:30350;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));display:block;padding:10px 14px;border:1px solid rgba(74,222,128,.35);border-radius:13px;background:rgba(20,83,45,.96);color:#dcfce7;font-size:12px;font-weight:800;box-shadow:0 12px 30px rgba(0,0,0,.5);transform:translateX(-50%);pointer-events:none}
+ .readCard.flow-active .paragraph-flow-status{position:relative!important;z-index:12!important;display:flex!important;top:auto!important;left:auto!important;transform:none!important;width:max-content!important;margin:2px auto 8px!important}
+ #quizStoryText.paragraph-flow>p{justify-content:flex-start!important;padding-top:clamp(16px,3.5vw,28px)!important}
 }
 </style>
-<script id="mobile-v9-requested-script">
+<script id="mobile-v10-session-script">
 (function(){
 'use strict';
 const touchLayout=()=>matchMedia('(max-width:1024px) and (pointer:coarse)').matches;
-const CACHE_KEY='germanPortalLoadedTopics:v1';
-const ACTIVE_KEY='germanPortalActiveTopic:v1';
+const CACHE_KEY='germanPortalLoadedTopics:v1',ACTIVE_KEY='germanPortalActiveTopic:v1';
 let restoring=false,toastTimer=0;
-
-function showAddedToast(){
-  document.querySelectorAll('.mobile-v9-toast').forEach(n=>n.remove());
-  const n=document.createElement('div');n.className='mobile-v9-toast';n.textContent='Kelime eklendi';document.body.append(n);
-  clearTimeout(toastTimer);toastTimer=setTimeout(()=>n.remove(),1450);
-}
-window.mobileV9AddedToast=showAddedToast;
-function closeMobileActions(){
-  document.body.classList.remove('r7-actions-open');
-  document.body.classList.toggle('r7-locked',['r7-drawer-open','r7-actions-open','r7-topics-open','r7-timer-open'].some(c=>document.body.classList.contains(c)));
-}
-function returnToReading(){
-  closeMobileActions();
-  requestAnimationFrame(()=>document.getElementById('quizStoryText')?.focus({preventScroll:true}));
-}
-
-/* Fixed bottom-left text size controls. Existing adjustFont persists the choice. */
-const fontBox=document.createElement('div');fontBox.className='mobile-v9-font-controls';fontBox.setAttribute('role','group');fontBox.setAttribute('aria-label','Metin boyutu');
-for(const [label,delta,aria] of [['A−',-1,'Metni küçült'],['A+',1,'Metni büyüt']]){
-  const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('aria-label',aria);
-  b.addEventListener('click',()=>{adjustFont(delta);if(paragraphFlowEnabled)requestAnimationFrame(()=>applyParagraphFlow(false))});fontBox.append(b);
-}
-document.body.append(fontBox);
-
-/* Replace only the mobile long-press sheet behavior. */
-function rebuildOpenActionSheet(){
-  if(typeof openActions!=='function')return;
-  openActions=function(sentence,wordNode){
-    if(!touchLayout())return;
-    setAudioEnabled(true);
-    const sentenceText=[...sentence.childNodes].filter(n=>!n.classList?.contains?.('inline-sentence-speaker')).map(n=>n.textContent||'').join('').trim();
-    const word=wordNode?.textContent?.trim()||'';
-    const wrap=document.querySelector('.mobile-r7-action-wrap'),left=wrap?.querySelector('.r7-left'),right=wrap?.querySelector('.r7-right');
-    if(!wrap||!left||!right)return;
-    wrap.querySelector('.r7-sheet-title').textContent=word||sentenceText;left.replaceChildren();right.replaceChildren();
-    const btn=(label,fn,disabled=false)=>{const b=document.createElement('button');b.className='r7-action-button';b.type='button';b.textContent=label;b.disabled=disabled;b.addEventListener('click',fn);return b};
-    left.append(
-      btn('Cümleyi Dinle',()=>{returnToReading();requestAnimationFrame(()=>speakWordText(sentenceText,speechRate,1,sentenceText))}),
-      btn('Kelimeyi Dinle',()=>{returnToReading();requestAnimationFrame(()=>word&&speakWordText(word,speechRate,1,sentenceText))},!word),
-      btn('Kelimelere Ekle',()=>{if(word)addWordToPool(word,sentenceText);else addWordToPool(sentenceText,sentenceText);returnToReading();showAddedToast()})
-    );
-    right.append(
-      btn('Cümle Çevirisi',()=>{returnToReading();requestAnimationFrame(()=>showSentenceTooltip(sentence,{force:true,pinned:true}))}),
-      btn('Kelime Çevirisi',()=>{const info=word&&findWordTranslation(word);returnToReading();requestAnimationFrame(()=>info?showWordTranslationTooltip(wordNode,info,{pinned:true}):alert('Bu kelime için çeviri bulunamadı.'))},!word),
-      btn(dimModeActive?'Satır Vurgusu: Açık':'Satır Vurgusu: Kapalı',()=>{setDimMode(!dimModeActive);openActions(sentence,wordNode)})
-    );
-    const rate=document.createElement('div');rate.className='r7-rate';rate.innerHTML='<button type="button">−</button><span>Ses Hızı<br>'+speechRate.toFixed(2)+'×</span><button type="button">+</button>';
-    const rb=rate.querySelectorAll('button');rb[0].addEventListener('click',()=>{changeSpeechRate(-1);openActions(sentence,wordNode)});rb[1].addEventListener('click',()=>{changeSpeechRate(1);openActions(sentence,wordNode)});right.append(rate);
-    document.body.classList.add('r7-actions-open','r7-locked');
-    const sel=getSelection();if(sel)sel.removeAllRanges();
-  };
-}
-rebuildOpenActionSheet();
-
-/* Persist loaded JSON topics and active work, then restore after a refresh. */
-function serializableTopic(t){
-  const d=t?.portalData;if(!d)return null;
-  return {fileName:t.fileName||'',data:{id:d.id,storyTitle:d.storyTitle,storyLevel:d.storyLevel,storyParagraphs:d.storyParagraphs,storyTranslations:d.storyTranslations,quizData:d.quizData,wordData:d.wordData}};
-}
-function saveLoadedTopics(){
-  if(restoring)return;
-  try{const items=topics.map(serializableTopic).filter(Boolean);localStorage.setItem(CACHE_KEY,JSON.stringify(items));if(activeTopicId)localStorage.setItem(ACTIVE_KEY,activeTopicId)}catch(_){}
-}
-const originalLoadPortalData=loadPortalData;
-loadPortalData=function(){const r=originalLoadPortalData.apply(this,arguments);if(r)saveLoadedTopics();return r};
-const originalActivateTopicV9=activateTopic;
-activateTopic=function(){const r=originalActivateTopicV9.apply(this,arguments);saveLoadedTopics();return r};
-const originalCloseTopic=closeTopic;
-closeTopic=function(){const r=originalCloseTopic.apply(this,arguments);saveLoadedTopics();return r};
-function restoreLoadedTopics(){
-  if(!touchLayout()||topics.length)return;
-  let items=[];try{items=JSON.parse(localStorage.getItem(CACHE_KEY)||'[]')}catch(_){return}
-  if(!Array.isArray(items)||!items.length)return;
-  restoring=true;for(const item of items){try{originalLoadPortalData(item.data,item.fileName||'Geri yüklenen JSON')}catch(_){}}
-  restoring=false;const wanted=localStorage.getItem(ACTIVE_KEY);if(wanted&&topics.some(t=>t.id===wanted))activateTopic(wanted);else if(topics[0])activateTopic(topics[0].id);
-  saveLoadedTopics();
-}
-addEventListener('load',()=>setTimeout(restoreLoadedTopics,0),{once:true});
-
-/* Recalculate paragraph cards after font changes and orientation changes. */
+/* Remove stale permanent topic copies from the previous build. */
+try{localStorage.removeItem(CACHE_KEY);localStorage.removeItem(ACTIVE_KEY)}catch(_){}
+function toast(){document.querySelectorAll('.mobile-v10-toast').forEach(n=>n.remove());const n=document.createElement('div');n.className='mobile-v10-toast';n.textContent='Kelime eklendi';document.body.append(n);clearTimeout(toastTimer);toastTimer=setTimeout(()=>n.remove(),1450)}
+function closeSheet(){document.body.classList.remove('r7-actions-open');document.body.classList.toggle('r7-locked',['r7-drawer-open','r7-actions-open','r7-topics-open','r7-timer-open'].some(c=>document.body.classList.contains(c)))}
+function backToText(fn){closeSheet();requestAnimationFrame(()=>{document.getElementById('quizStoryText')?.focus({preventScroll:true});fn?.()})}
+const box=document.createElement('div');box.className='mobile-v10-font-controls';box.setAttribute('role','group');box.setAttribute('aria-label','Metin boyutu');
+[['A−',-1,'Metni küçült'],['A+',1,'Metni büyüt']].forEach(([label,delta,aria])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('aria-label',aria);b.addEventListener('click',()=>{adjustFont(delta);if(paragraphFlowEnabled)requestAnimationFrame(()=>applyParagraphFlow(false))});box.append(b)});document.body.append(box);
+/* Intercept the mobile sheet after it is built: close on audio/add, remove selection actions. */
+document.addEventListener('click',e=>{if(!touchLayout())return;const b=e.target.closest('.mobile-r7-action-wrap .r7-action-button');if(!b)return;const label=b.textContent.trim();if(label==='Cümleyi Seç'||label==='Kelimeyi Seç'){e.preventDefault();e.stopImmediatePropagation();return}if(label==='Cümleyi Dinle'||label==='Kelimeyi Dinle'){setTimeout(closeSheet,0)}if(label==='Kelimelere Ekle'){setTimeout(()=>{closeSheet();toast()},0)}},true);
+const observer=new MutationObserver(()=>{if(!touchLayout())return;document.querySelectorAll('.mobile-r7-action-wrap .r7-action-button').forEach(b=>{const t=b.textContent.trim();if(t==='Cümleyi Seç'||t==='Kelimeyi Seç')b.remove()})});observer.observe(document.body,{childList:true,subtree:true});
+function serializable(t){const d=t?.portalData;if(!d)return null;return{fileName:t.fileName||'',data:{id:d.id,storyTitle:d.storyTitle,storyLevel:d.storyLevel,storyParagraphs:d.storyParagraphs,storyTranslations:d.storyTranslations,quizData:d.quizData,wordData:d.wordData}}}
+function saveSession(){if(restoring)return;try{sessionStorage.setItem(CACHE_KEY,JSON.stringify(topics.map(serializable).filter(Boolean)));if(activeTopicId)sessionStorage.setItem(ACTIVE_KEY,activeTopicId)}catch(_){}}
+const oldLoad=loadPortalData;loadPortalData=function(){const r=oldLoad.apply(this,arguments);if(r)saveSession();return r};
+const oldActivate=activateTopic;activateTopic=function(){const r=oldActivate.apply(this,arguments);saveSession();return r};
+const oldClose=closeTopic;closeTopic=function(){const r=oldClose.apply(this,arguments);saveSession();return r};
+function restoreSession(){if(!touchLayout()||topics.length)return;let items=[];try{items=JSON.parse(sessionStorage.getItem(CACHE_KEY)||'[]')}catch(_){return}if(!Array.isArray(items)||!items.length)return;restoring=true;items.forEach(x=>{try{oldLoad(x.data,x.fileName||'Geri yüklenen JSON')}catch(_){}});restoring=false;const wanted=sessionStorage.getItem(ACTIVE_KEY);if(wanted&&topics.some(t=>t.id===wanted))activateTopic(wanted);else if(topics[0])activateTopic(topics[0].id);saveSession()}
+addEventListener('load',()=>setTimeout(restoreSession,0),{once:true});
 addEventListener('resize',()=>{if(touchLayout()&&paragraphFlowEnabled)requestAnimationFrame(()=>applyParagraphFlow(false))});
 addEventListener('orientationchange',()=>setTimeout(()=>{if(touchLayout()&&paragraphFlowEnabled)applyParagraphFlow(false)},180));
 })();
