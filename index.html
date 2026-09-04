@@ -614,7 +614,7 @@ body.resizing .resizer{pointer-events:auto}
   body.focus-mode.mobile-quiz-open .mobile-quiz-resizer{bottom:calc(var(--mobile-quiz-height,42dvh) + env(safe-area-inset-bottom) - 11px)}
 }
 </style>
-<style id="mobile-r7-final">
+<style id="mobile-r8-final">
 /* Mobile and tablet UI. Desktop CSS is untouched. */
 .mobile-r7-bar,.mobile-r7-drawer-wrap,.mobile-r7-action-wrap,.mobile-r7-topic-wrap,.mobile-r7-timer-wrap{display:none}
 @media (max-width:1024px) and (pointer:coarse){
@@ -659,6 +659,14 @@ body.resizing .resizer{pointer-events:auto}
   .mobile-r7-action-wrap,.mobile-r7-topic-wrap,.mobile-r7-timer-wrap{align-items:flex-end}.r7-sheet{width:100%;max-height:min(88dvh,760px);padding:16px 14px calc(16px + env(safe-area-inset-bottom));overflow-y:auto;border-radius:22px 22px 0 0;background:#151923;border-top:1px solid rgba(255,255,255,.12)}.r7-sheet-title{margin:0 0 12px;color:#bfdbfe;font-size:13px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .r7-action-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.r7-action-col{display:grid;align-content:start;gap:8px}.r7-action-button{width:100%;min-height:48px;padding:8px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:#252b39;color:#fff;font-size:12px;font-weight:750}.r7-action-button:disabled{opacity:.45}.r7-rate{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;gap:5px;min-height:48px;padding:4px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:#252b39}.r7-rate button{height:38px;border:0;border-radius:9px;background:#334155;color:#fff;font-size:20px;font-weight:900}.r7-rate span{text-align:center;color:#bfdbfe;font-size:11px;font-weight:800}.r7-sheet-close{width:100%;min-height:46px;margin-top:10px;border:0;border-radius:12px;background:#353c4c;color:#fff;font-weight:750}
   .r7-topic-list{display:grid;gap:8px}.r7-topic-item{width:100%;min-height:52px;padding:10px 12px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#232936;color:#fff;text-align:left}.r7-topic-item.active{background:#2563eb;border-color:#60a5fa}.r7-timer-value{display:flex;align-items:center;justify-content:center;height:64px;margin-bottom:12px;border-radius:15px;background:#0d0f14;font-size:28px;font-weight:800}
+}
+
+/* Phones/tablets: no duplicated toolbar above the reading text. */
+@media (max-width:1024px) and (pointer:coarse){
+  body .reader-main-toolbar,body .reader-control-groups,body .reader-segment-group,body .language-segment-group,body .reader-segments,body .language-tabs,body .reading-mode-buttons,body .reading-settings-button,body .reader-font-toolbar,body .toggle-dashboard,body .translation-controls,body .paragraph-flow-status,body .paragraph-flow-nav{display:none!important;visibility:hidden!important}
+  body .readCard>div:first-child{min-height:0!important;padding-right:0!important}
+  body .story-title-row{margin-bottom:0!important}
+  body #quizStoryText{margin-top:14px!important}
 }
 
 </style>
@@ -1645,7 +1653,7 @@ body.test-mode #readingLayoutTextBtn,body.test-mode #autoScrollBtn{opacity:.38;p
  document.querySelector('.workspace-left')?.addEventListener('click',()=>{if(phone()&&document.body.classList.contains('mobile-quiz-open')){document.body.classList.remove('mobile-quiz-open');document.getElementById('mobileFocusQuizButton')?.setAttribute('aria-expanded','false')}});
 })();
 </script>
-<script id="mobile-r7-final-script">
+<script id="mobile-r8-final-script">
 (function(){
 'use strict';
 const touchLayout=()=>matchMedia('(max-width:1024px) and (pointer:coarse)').matches;
