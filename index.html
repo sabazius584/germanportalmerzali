@@ -1667,4 +1667,11 @@ const oldActivate=activateTopic;activateTopic=function(){const r=oldActivate.app
 </script>
 
 y>
-</html>
+</htm
+<style id="mobile-fab-body-fix">
+@media(max-width:900px){body>.mv4-fab{position:fixed!important;top:auto!important;bottom:calc(16px + env(safe-area-inset-bottom))!important;margin:0!important;transform:none!important;z-index:13400!important}body>.mv4-test{right:calc(14px + env(safe-area-inset-right))!important;left:auto!important}body>.mv4-topics{right:calc(76px + env(safe-area-inset-right))!important;left:auto!important}}
+</style>
+<script id="mobile-fab-body-fix-script">
+(function(){function move(){const test=document.querySelector('.mv4-test'),topics=document.querySelector('.mv4-topics');if(topics&&topics.parentElement!==document.body)document.body.appendChild(topics);if(test&&test.parentElement!==document.body)document.body.appendChild(test);[topics,test].forEach(function(button,index){if(!button)return;button.style.setProperty('position','fixed','important');button.style.setProperty('top','auto','important');button.style.setProperty('bottom','calc(16px + env(safe-area-inset-bottom))','important');button.style.setProperty('left','auto','important');button.style.setProperty('right',index===0?'calc(76px + env(safe-area-inset-right))':'calc(14px + env(safe-area-inset-right))','important');button.style.setProperty('z-index','13400','important');button.style.setProperty('transform','none','important')})}move();requestAnimationFrame(move);addEventListener('load',move,{once:true})})();
+</script>
+l>
