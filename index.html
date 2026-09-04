@@ -1688,45 +1688,132 @@ if(touchLayout())setAudioEnabled(true);updateMenu();
 
 </script>
 
-<style id="mobile-v10-session-patch">
-.mobile-v10-font-controls,.mobile-v10-toast{display:none}
+<style id="mobile-v11-samsung-translation-patch">
+.mobile-inline-translation{display:none}
 @media (max-width:1024px) and (pointer:coarse){
- html,body{overscroll-behavior-y:none}
- #quizStoryText,.workspace-right,.r7-drawer,.r7-sheet,.pool-panel{overscroll-behavior-y:contain}
- body.r7-actions-open #quizStoryText,body.r7-actions-open .sentence,body.r7-actions-open .selectable-word{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
- .mobile-v10-font-controls{position:fixed;z-index:29960;left:calc(14px + env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));display:flex;gap:7px;padding:5px;border:1px solid rgba(255,255,255,.10);border-radius:16px;background:rgba(20,24,33,.94);box-shadow:0 9px 26px rgba(0,0,0,.48);backdrop-filter:blur(12px)}
- .mobile-v10-font-controls button{display:flex;align-items:center;justify-content:center;width:44px;height:40px;padding:0;border:1px solid rgba(148,163,184,.22);border-radius:11px;background:#283142;color:#fff;font-weight:850;font-size:14px}
- body.r7-drawer-open .mobile-v10-font-controls,body.r7-actions-open .mobile-v10-font-controls,body.r7-topics-open .mobile-v10-font-controls,body.r7-timer-open .mobile-v10-font-controls{visibility:hidden;pointer-events:none}
- .mobile-v10-toast{position:fixed;z-index:30350;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));display:block;padding:10px 14px;border:1px solid rgba(74,222,128,.35);border-radius:13px;background:rgba(20,83,45,.96);color:#dcfce7;font-size:12px;font-weight:800;box-shadow:0 12px 30px rgba(0,0,0,.5);transform:translateX(-50%);pointer-events:none}
- .readCard.flow-active .paragraph-flow-status{position:relative!important;z-index:12!important;display:flex!important;top:auto!important;left:auto!important;transform:none!important;width:max-content!important;margin:2px auto 8px!important}
- #quizStoryText.paragraph-flow>p{justify-content:flex-start!important;padding-top:clamp(16px,3.5vw,28px)!important}
+  /* Samsung/Android: keep the reading surface vertically scrollable. */
+  html,body{height:auto!important;min-height:100%!important;overflow-y:auto!important;overscroll-behavior-y:none!important;touch-action:pan-y!important}
+  body.r7-locked{overflow:hidden!important;touch-action:none!important}
+  .app,.workspace-container,.workspace-left,.readCard{height:auto!important;max-height:none!important;overflow:visible!important;touch-action:pan-y!important}
+  #quizStoryText:not(.paragraph-flow){height:auto!important;max-height:none!important;overflow:visible!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch}
+  #quizStoryText.paragraph-flow{overflow-y:auto!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain!important}
+  #quizStoryText .sentence,#quizStoryText .selectable-word{touch-action:pan-y!important}
+
+  /* No accidental selection inside the long-press action sheet. */
+  .mobile-r7-action-wrap,.mobile-r7-action-wrap *,.r7-sheet,.r7-sheet *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+
+  /* Mobile translations are in document flow, directly below the source sentence. */
+  .sentence-tooltip,.word-translation-tooltip{display:none!important}
+  .mobile-inline-translation{display:block;width:100%;margin:8px 0 13px;padding:10px 12px;border:1px solid rgba(96,165,250,.24);border-left:3px solid #60a5fa;border-radius:10px;background:rgba(30,41,59,.92);color:#e5eefc;font-size:calc(var(--reader-font-size) - 2px);line-height:1.55;white-space:normal;overflow-wrap:anywhere;box-shadow:none}
+  .mobile-inline-translation.word-inline{border-left-color:#22c55e;background:rgba(20,83,45,.34)}
+  .mobile-inline-translation .mobile-translation-label{display:block;margin-bottom:4px;color:#93c5fd;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.45px}
+  .mobile-inline-translation.word-inline .mobile-translation-label{color:#86efac}
+
+  /* Paragraph counter outside the text, immediately below the title. */
+  .story-title-row{display:flex!important;flex-wrap:wrap!important}
+  .story-title-row .story-heading{width:100%!important;flex-basis:100%!important}
+  .story-title-row .paragraph-flow-status{order:3!important;position:static!important;display:none!important;width:max-content!important;height:28px!important;margin:8px 0 0!important;transform:none!important}
+  .readCard.flow-active .story-title-row .paragraph-flow-status{display:inline-flex!important}
+  #quizStoryText + .paragraph-flow-status,.reader-main-toolbar + .paragraph-flow-status{display:none!important}
 }
 </style>
-<script id="mobile-v10-session-script">
+<script id="mobile-v11-samsung-translation-script">
 (function(){
 'use strict';
 const touchLayout=()=>matchMedia('(max-width:1024px) and (pointer:coarse)').matches;
-const CACHE_KEY='germanPortalLoadedTopics:v1',ACTIVE_KEY='germanPortalActiveTopic:v1';
-let restoring=false,toastTimer=0;
-/* Remove stale permanent topic copies from the previous build. */
-try{localStorage.removeItem(CACHE_KEY);localStorage.removeItem(ACTIVE_KEY)}catch(_){}
-function toast(){document.querySelectorAll('.mobile-v10-toast').forEach(n=>n.remove());const n=document.createElement('div');n.className='mobile-v10-toast';n.textContent='Kelime eklendi';document.body.append(n);clearTimeout(toastTimer);toastTimer=setTimeout(()=>n.remove(),1450)}
-function closeSheet(){document.body.classList.remove('r7-actions-open');document.body.classList.toggle('r7-locked',['r7-drawer-open','r7-actions-open','r7-topics-open','r7-timer-open'].some(c=>document.body.classList.contains(c)))}
-function backToText(fn){closeSheet();requestAnimationFrame(()=>{document.getElementById('quizStoryText')?.focus({preventScroll:true});fn?.()})}
-const box=document.createElement('div');box.className='mobile-v10-font-controls';box.setAttribute('role','group');box.setAttribute('aria-label','Metin boyutu');
-[['A−',-1,'Metni küçült'],['A+',1,'Metni büyüt']].forEach(([label,delta,aria])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('aria-label',aria);b.addEventListener('click',()=>{adjustFont(delta);if(paragraphFlowEnabled)requestAnimationFrame(()=>applyParagraphFlow(false))});box.append(b)});document.body.append(box);
-/* Intercept the mobile sheet after it is built: close on audio/add, remove selection actions. */
-document.addEventListener('click',e=>{if(!touchLayout())return;const b=e.target.closest('.mobile-r7-action-wrap .r7-action-button');if(!b)return;const label=b.textContent.trim();if(label==='Cümleyi Seç'||label==='Kelimeyi Seç'){e.preventDefault();e.stopImmediatePropagation();return}if(label==='Cümleyi Dinle'||label==='Kelimeyi Dinle'){setTimeout(closeSheet,0)}if(label==='Kelimelere Ekle'){setTimeout(()=>{closeSheet();toast()},0)}},true);
-const observer=new MutationObserver(()=>{if(!touchLayout())return;document.querySelectorAll('.mobile-r7-action-wrap .r7-action-button').forEach(b=>{const t=b.textContent.trim();if(t==='Cümleyi Seç'||t==='Kelimeyi Seç')b.remove()})});observer.observe(document.body,{childList:true,subtree:true});
-function serializable(t){const d=t?.portalData;if(!d)return null;return{fileName:t.fileName||'',data:{id:d.id,storyTitle:d.storyTitle,storyLevel:d.storyLevel,storyParagraphs:d.storyParagraphs,storyTranslations:d.storyTranslations,quizData:d.quizData,wordData:d.wordData}}}
-function saveSession(){if(restoring)return;try{sessionStorage.setItem(CACHE_KEY,JSON.stringify(topics.map(serializable).filter(Boolean)));if(activeTopicId)sessionStorage.setItem(ACTIVE_KEY,activeTopicId)}catch(_){}}
-const oldLoad=loadPortalData;loadPortalData=function(){const r=oldLoad.apply(this,arguments);if(r)saveSession();return r};
-const oldActivate=activateTopic;activateTopic=function(){const r=oldActivate.apply(this,arguments);saveSession();return r};
-const oldClose=closeTopic;closeTopic=function(){const r=oldClose.apply(this,arguments);saveSession();return r};
-function restoreSession(){if(!touchLayout()||topics.length)return;let items=[];try{items=JSON.parse(sessionStorage.getItem(CACHE_KEY)||'[]')}catch(_){return}if(!Array.isArray(items)||!items.length)return;restoring=true;items.forEach(x=>{try{oldLoad(x.data,x.fileName||'Geri yüklenen JSON')}catch(_){}});restoring=false;const wanted=sessionStorage.getItem(ACTIVE_KEY);if(wanted&&topics.some(t=>t.id===wanted))activateTopic(wanted);else if(topics[0])activateTopic(topics[0].id);saveSession()}
-addEventListener('load',()=>setTimeout(restoreSession,0),{once:true});
-addEventListener('resize',()=>{if(touchLayout()&&paragraphFlowEnabled)requestAnimationFrame(()=>applyParagraphFlow(false))});
-addEventListener('orientationchange',()=>setTimeout(()=>{if(touchLayout()&&paragraphFlowEnabled)applyParagraphFlow(false)},180));
+const reader=document.getElementById('quizStoryText');
+
+function clearInlineTranslations(except=null){
+  document.querySelectorAll('.mobile-inline-translation').forEach(n=>{if(n!==except)n.remove()});
+}
+function sentenceTextWithoutTools(sentence){
+  return [...sentence.childNodes].filter(n=>!n.classList?.contains?.('inline-sentence-speaker')&&!n.classList?.contains?.('mobile-inline-translation')).map(n=>n.textContent||'').join('').replace(/\s+/g,' ').trim();
+}
+function putInlineTranslation(sentence,kind,content,label){
+  if(!touchLayout()||!sentence)return false;
+  clearInlineTranslations();
+  const line=document.createElement('span');line.className='mobile-inline-translation'+(kind==='word'?' word-inline':'');
+  const heading=document.createElement('span');heading.className='mobile-translation-label';heading.textContent=label;
+  const value=document.createElement('span');value.textContent=content;
+  line.append(heading,value);sentence.insertAdjacentElement('afterend',line);
+  line.scrollIntoView({block:'nearest',inline:'nearest'});
+  return true;
+}
+
+/* Keep desktop behavior intact; touch devices use inline translations. */
+const desktopSentenceTooltip=showSentenceTooltip;
+showSentenceTooltip=function(sentence,options={}){
+  if(!touchLayout())return desktopSentenceTooltip(sentence,options);
+  const parts=[];
+  if(sentence.dataset.tr)parts.push('TR: '+sentence.dataset.tr);
+  if(sentence.dataset.en)parts.push('EN: '+sentence.dataset.en);
+  if(!parts.length)return;
+  putInlineTranslation(sentence,'sentence',parts.join('\n'),'Cümle çevirisi');
+};
+const desktopWordTooltip=showWordTranslationTooltip;
+showWordTranslationTooltip=function(wordNode,info,options={}){
+  if(!touchLayout())return desktopWordTooltip(wordNode,info,options);
+  if(!wordNode||!info)return;
+  const sentence=wordNode.closest('.sentence');
+  const name=info.category==='Nomen'?[info.article,info.lemma].filter(Boolean).join(' '):(info.lemma||info.surface||wordNode.textContent);
+  putInlineTranslation(sentence,'word',name+': '+info.translation,'Kelime çevirisi');
+};
+
+/* Counter is physically moved under the title whenever paragraph mode is rendered. */
+function moveCounterUnderTitle(){
+  if(!touchLayout())return;
+  const badge=document.querySelector('.paragraph-flow-status'),title=document.querySelector('.story-title-row');
+  if(badge&&title&&badge.parentElement!==title)title.append(badge);
+}
+const oldUpdateParagraphFlowStatus=updateParagraphFlowStatus;
+updateParagraphFlowStatus=function(){const r=oldUpdateParagraphFlowStatus.apply(this,arguments);moveCounterUnderTitle();return r};
+moveCounterUnderTitle();
+
+/* Samsung scroll guard: long press must yield immediately to vertical motion. */
+let sx=0,sy=0,tracking=false;
+reader?.addEventListener('pointerdown',e=>{if(!touchLayout()||e.pointerType==='mouse')return;sx=e.clientX;sy=e.clientY;tracking=true},{capture:true,passive:true});
+reader?.addEventListener('pointermove',e=>{if(!tracking)return;if(Math.abs(e.clientY-sy)>5||Math.abs(e.clientX-sx)>9){tracking=false;try{e.target.releasePointerCapture?.(e.pointerId)}catch(_){}}},{capture:true,passive:true});
+['pointerup','pointercancel'].forEach(type=>reader?.addEventListener(type,()=>{tracking=false},{capture:true,passive:true}));
+
+/* Tapping outside an inline translation closes it, without blocking scrolling. */
+document.addEventListener('click',e=>{if(!touchLayout())return;if(!e.target.closest('.mobile-inline-translation')&&!e.target.closest('.r7-action-button'))clearInlineTranslations()});
+
+/* Preserve the verified session behavior: refresh restores, a newly opened app starts clean. */
+const V11_TOPIC_CACHE='germanPortalLoadedTopics:v1';
+const V11_ACTIVE_TOPIC='germanPortalActiveTopic:v1';
+let v11RestoringSession=false;
+try{localStorage.removeItem(V11_TOPIC_CACHE);localStorage.removeItem(V11_ACTIVE_TOPIC)}catch(_){}
+function v11SerializableTopic(t){
+  const d=t?.portalData;if(!d)return null;
+  return{fileName:t.fileName||'',data:{id:d.id,storyTitle:d.storyTitle,storyLevel:d.storyLevel,storyParagraphs:d.storyParagraphs,storyTranslations:d.storyTranslations,quizData:d.quizData,wordData:d.wordData}};
+}
+function v11SaveSession(){
+  if(v11RestoringSession)return;
+  try{
+    sessionStorage.setItem(V11_TOPIC_CACHE,JSON.stringify(topics.map(v11SerializableTopic).filter(Boolean)));
+    if(activeTopicId)sessionStorage.setItem(V11_ACTIVE_TOPIC,activeTopicId);else sessionStorage.removeItem(V11_ACTIVE_TOPIC);
+  }catch(_){}
+}
+const v11OriginalLoad=loadPortalData;
+loadPortalData=function(){const result=v11OriginalLoad.apply(this,arguments);if(result)v11SaveSession();return result};
+const v11OriginalActivate=activateTopic;
+activateTopic=function(){const result=v11OriginalActivate.apply(this,arguments);v11SaveSession();return result};
+const v11OriginalClose=closeTopic;
+closeTopic=function(){const result=v11OriginalClose.apply(this,arguments);v11SaveSession();return result};
+function v11RestoreSession(){
+  if(!touchLayout()||topics.length)return;
+  let items=[];try{items=JSON.parse(sessionStorage.getItem(V11_TOPIC_CACHE)||'[]')}catch(_){return}
+  if(!Array.isArray(items)||!items.length)return;
+  v11RestoringSession=true;
+  items.forEach(item=>{try{v11OriginalLoad(item.data,item.fileName||'Geri yüklenen JSON')}catch(_){}});
+  v11RestoringSession=false;
+  const wanted=sessionStorage.getItem(V11_ACTIVE_TOPIC);
+  if(wanted&&topics.some(t=>t.id===wanted))activateTopic(wanted);else if(topics[0])activateTopic(topics[0].id);
+  v11SaveSession();
+}
+addEventListener('load',()=>setTimeout(v11RestoreSession,0),{once:true});
+
+addEventListener('resize',moveCounterUnderTitle);
 })();
 </script>
 
