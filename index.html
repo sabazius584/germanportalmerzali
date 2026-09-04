@@ -614,6 +614,41 @@ body.resizing .resizer{pointer-events:auto}
   body.focus-mode.mobile-quiz-open .mobile-quiz-resizer{bottom:calc(var(--mobile-quiz-height,42dvh) + env(safe-area-inset-bottom) - 11px)}
 }
 </style>
+<style id="mobile-bottom-buttons-fix">
+@media(max-width:900px){
+  .mobile-v4-bar .mv4-fab,
+  .mv4-fab{
+    position:fixed!important;
+    top:auto!important;
+    bottom:calc(16px + env(safe-area-inset-bottom))!important;
+    width:50px!important;
+    height:50px!important;
+    min-width:50px!important;
+    padding:0!important;
+    border-radius:50%!important;
+    z-index:13400!important;
+  }
+  .mobile-v4-bar .mv4-test,
+  .mv4-test{
+    right:calc(14px + env(safe-area-inset-right))!important;
+    left:auto!important;
+  }
+  .mobile-v4-bar .mv4-topics,
+  .mv4-topics{
+    right:calc(76px + env(safe-area-inset-right))!important;
+    left:auto!important;
+  }
+  body.mv4-drawer .mv4-fab,
+  body.mv4-sheet .mv4-fab,
+  body.mv4-topics-open .mv4-fab,
+  body.mv4-timer .mv4-fab,
+  body:has(.pool-overlay:not(.hidden)) .mv4-fab{
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app">
