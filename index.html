@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5"><meta name="theme-color" content="#13151c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5"><meta name="theme-color" content="#13151c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Almanca Portalı"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
 <title>Almanca Öğrenme Portalı</title>
 <style>
 :root{--bg:#090a0f;--panel:#13151c;--panel-glass:rgba(19, 21, 28, 0.85);--panel2:#1a1d26;--text:#f8fafc;--muted:#94a3b8;--blue:#3b82f6;--blue-light:#60a5fa;--green:#22c55e;--green-bg:rgba(34, 197, 94, 0.15);--red:#ef4444;--red-bg:rgba(239, 68, 68, 0.15);--line:#272a37;--reader-font-size:16px;--quiz-font-size:16px}
@@ -510,65 +510,108 @@ body.resizing .resizer{pointer-events:auto}
 .resizer{width:12px;margin:0 6px;will-change:background-color}
 
 </style>
-<style id="mobile-ux-v5">
-/* Mobil UX v5: masaustu etkilenmez. */
-.mobile-header-toggle,.mobile-focus-quiz-button,.mobile-quiz-resizer{display:none}
+<style>.sentence.quiz-evidence-highlight{background:rgba(250,204,21,.22)!important;color:#fffceb!important;box-shadow:inset 4px 0 0 #facc15,0 0 0 1px rgba(250,204,21,.28)}@media(hover:none),(pointer:coarse){.reading-settings-panel .translation-control:has(#contextWordSelectToggle),.reading-settings-panel .translation-control:has(#contextSentenceSelectToggle){display:none!important}}</style><style id="mobile-ux-v3">
+/* Mobile UX v3: desktop kuralları değişmeden yalnızca telefonlarda uygulanır */
+.mobile-focus-quiz-button,.mobile-focus-quiz-close{display:none}
 @media(max-width:900px){
- body.focus-mode .app{padding:calc(env(safe-area-inset-top) + 10px) max(6px,env(safe-area-inset-right)) calc(66px + env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left))!important}
- body.focus-mode .readCard{min-height:calc(100dvh - env(safe-area-inset-top) - 16px);padding:18px 12px 24px!important}
- body.focus-mode #quizStoryText{height:calc(100dvh - env(safe-area-inset-top) - 110px)!important;max-height:calc(100dvh - env(safe-area-inset-top) - 110px)!important;padding-top:8px!important}
- body.focus-mode .mobile-focus-quiz-button{position:fixed;z-index:10620;right:max(10px,env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:center;min-width:116px;height:44px;padding:0 15px;border:1px solid rgba(147,197,253,.45);border-radius:22px;background:#2563eb;color:#fff;font-weight:800}
- body.focus-mode.mobile-quiz-open .workspace-right{position:fixed!important;z-index:10610!important;left:max(6px,env(safe-area-inset-left))!important;right:max(6px,env(safe-area-inset-right))!important;bottom:calc(6px + env(safe-area-inset-bottom))!important;top:auto!important;display:block!important;width:auto!important;height:var(--mobile-quiz-height,38dvh)!important;min-height:210px;max-height:72dvh;margin:0!important;padding:30px 10px 10px!important;overflow-y:auto!important;background:rgba(19,21,28,.985);border:1px solid rgba(255,255,255,.12);border-radius:18px 18px 12px 12px;box-shadow:0 -18px 48px rgba(0,0,0,.72)}
- body.focus-mode.mobile-quiz-open .question-header,body.focus-mode.mobile-quiz-open .qType{display:none!important}
- body.focus-mode.mobile-quiz-open .mobile-focus-quiz-button{display:none}
- body.focus-mode.mobile-quiz-open .mobile-quiz-resizer{position:fixed;z-index:10635;left:0;right:0;bottom:calc(var(--mobile-quiz-height,38dvh) + env(safe-area-inset-bottom) - 18px);display:flex;height:38px;align-items:center;justify-content:center;touch-action:none}
- body.focus-mode.mobile-quiz-open .mobile-quiz-resizer::after{content:'';width:54px;height:6px;border-radius:5px;background:#64748b}
+  /* Üst komutlar: çakışma yok, sayaç ayrı satırda */
+  .header-top{display:block!important;padding:calc(12px + env(safe-area-inset-top)) 12px 12px!important}
+  .head{margin-bottom:10px}.head p{white-space:normal!important;line-height:1.35}
+  .header-actions{display:grid!important;grid-template-columns:1fr!important;gap:7px!important;width:100%}
+  .header-actions-row{display:grid!important;width:100%;gap:7px!important;padding:0!important;border:0!important}
+  .header-actions-row:first-child{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .header-actions-row:first-child .btn:last-child:nth-child(3){grid-column:1/-1}
+  .header-actions-row:nth-child(2){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .countdown-timer{grid-column:1/-1;display:grid!important;grid-template-columns:minmax(92px,1fr) auto auto;width:100%;gap:6px;padding:6px 7px!important}
+  .countdown-input{width:100%!important;min-width:0;text-align:left;padding-left:8px!important}
+  .header-top .btn{min-width:0;overflow:hidden;text-overflow:ellipsis}
+
+  /* Okuma araçları: üç büyük blok yerine tek, yatay ve kompakt şerit */
+  .reader-main-toolbar{display:grid!important;grid-template-columns:minmax(0,1fr) 42px!important;align-items:center!important;gap:7px!important;margin:9px 0 12px!important;padding-top:9px!important}
+  .reader-control-groups{display:flex!important;grid-column:1!important;grid-row:1!important;flex-flow:row nowrap!important;align-items:center!important;gap:6px!important;width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;padding-bottom:2px}
+  .reader-control-groups::-webkit-scrollbar{display:none}
+  .reader-segment-group,.reader-segment-group:nth-child(2),.reader-segment-group:nth-child(3){display:block!important;grid-column:auto!important;width:auto!important;min-width:max-content!important}
+  .reader-group-label{display:none!important}
+  .reader-segments,.language-segment-group .language-tabs,.reader-segment-group:nth-child(2) .reader-segments,.reader-segment-group:nth-child(3) .reader-segments{display:flex!important;width:auto!important;grid-template-columns:none!important}
+  .reader-segment,.reader-main-toolbar .language-tab{min-height:36px!important;height:36px!important;padding:6px 9px!important}
+  .reader-main-toolbar>.reading-settings-button.icon-only{grid-column:2!important;grid-row:1!important;width:42px!important;height:42px!important;min-height:42px!important}
+
+  /* Odak görünümü: Dynamic Island / durum çubuğu ve Android üst alanı korunur */
+  body.focus-mode .app{padding:calc(env(safe-area-inset-top) + 10px) max(6px,env(safe-area-inset-right)) calc(66px + env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left))!important}
+  body.focus-mode .readCard{min-height:calc(100dvh - env(safe-area-inset-top) - 16px)!important;padding:18px 12px 24px!important}
+  body.focus-mode #quizStoryTitle{padding-top:4px!important}
+  body.focus-mode #quizStoryText{height:calc(100dvh - env(safe-area-inset-top) - 110px)!important;max-height:calc(100dvh - env(safe-area-inset-top) - 110px)!important;padding-top:8px!important;scroll-padding-top:20px}
+  body.focus-mode .reader-text.paragraph-flow{height:calc(100dvh - env(safe-area-inset-top) - 110px)!important;max-height:calc(100dvh - env(safe-area-inset-top) - 110px)!important}
+  body.focus-mode .reader-text.paragraph-flow>p{min-height:calc(100dvh - env(safe-area-inset-top) - 110px)!important;padding:32px 12px!important}
+  body.focus-mode .focus-exit-button{top:calc(env(safe-area-inset-top) + 10px)!important}
+
+  /* Odak içinde test: alttan açılan panel, üstteki metin kullanılmaya devam eder */
+  body.focus-mode .mobile-focus-quiz-button{position:fixed;z-index:10620;right:max(10px,env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:center;min-width:116px;height:44px;padding:0 15px;border:1px solid rgba(147,197,253,.45);border-radius:22px;background:#2563eb;color:#fff;font-weight:800;box-shadow:0 9px 28px rgba(0,0,0,.48);cursor:pointer}
+  body.focus-mode.mobile-quiz-open .mobile-focus-quiz-button{display:none}
+  body.focus-mode.mobile-quiz-open .workspace-right{position:fixed!important;z-index:10610!important;left:max(6px,env(safe-area-inset-left))!important;right:max(6px,env(safe-area-inset-right))!important;bottom:calc(6px + env(safe-area-inset-bottom))!important;top:auto!important;display:block!important;width:auto!important;height:min(52dvh,560px)!important;max-height:min(52dvh,560px)!important;margin:0!important;padding:48px 12px 14px!important;overflow-y:auto!important;overscroll-behavior:contain;background:rgba(19,21,28,.985);border:1px solid rgba(255,255,255,.12);border-radius:20px 20px 14px 14px;box-shadow:0 -18px 48px rgba(0,0,0,.72);backdrop-filter:blur(16px)}
+  body.focus-mode.mobile-quiz-open .mobile-focus-quiz-close{position:fixed;z-index:10630;right:calc(max(6px,env(safe-area-inset-right)) + 10px);bottom:calc(min(52dvh,560px) + env(safe-area-inset-bottom) - 38px);display:flex;align-items:center;justify-content:center;min-width:92px;height:34px;padding:0 12px;border:0;border-radius:17px;background:#2b3242;color:#fff;font-size:12px;font-weight:800;cursor:pointer}
+  body.focus-mode.mobile-quiz-open .workspace-right .question-header{display:flex!important}
+  body.focus-mode.mobile-quiz-open #questionProgress{display:flex!important;margin-bottom:14px!important}
+  body.focus-mode.mobile-quiz-open #s1-quizCard{display:block!important}
+  body.focus-mode.mobile-quiz-open .option{min-height:48px;padding:12px}
+  body.focus-mode.mobile-quiz-open .nav{padding-bottom:8px}
 }
-
-.mobile-drawer,.mobile-drawer-backdrop,.mobile-only-test-button{display:none}
+@media(max-width:390px){
+  .reader-segment,.reader-main-toolbar .language-tab{padding-inline:7px!important;font-size:10.5px!important}
+  body.focus-mode.mobile-quiz-open .workspace-right{height:56dvh!important;max-height:56dvh!important}
+  body.focus-mode.mobile-quiz-open .mobile-focus-quiz-close{bottom:calc(56dvh + env(safe-area-inset-bottom) - 38px)}
+}
+</style>
+<style id="mobile-ux-v4">
+/* Mobil UX v4. Tum kurallar yalnizca telefon ekranlarinda gecerlidir. */
+.mobile-header-toggle,.mobile-quiz-resizer{display:none}
 @media(max-width:900px){
-  /* Klasik sol ust hamburger */
-  .mobile-header-toggle{position:fixed!important;z-index:10820;top:calc(env(safe-area-inset-top) + 8px);left:max(8px,env(safe-area-inset-left));display:flex!important;width:44px!important;min-width:44px!important;height:44px!important;padding:0!important;font-size:0!important;border-radius:12px!important}
-  .mobile-header-toggle::before{content:'☰';font-size:25px;line-height:1}
-  body.mobile-header-open .mobile-header-toggle::before{content:'×';font-size:28px}
-  .header-top .header-actions{display:none!important}
-  .head{display:block!important;padding-left:48px;min-height:44px}.head p{display:none}
-  .mobile-drawer-backdrop.open{position:fixed;inset:0;z-index:10800;display:block;background:rgba(0,0,0,.55);backdrop-filter:blur(2px)}
-  .mobile-drawer.open{position:fixed;z-index:10810;top:0;bottom:0;left:0;display:flex;width:min(300px,84vw);padding:calc(env(safe-area-inset-top) + 66px) 14px calc(env(safe-area-inset-bottom) + 16px);flex-direction:column;gap:8px;overflow-y:auto;background:#13151c;border-right:1px solid rgba(255,255,255,.10);box-shadow:18px 0 48px rgba(0,0,0,.65)}
-  .mobile-drawer .drawer-title{margin:3px 4px 8px;color:#94a3b8;font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.6px}
-  .mobile-drawer .drawer-button{display:flex;align-items:center;width:100%;min-height:45px;padding:10px 12px;border:1px solid rgba(255,255,255,.07);border-radius:11px;background:#1b1f2a;color:#fff;font-weight:700;text-align:left;cursor:pointer}
-  .mobile-drawer .drawer-button:active{background:#2563eb}
-  .mobile-drawer .drawer-spacer{flex:1;min-height:12px}
-  .mobile-drawer .drawer-languages{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}
+  /* Ust menu varsayilan olarak kapali, tek dokunusla acilir. */
+  .header-top{padding:calc(10px + env(safe-area-inset-top)) 10px 10px!important}
+  .head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;margin:0!important}
+  .head h1{font-size:18px!important;margin:0!important}.head p{grid-column:1/-1;margin-top:2px!important;font-size:10.5px!important}
+  .mobile-header-toggle{display:flex;align-items:center;justify-content:center;min-width:76px;height:38px;padding:0 11px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:#202635;color:#fff;font-weight:750;cursor:pointer}
+  .header-actions{display:none!important;margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.07)}
+  body.mobile-header-open .header-actions{display:grid!important}
+  .header-actions-row:first-child{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .header-actions-row:first-child .btn:last-child:nth-child(3){grid-column:auto!important}
+  .header-actions-row:nth-child(2){grid-template-columns:minmax(0,1.35fr) repeat(2,minmax(0,1fr))!important}
+  .countdown-timer{grid-column:auto!important;grid-template-columns:minmax(64px,1fr) 34px 34px!important;gap:3px!important;padding:3px 4px!important;min-width:0}
+  .countdown-input{font-size:12px!important;padding-left:4px!important;min-height:34px!important}
+  .countdown-timer .btn{min-width:34px!important;width:34px!important;min-height:34px!important;padding:0!important;font-size:0!important}
+  #countdownStartButton::after{content:'▶';font-size:13px}#countdownResetButton::after{content:'↻';font-size:15px}
+  .header-top .btn{min-height:40px!important;padding:6px 5px!important;font-size:10.5px!important}
+  #selectFileButton{font-size:0!important}#selectFileButton::after{content:'📁 Dosya';font-size:10.5px}
+  #selectFolderButton{font-size:0!important}#selectFolderButton::after{content:'📂 Klasör';font-size:10.5px}
+  #printButton{font-size:0!important}#printButton::after{content:'▤ Yazdır';font-size:10.5px}
+  #clearProgressButton{font-size:0!important}#clearProgressButton::after{content:'↻ Test';font-size:10.5px}
+  #wordPoolButton{font-size:0!important}#wordPoolButton::before{content:'Kelimeler ';font-size:10.5px}#wordPoolButton .pool-count{font-size:10px!important}
 
-  /* Mobil ana ekran zaten odak ekranidir; gereksiz mod cubugu yok. */
-  .reader-main-toolbar{display:none!important}
-  body:not(.test-mode) .workspace-right{display:none!important}
-  body.focus-mode.mobile-quiz-open .workspace-right{display:block!important}
-  .mobile-only-test-button{position:fixed;z-index:10621;left:max(10px,env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:center;min-width:108px;height:44px;padding:0 14px;border:1px solid rgba(255,255,255,.12);border-radius:22px;background:#242b3a;color:#fff;font-weight:800;box-shadow:0 9px 28px rgba(0,0,0,.42);cursor:pointer}
-  body.test-mode .mobile-only-test-button,body.mobile-quiz-open .mobile-only-test-button{display:none!important}
+  /* Paragraf sayaci metnin veya cumlenin uzerine binmez. */
+  .paragraph-flow-status,.readCard.flow-active .paragraph-flow-status{position:static!important;display:none!important;width:max-content;min-width:54px;height:26px;margin:0 auto 7px!important;transform:none!important;pointer-events:none}
+  .readCard.flow-active .paragraph-flow-status{display:flex!important}
 
-  /* Metin/paragraf secimi odak alt cubugunda sade kalir. */
-  body.focus-mode .focus-quick-menu{display:flex!important}
-
-  /* Kaydirma oncelikli: kisa dokunus secim baslatmaz. */
-  #quizStoryText,.sentence,.selectable-word{touch-action:pan-y!important;-webkit-user-select:none!important;user-select:none!important}
-  .selectable-word{cursor:default!important}
-
-  /* Uzun basma menusu */
-  .word-audio-menu{display:block!important;width:min(290px,calc(100vw - 24px))!important;max-height:min(74dvh,520px);overflow-y:auto;padding:8px!important;border-radius:15px!important}
-  .word-audio-menu button{min-height:44px!important;margin-top:3px!important;padding:9px 11px!important;font-size:13px!important}
-  .word-audio-menu-title{font-size:14px!important}
-
-  /* Paragraf kartlari kullanilabilir ekrana oturur */
-  body.focus-mode .reader-text.paragraph-flow{scroll-snap-type:y mandatory!important;scroll-padding-top:0!important;padding:0!important}
-  body.focus-mode .reader-text.paragraph-flow>p{height:100%!important;min-height:100%!important;max-height:100%!important;overflow-y:auto!important;overscroll-behavior:contain;padding:34px 13px 24px!important;scroll-snap-align:start!important}
-
-  /* Quiz paneli: genis kavrama alani ve metnin gorunur alaniyla uyum */
-  body.focus-mode.mobile-quiz-open .mobile-quiz-resizer{width:100%!important;height:38px!important;bottom:calc(var(--mobile-quiz-height,38dvh) + env(safe-area-inset-bottom) - 18px)!important}
-  body.focus-mode.mobile-quiz-open .mobile-quiz-resizer::after{width:54px!important;height:6px!important}
-  body.focus-mode.mobile-quiz-open #quizStoryText{height:calc(100dvh - env(safe-area-inset-top) - var(--mobile-quiz-height,38dvh) - 74px)!important;max-height:calc(100dvh - env(safe-area-inset-top) - var(--mobile-quiz-height,38dvh) - 74px)!important}
-  body.focus-mode.mobile-quiz-open .reader-text.paragraph-flow{height:calc(100dvh - env(safe-area-inset-top) - var(--mobile-quiz-height,38dvh) - 74px)!important;max-height:calc(100dvh - env(safe-area-inset-top) - var(--mobile-quiz-height,38dvh) - 74px)!important}
+  /* Acilir quiz daha kucuk; baslik ve soru tipi telefonda gizli. */
+  body.focus-mode.mobile-quiz-open .workspace-right{height:var(--mobile-quiz-height,38dvh)!important;max-height:72dvh!important;min-height:210px!important;padding:30px 10px 10px!important;border-radius:18px 18px 12px 12px}
+  body.focus-mode.mobile-quiz-open .workspace-right .question-header{display:none!important}
+  body.focus-mode.mobile-quiz-open .workspace-right .qType{display:none!important}
+  body.focus-mode.mobile-quiz-open #questionProgress{margin:0 0 8px!important}
+  body.focus-mode.mobile-quiz-open .question{margin-bottom:12px;font-size:calc(var(--quiz-font-size) + 1px)}
+  body.focus-mode.mobile-quiz-open .qNo{margin-bottom:5px}
+  body.focus-mode.mobile-quiz-open .option{min-height:42px;margin:6px 0;padding:9px 10px}
+  body.focus-mode.mobile-quiz-open .feedback{margin-top:9px;padding:10px}
+  body.focus-mode.mobile-quiz-open .nav{margin-top:10px}
+  body.focus-mode.mobile-quiz-open .nav .btn{min-height:40px}
+  body.focus-mode.mobile-quiz-open .mobile-focus-quiz-close{display:none!important}
+  body.focus-mode.mobile-quiz-open .mobile-quiz-resizer{position:fixed;z-index:10635;left:50%;bottom:calc(var(--mobile-quiz-height,38dvh) + env(safe-area-inset-bottom) - 11px);display:flex;width:74px;height:24px;transform:translateX(-50%);align-items:center;justify-content:center;touch-action:none;cursor:ns-resize}
+  body.focus-mode.mobile-quiz-open .mobile-quiz-resizer::after{content:'';width:42px;height:5px;border-radius:5px;background:#64748b;box-shadow:0 0 0 1px rgba(255,255,255,.10)}
+}
+@media(max-width:390px){
+  .header-actions-row:first-child{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .header-actions-row:nth-child(2){grid-template-columns:1fr 1fr!important}
+  .countdown-timer{grid-column:1/-1!important}
+  body.focus-mode.mobile-quiz-open .workspace-right{height:var(--mobile-quiz-height,42dvh)!important}
+  body.focus-mode.mobile-quiz-open .mobile-quiz-resizer{bottom:calc(var(--mobile-quiz-height,42dvh) + env(safe-area-inset-bottom) - 11px)}
 }
 </style>
 </head>
@@ -691,20 +734,20 @@ body.resizing .resizer{pointer-events:auto}
 
 
 <button id="testModeExitButton" class="test-mode-exit-button" type="button" aria-label="Test modundan çık" title="Test modundan çık">×</button>
-<button id="focusExitButton" class="focus-exit-button" type="button" aria-label="Odak modundan cik" title="Odak modundan cik">x</button>
+<button id="focusExitButton" class="focus-exit-button" type="button" aria-label="Odak modundan çık" title="Odak modundan çık">x</button>
 <div class="focus-quick-menu" aria-label="Odak modu hizli kontrolleri">
   <button id="focusFontButton" class="focus-quick-button" type="button" aria-label="Yazı boyutu" title="Yazı boyutu">Aa</button>
-  <button id="focusToolsButton" class="focus-quick-button" type="button" aria-label="Okuma araclari" title="Okuma araclari">...</button>
+  <button id="focusToolsButton" class="focus-quick-button" type="button" aria-label="Okuma araçları" title="Okuma araçları">...</button>
 </div>
 <div id="focusToolsBackdrop" class="focus-tools-backdrop" aria-hidden="true">
   <aside class="focus-tools-panel" role="dialog" aria-modal="true" aria-labelledby="focusToolsTitle">
-    <div class="focus-tools-header"><h2 id="focusToolsTitle">Okuma Araçları</h2><button id="focusToolsClose" class="focus-tools-close" type="button" aria-label="Araclari kapat">x</button></div>
+    <div class="focus-tools-header"><h2 id="focusToolsTitle">Okuma Araçları</h2><button id="focusToolsClose" class="focus-tools-close" type="button" aria-label="Araçları kapat">x</button></div>
     <section class="focus-tools-section"><h3>Yazı boyutu</h3><div class="focus-tools-grid"><button id="focusFontDown" class="btn secondary" type="button">A-</button><button id="focusFontUp" class="btn secondary" type="button">A+</button></div></section>
     <section class="focus-tools-section"><h3>Gorunum</h3><div class="focus-tools-grid"><button id="focusDimToggle" class="btn secondary" type="button">Satir Vurgu<span id="focusDimStatus" class="focus-tools-status"></span></button><button id="focusFlowToggle" class="btn secondary" type="button">Paragraf Akışı<span id="focusFlowStatus" class="focus-tools-status"></span></button></div></section>
     <section class="focus-tools-section"><h3>Dil</h3><div class="focus-tools-grid"><button class="btn secondary" data-focus-language="de" type="button">Deutsch</button><button class="btn secondary" data-focus-language="tr" type="button">Türkçe</button><button class="btn secondary wide" data-focus-language="en" type="button">English</button></div></section>
     <section class="focus-tools-section"><h3>Ceviri ve secim</h3><div class="focus-tools-grid"><button id="focusSentenceTranslation" class="btn secondary" type="button">Cümle Çevirisi<span id="focusSentenceStatus" class="focus-tools-status"></span></button><button id="focusWordTranslation" class="btn secondary" type="button">Kelime Çevirisi<span id="focusWordStatus" class="focus-tools-status"></span></button><button id="focusWordSelection" class="btn secondary wide" type="button">Kelime Seçimi<span id="focusSelectionStatus" class="focus-tools-status"></span></button></div></section>
-    <section class="focus-tools-section"><h3>Ses</h3><div class="focus-tools-grid"><button id="focusAudioToggle" class="btn secondary wide" type="button">Ses Dinleme<span id="focusAudioStatus" class="focus-tools-status"></span></button><button id="focusRateDown" class="btn secondary" type="button">Daha Yavas</button><button id="focusRateUp" class="btn secondary" type="button">Daha Hizli</button><button id="focusGoogleVoice" class="btn secondary" type="button">Google</button><button id="focusBrowserVoice" class="btn secondary" type="button">Browser</button></div></section>
-    <button id="focusExitPanelButton" class="btn danger" type="button" style="width:100%">Odak Modundan Cik</button>
+    <section class="focus-tools-section"><h3>Ses</h3><div class="focus-tools-grid"><button id="focusAudioToggle" class="btn secondary wide" type="button">Ses Dinleme<span id="focusAudioStatus" class="focus-tools-status"></span></button><button id="focusRateDown" class="btn secondary" type="button">Daha Yavaş</button><button id="focusRateUp" class="btn secondary" type="button">Daha Hızlı</button><button id="focusGoogleVoice" class="btn secondary" type="button">Google</button><button id="focusBrowserVoice" class="btn secondary" type="button">Browser</button></div></section>
+    <button id="focusExitPanelButton" class="btn danger" type="button" style="width:100%">Odak Modundan Çık</button>
   </aside>
 </div>
 
@@ -1139,24 +1182,9 @@ function renderTopicTabs(){topicTabs.replaceChildren();topicTabs.classList.toggl
 function initializeContent(){$("quizStoryTitleText").textContent=portalData.storyTitle;$("quizStoryLevelBadge").textContent=portalData.storyLevel;$("quizWordCountContainer").textContent=`Kelime Sayısı: ${countWords(portalData.storyParagraphs.join(" "))} | Seviye: ${portalData.storyLevel}`;setLanguage(currentLanguage);updateTranslationToggle();updateWordTranslationToggle();requestAnimationFrame(syncQuestionAreaToText)}
 function adjustFont(d){currentFontSize=Math.max(12,Math.min(28,currentFontSize+d));document.documentElement.style.setProperty("--reader-font-size",currentFontSize+"px");safeSet("germanPortalFontSize",String(currentFontSize));requestAnimationFrame(syncQuestionAreaToText)}
 function adjustQuizFont(d){currentQuizFontSize=Math.max(12,Math.min(28,currentQuizFontSize+d));document.documentElement.style.setProperty("--quiz-font-size",currentQuizFontSize+"px");safeSet("germanPortalQuizFontSize",String(currentQuizFontSize));requestAnimationFrame(syncQuestionAreaToText)}
-function syncQuestionAreaToText(){
-  const right=$("workspaceRight"),text=$("quizStoryText"),progress=$("questionProgress");
-  if(!right||!text||!progress)return;
-  if(innerWidth<=900){right.style.paddingTop="18px";return}
-  const align=()=>{
-    right.style.paddingTop="0px";
-    const naturalProgressTop=progress.getBoundingClientRect().top;
-    const textTop=text.getBoundingClientRect().top;
-    right.style.paddingTop=Math.max(0,Math.round(textTop-naturalProgressTop))+"px";
-  };
-  align();
-  requestAnimationFrame(()=>{
-    const delta=text.getBoundingClientRect().top-progress.getBoundingClientRect().top;
-    if(Math.abs(delta)>1)right.style.paddingTop=Math.max(0,Math.round(parseFloat(right.style.paddingTop||0)+delta))+"px"
-  });
-}
+function syncQuestionAreaToText(){const right=$("workspaceRight");if(!right)return;right.style.paddingTop=innerWidth<=900?"18px":"0px";}
 function activeQ(){return state.retryMode?state.retryIndexes[state.index]:state.index}
-function renderQuiz(){if(!portalData)return;requestAnimationFrame(syncQuestionAreaToText);const total=state.retryMode?state.retryIndexes.length:10;if(!total||state.index>=total){renderResult();return}const qi=activeQ(),q=portalData.quizData[qi],sel=state.selected[qi],done=sel!==null,indexes=state.retryMode?state.retryIndexes:Array.from({length:10},(_,i)=>i),completed=indexes.filter(i=>state.selected[i]!==null).length;$("s1-pos").textContent=`${state.index+1} / ${total}`;$("s1-fill").style.width=`${completed/total*100}%`;$("s1-r").textContent=state.right;$("s1-w").textContent=state.wrong;const c=$("s1-quizCard");c.replaceChildren();c.append(el("div","qNo",`Frage ${state.index+1}`),el("div","qType",q.type),el("div","question",q.q));q.o.forEach((txt,i)=>{const label=el("label","option");if(done){label.classList.add("disabled");if(i===q.a)label.classList.add("correct");else if(i===sel)label.classList.add("wrong")}const input=document.createElement("input");input.type="radio";input.name="current_q";input.value=String(i);input.disabled=done;input.checked=sel===i;const span=el("span","option-text");span.append(el("strong","",`${OPTION_LABELS[i]}. `),document.createTextNode(txt));label.append(input,span);if(done&&(i===q.a||i===sel))label.append(el("span","badge",i===q.a?"✓ Doğru":"✕ Yanlış"));c.append(label)});if(done)c.append(el("div","feedback",q.e));const nav=el("div","nav"),prev=button("Zurück","btn",()=>{if(state.index>0){state.index--;saveProgress();renderQuiz()}}),check=button("Check","btn primary",checkAnswer),next=button(state.index===total-1?"Result":"Weiter","btn primary",()=>{if(state.selected[activeQ()]!==null){state.index++;saveProgress();renderQuiz()}});prev.disabled=state.index===0;check.disabled=done;next.hidden=!done;nav.append(prev,check,next);c.append(nav)}
+function clearQuizEvidenceHighlight(){document.querySelectorAll("#quizStoryText .sentence.quiz-evidence-highlight").forEach(n=>n.classList.remove("quiz-evidence-highlight"))}function quizEvidenceTokens(v){const stop=new Set(["aber","auch","das","dass","dem","den","der","des","die","ein","eine","einem","einen","einer","eines","er","es","für","hat","haben","ich","im","in","ist","mit","nicht","oder","sein","sich","sie","sind","und","vom","von","war","was","weil","werden","wie","wir","wo","zu","zum","zur"]);return [...new Set(String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("de-DE").match(/[a-zäöüß]{3,}/g)||[])].filter(x=>!stop.has(x))}function highlightQuizEvidence(q){clearQuizEvidenceHighlight();if(!q||currentLanguage!=="de")return;const a=quizEvidenceTokens([q.q,q.o?.[q.a],q.e].filter(Boolean).join(" "));let b=null,z=0;document.querySelectorAll("#quizStoryText .sentence").forEach(s=>{const w=new Set(quizEvidenceTokens(s.textContent));let x=0;a.forEach(k=>{if(w.has(k))x+=k.length>=7?2:1});if(x>z){z=x;b=s}});if(b&&z){b.classList.add("quiz-evidence-highlight");b.scrollIntoView({behavior:"smooth",block:"center"})}}function renderQuiz(){if(!portalData)return;requestAnimationFrame(syncQuestionAreaToText);const total=state.retryMode?state.retryIndexes.length:10;if(!total||state.index>=total){renderResult();return}const qi=activeQ(),q=portalData.quizData[qi],sel=state.selected[qi],done=sel!==null,indexes=state.retryMode?state.retryIndexes:Array.from({length:10},(_,i)=>i),completed=indexes.filter(i=>state.selected[i]!==null).length;$("s1-pos").textContent=`${state.index+1} / ${total}`;$("s1-fill").style.width=`${completed/total*100}%`;$("s1-r").textContent=state.right;$("s1-w").textContent=state.wrong;const c=$("s1-quizCard");c.replaceChildren();c.append(el("div","qNo",`Frage ${state.index+1}`),el("div","qType",q.type),el("div","question",q.q));q.o.forEach((txt,i)=>{const label=el("label","option");if(done){label.classList.add("disabled");if(i===q.a)label.classList.add("correct");else if(i===sel)label.classList.add("wrong")}const input=document.createElement("input");input.type="radio";input.name="current_q";input.value=String(i);input.disabled=done;input.checked=sel===i;const span=el("span","option-text");span.append(el("strong","",`${OPTION_LABELS[i]}. `),document.createTextNode(txt));label.append(input,span);if(done&&(i===q.a||i===sel))label.append(el("span","badge",i===q.a?"✓ Doğru":"✕ Yanlış"));c.append(label)});if(done)c.append(el("div","feedback",q.e));if(done)requestAnimationFrame(()=>highlightQuizEvidence(q));else clearQuizEvidenceHighlight();const nav=el("div","nav"),prev=button("Zurück","btn",()=>{if(state.index>0){state.index--;saveProgress();renderQuiz()}}),check=button("Check","btn primary",checkAnswer),next=button(state.index===total-1?"Result":"Weiter","btn primary",()=>{if(state.selected[activeQ()]!==null){state.index++;saveProgress();renderQuiz()}});prev.disabled=state.index===0;check.disabled=done;next.hidden=!done;nav.append(prev,check,next);c.append(nav)}
 function checkAnswer(){const qi=activeQ();if(state.selected[qi]!==null)return;const checked=document.querySelector('input[name="current_q"]:checked');if(!checked){alert("Lütfen seçenek seç.");return}const s=Number(checked.value);state.selected[qi]=s;s===portalData.quizData[qi].a?state.right++:state.wrong++;saveProgress();renderQuiz()}
 function renderResult(){const c=$("s1-quizCard");c.replaceChildren();const indexes=state.retryMode?state.retryIndexes:Array.from({length:10},(_,i)=>i),correct=indexes.filter(i=>state.selected[i]===portalData.quizData[i].a).length,wrong=[],result=el("div","result"),rate=el("div","",`Başarı: ${indexes.length?Math.round(correct/indexes.length*100):0}%`);rate.style.cssText="font-size:32px;font-weight:bold;margin-bottom:10px";result.append(rate,el("div","",`${correct} / ${indexes.length} doğru`),el("h2","","Quiz tamamlandı"));const details=el("div","result-details");indexes.forEach((qi,k)=>{const q=portalData.quizData[qi],s=state.selected[qi],ok=s===q.a;if(!ok)wrong.push(qi);const item=el("div",`result-item ${ok?"correct-result":"wrong-result"}`);item.append(el("p","",`${k+1}. ${q.q}`),el("p","",s===null?"Cevaplanmadı":`Senin cevabın: ${OPTION_LABELS[s]}. ${q.o[s]}`),el("p","",`Doğru: ${OPTION_LABELS[q.a]}. ${q.o[q.a]}`),el("p","",`Açıklama: ${q.e}`));details.append(item)});result.append(details);const nav=el("div","nav");nav.append(button("Yeniden Başlat","btn",restartQuiz));if(wrong.length)nav.append(button("Sadece Yanlışlar","btn primary",()=>startWrongAnswers(wrong)));result.append(nav);c.append(result)}
 function restartQuiz(){state=createInitialState(10);saveProgress();renderQuiz()}
@@ -1498,68 +1526,178 @@ body.test-mode #readingLayoutTextBtn,body.test-mode #autoScrollBtn{opacity:.38;p
   document.querySelectorAll('.language-tab,[data-font-delta],[data-quiz-font-delta]').forEach(node=>node.addEventListener('click',resync));
 })();
 </script>
-<button class="mobile-header-toggle" type="button" aria-label="Menüyü aç"></button><button id="mobileFocusQuizButton" class="mobile-focus-quiz-button" type="button">Frage öffnen</button><div class="mobile-quiz-resizer"></div>
+<script>(function(){if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));})();</script>
+<script>
+(function(){
+  const isPhone=()=>matchMedia('(max-width: 900px)').matches;
+  const isiOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+
+  /* iOS Chrome/Safari: uzak MP3 yerine kullanıcı dokunuşuyla yerel Web Speech kullan. */
+  if(isiOS&&'speechSynthesis' in window){
+    try{setVoiceSource('browser')}catch(_){voiceSource='browser'}
+    const unlockSpeech=()=>{
+      try{
+        speechSynthesis.cancel();speechSynthesis.resume();
+        const u=new SpeechSynthesisUtterance('');u.volume=0;speechSynthesis.speak(u);
+      }catch(_){}
+    };
+    document.addEventListener('touchend',unlockSpeech,{once:true,passive:true});
+    const originalSpeakWithDeviceGerman=speakWithDeviceGerman;
+    speakWithDeviceGerman=function(text,btn){
+      try{speechSynthesis.cancel();speechSynthesis.resume()}catch(_){}
+      return originalSpeakWithDeviceGerman(text,btn);
+    };
+  }
+
+  /* Mobil odak modunda metni kaybetmeden açılıp kapanan quiz paneli. */
+  const open=document.createElement('button');
+  open.id='mobileFocusQuizButton';open.className='mobile-focus-quiz-button';open.type='button';open.textContent='Frage öffnen';
+  open.setAttribute('aria-controls','workspaceRight');open.setAttribute('aria-expanded','false');
+  const close=document.createElement('button');
+  close.id='mobileFocusQuizClose';close.className='mobile-focus-quiz-close';close.type='button';close.textContent='Metne dön';
+  document.body.append(open,close);
+  const setOpen=value=>{
+    document.body.classList.toggle('mobile-quiz-open',Boolean(value)&&isPhone()&&document.body.classList.contains('focus-mode'));
+    open.setAttribute('aria-expanded',String(document.body.classList.contains('mobile-quiz-open')));
+    if(value)requestAnimationFrame(()=>document.querySelector('#workspaceRight input:not(:disabled)')?.focus({preventScroll:true}));
+  };
+  open.addEventListener('click',()=>setOpen(true));close.addEventListener('click',()=>setOpen(false));
+  addEventListener('resize',()=>{if(!isPhone())setOpen(false)});
+  const originalSetFocusMode=setFocusMode;
+  setFocusMode=function(active){if(!active)setOpen(false);return originalSetFocusMode(active)};
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('mobile-quiz-open')){event.stopImmediatePropagation();setOpen(false)}},true);
+})();
+</script>
+
 <script>
 (function(){
  const phone=()=>matchMedia('(max-width:900px)').matches;
- const focusQuiz=document.getElementById('mobileFocusQuizButton'),grip=document.querySelector('.mobile-quiz-resizer');
- focusQuiz?.addEventListener('click',()=>document.body.classList.add('mobile-quiz-open'));
- let drag=false;grip?.addEventListener('pointerdown',e=>{drag=true;grip.setPointerCapture(e.pointerId)});grip?.addEventListener('pointermove',e=>{if(!drag)return;const h=Math.max(210,Math.min(innerHeight*.72,innerHeight-e.clientY));document.documentElement.style.setProperty('--mobile-quiz-height',h+'px')});grip?.addEventListener('pointerup',()=>drag=false);
- document.querySelector('.workspace-left')?.addEventListener('click',()=>document.body.classList.remove('mobile-quiz-open'));
- const oldActivate=activateTopic;activateTopic=function(id){const r=oldActivate(id);if(phone())requestAnimationFrame(()=>setFocusMode(true));return r};
-
- const oldMenu=document.querySelector('.mobile-header-toggle');
- if(oldMenu){oldMenu.textContent='';oldMenu.setAttribute('aria-label','Menüyü aç')}
- const drawer=document.createElement('aside');drawer.className='mobile-drawer';drawer.setAttribute('aria-label','Mobil menü');
- const backdrop=document.createElement('div');backdrop.className='mobile-drawer-backdrop';
- const add=(label,fn,container=drawer)=>{const x=document.createElement('button');x.type='button';x.className='drawer-button';x.textContent=label;x.addEventListener('click',()=>{fn();closeDrawer()});container.append(x);return x};
- const title=document.createElement('div');title.className='drawer-title';title.textContent='Almanca Portalı';drawer.append(title);
- add('📁 Dosya seç',()=>document.getElementById('jsonFileInput')?.click());
- add('📂 Klasör seç',()=>document.getElementById('jsonFolderInput')?.click());
- add('⏱ Sayaç',()=>document.getElementById('countdownInput')?.click());
- add('▤ Yazdır',()=>document.getElementById('printButton')?.click());
- add('Kelimelerim',()=>document.getElementById('wordPoolButton')?.click());
- add('↻ Testi sıfırla',()=>document.getElementById('clearProgressButton')?.click());
- const spacer=document.createElement('div');spacer.className='drawer-spacer';drawer.append(spacer);
- const langs=document.createElement('div');langs.className='drawer-languages';drawer.append(langs);
- add('TR',()=>setLanguage('tr'),langs);add('EN',()=>setLanguage('en'),langs);
- document.body.append(backdrop,drawer);
- const closeDrawer=()=>{document.body.classList.remove('mobile-header-open');drawer.classList.remove('open');backdrop.classList.remove('open');oldMenu?.setAttribute('aria-expanded','false')};
- const toggleDrawer=()=>{const open=!drawer.classList.contains('open');drawer.classList.toggle('open',open);backdrop.classList.toggle('open',open);document.body.classList.toggle('mobile-header-open',open);oldMenu?.setAttribute('aria-expanded',String(open))};
- oldMenu?.replaceWith(oldMenu.cloneNode(true));
- const hamburger=document.querySelector('.mobile-header-toggle');hamburger?.addEventListener('click',toggleDrawer);backdrop.addEventListener('click',closeDrawer);
-
- /* Sadece Test her zaman erisilebilir. */
- const test=document.createElement('button');test.type='button';test.className='mobile-only-test-button';test.textContent='Sadece Test';test.addEventListener('click',()=>setTestMode(true));document.body.append(test);
-
- /* Telefonda konu acilinca sade odak gorunumu varsayilan olur. */
-
- /* Uzun basma: hareket varsa kaydirma, sabitse mobil kelime menusu. */
- let timer=0,startX=0,startY=0,target=null;
- const cancel=()=>{if(timer)clearTimeout(timer);timer=0;target=null};
- const story=document.getElementById('quizStoryText');
- story?.addEventListener('touchstart',e=>{if(!phone()||e.touches.length!==1)return;const w=e.target.closest('.selectable-word');if(!w)return;target=w;startX=e.touches[0].clientX;startY=e.touches[0].clientY;timer=setTimeout(()=>{timer=0;if(!target)return;const sentence=target.closest('.sentence');showWordAudioMenu(target.textContent,sentence?.textContent||'',startX,startY);navigator.vibrate?.(18);target=null},520)},{passive:true});
- story?.addEventListener('touchmove',e=>{if(!timer)return;const x=e.touches[0].clientX,y=e.touches[0].clientY;if(Math.hypot(x-startX,y-startY)>10)cancel()},{passive:true});
- story?.addEventListener('touchend',cancel,{passive:true});story?.addEventListener('touchcancel',cancel,{passive:true});
-
- /* Mobil uzun basma menusunu istenen sirayla sadelestir. */
- const desktopWordMenu=showWordAudioMenu;
- showWordAudioMenu=function(word,sentence,x,y){
-   if(!phone())return desktopWordMenu(word,sentence,x,y);
-   hideWordAudioMenu();hideWordPopover();hideSentenceTooltip();hideWordTranslationTooltip();
-   const m=el('div','word-audio-menu'),head=el('div','word-audio-menu-title',word);m.append(head);
-   const sentenceNode=[...document.querySelectorAll('.sentence')].find(n=>n.textContent.replace(/\s+/g,' ').trim()===String(sentence).replace(/\s+/g,' ').trim());
-   const wordNode=sentenceNode?[...sentenceNode.querySelectorAll('.selectable-word')].find(n=>normalizeKey(n.textContent)===normalizeKey(word)):null;
-   const item=(label,fn)=>{const q=button(label,'',e=>{e.preventDefault();e.stopPropagation();hideWordAudioMenu();requestAnimationFrame(fn)});m.append(q)};
-   item('Kelimeyi seç',()=>selectElementText(wordNode));
-   item('Cümleyi seç',()=>selectSentenceText(sentenceNode));
-   item('Kelimeyi çevir',()=>{const info=findWordTranslation(word);if(wordNode&&info)showWordTranslationTooltip(wordNode,info,{pinned:true});else alert('Bu kelime için çeviri bulunamadı.')});
-   item('Cümleyi çevir',()=>sentenceNode?showSentenceTooltip(sentenceNode,{force:true,pinned:true}):alert('Bu cümle için çeviri bulunamadı.'));
-   item('Cümleyi dinle',()=>speakWordText(sentence,speechRate,1,sentence));
-   item('Kelimelerime ekle',()=>addWordToPool(word,sentence));
-   document.body.append(m);activeWordAudioMenu=m;positionWordAudioMenu(m,x,y);
+ /* Mobilde tek ses motoru ve tek oynatma: Samsung cift okumayi engeller. */
+ const normalPlay=playGermanSentence;
+ playGermanSentence=function(text,btn){
+   if(!phone())return normalPlay(text,btn);
+   if(!audioEnabled)return;stopSentenceAudio();text=String(text||'').trim();if(!text)return;
+   sentenceAudioButton=btn;btn.classList.add('playing','visible');
+   speakWithDeviceGerman(text,btn);
  };
+ /* Kompakt ust menu. */
+ const head=document.querySelector('.head');
+ const menu=document.createElement('button');menu.type='button';menu.className='mobile-header-toggle';menu.textContent='Menü';menu.setAttribute('aria-expanded','false');
+ if(head)head.append(menu);
+ menu.addEventListener('click',()=>{const open=document.body.classList.toggle('mobile-header-open');menu.textContent=open?'Kapat':'Menü';menu.setAttribute('aria-expanded',String(open))});
+ /* Quiz panelini ust kenardan parmakla boyutlandir. */
+ const grip=document.createElement('div');grip.className='mobile-quiz-resizer';grip.setAttribute('role','separator');grip.setAttribute('aria-label','Soru paneli yüksekliğini ayarla');document.body.append(grip);
+ let dragging=false;
+ const resize=y=>{const min=210,max=innerHeight*.72;const h=Math.max(min,Math.min(max,innerHeight-y));document.documentElement.style.setProperty('--mobile-quiz-height',h+'px')};
+ grip.addEventListener('pointerdown',e=>{dragging=true;grip.setPointerCapture(e.pointerId);e.preventDefault()});
+ grip.addEventListener('pointermove',e=>{if(dragging)resize(e.clientY)});
+ const finish=e=>{dragging=false;if(grip.hasPointerCapture?.(e.pointerId))grip.releasePointerCapture(e.pointerId)};
+ grip.addEventListener('pointerup',finish);grip.addEventListener('pointercancel',finish);
+ /* Panel acikken ana metne dokunmak paneli kapatir. */
+ document.querySelector('.workspace-left')?.addEventListener('click',()=>{if(phone()&&document.body.classList.contains('mobile-quiz-open')){document.body.classList.remove('mobile-quiz-open');document.getElementById('mobileFocusQuizButton')?.setAttribute('aria-expanded','false')}});
 })();
 </script>
-<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));</script></body>
+<style id="mobile-clean-ux">
+/* Clean mobile layer. Desktop remains unchanged. */
+.mobile-appbar,.mobile-drawer-backdrop,.mobile-context-backdrop{display:none}
+@media (max-width:900px){
+  :root{--mobile-bar-h:58px}
+  body{overflow-x:hidden;background:var(--bg);padding-top:calc(var(--mobile-bar-h) + env(safe-area-inset-top))}
+  body.mobile-drawer-open,body.mobile-context-open{overflow:hidden}
+  .app{padding:8px 8px calc(28px + env(safe-area-inset-bottom))!important;max-width:none}
+
+  .mobile-appbar{position:fixed;z-index:12000;left:0;right:0;top:0;height:calc(var(--mobile-bar-h) + env(safe-area-inset-top));padding:env(safe-area-inset-top) 12px 0;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;background:rgba(13,15,20,.96);border-bottom:1px solid rgba(255,255,255,.09);backdrop-filter:blur(16px)}
+  .mobile-menu-button,.mobile-test-button{width:42px;height:42px;padding:0;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:#1b202b;color:#fff;font-size:0;cursor:pointer}
+  .mobile-menu-button::before{content:'☰';font-size:24px}.mobile-test-button::before{content:'✓';font-size:18px;font-weight:900}
+  .mobile-app-title{min-width:0;text-align:center}.mobile-app-title strong,.mobile-app-title span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mobile-app-title strong{font-size:14px}.mobile-app-title span{margin-top:2px;color:var(--muted);font-size:10px}
+
+  .mobile-drawer-backdrop{position:fixed;z-index:12020;inset:0;display:none;background:rgba(0,0,0,.64);backdrop-filter:blur(3px)}
+  body.mobile-drawer-open .mobile-drawer-backdrop{display:block}
+  .mobile-drawer{width:min(86vw,340px);height:100%;padding:calc(14px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));overflow-y:auto;background:#12151d;border-right:1px solid rgba(255,255,255,.1);box-shadow:18px 0 45px rgba(0,0,0,.55)}
+  .mobile-drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.mobile-drawer-head strong{font-size:18px}.mobile-drawer-close{width:38px;height:38px;border:0;border-radius:50%;background:#232936;color:#fff;font-size:23px}
+  .mobile-menu-section{margin:0 0 14px;padding:12px;background:#181c25;border:1px solid rgba(255,255,255,.07);border-radius:15px}.mobile-menu-section h3{margin:0 0 9px;color:#93c5fd;font-size:10px;text-transform:uppercase;letter-spacing:.7px}.mobile-menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mobile-menu-grid.one{grid-template-columns:1fr}.mobile-menu-action{min-height:44px;padding:9px;border:1px solid rgba(255,255,255,.08);border-radius:11px;background:#222836;color:#f8fafc;font-weight:700;font-size:12px}.mobile-menu-action.active{background:#2563eb;border-color:#60a5fa}.mobile-menu-action:disabled{opacity:.4}
+
+  /* The old desktop command center and duplicated mobile controls are removed only on phones. */
+  .header-top,.topic-tabs,.reader-main-toolbar,.reader-font-toolbar,.wordcount,.resizer,.footer,.mobile-header-toggle,.mobile-focus-quiz-button,.mobile-focus-quiz-close,.mobile-quiz-resizer,.focus-quick-menu,.focus-exit-button,.test-mode-exit-button{display:none!important}
+  #dropZone{margin:10px auto;padding:34px 18px}.welcome{margin:14px auto;padding:34px 20px}
+  .workspace-container{display:block!important;margin:0!important}.workspace-left{position:static!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important}.workspace-right{display:none!important}
+  .readCard{min-height:calc(100dvh - var(--mobile-bar-h) - env(safe-area-inset-top) - 16px);padding:16px 13px!important;border-radius:16px!important;box-shadow:none}.story-title-row{padding:0 2px 10px;border-bottom:1px solid rgba(255,255,255,.07)}.story-heading{font-size:18px!important}.story-level-badge{font-size:10px}
+  #quizStoryText{height:auto!important;max-height:none!important;overflow:visible!important;margin-top:14px!important;padding:0 2px 26px!important;font-size:var(--reader-font-size);line-height:1.88;touch-action:pan-y;overscroll-behavior:auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  #quizStoryText p{margin:0 0 22px}.sentence,.selectable-word{cursor:default!important;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.sentence{display:inline;border-radius:5px}
+  .inline-sentence-speaker{display:none!important}.mobile-sentence-actions{display:none!important}
+
+  /* Paragraph mode is a reliable vertical pager, with no tiny side controls. */
+  #quizStoryText.paragraph-flow{height:calc(100dvh - var(--mobile-bar-h) - env(safe-area-inset-top) - 84px)!important;max-height:none!important;overflow-y:auto!important;scroll-snap-type:y mandatory;touch-action:pan-y;padding:0!important}
+  #quizStoryText.paragraph-flow>p{min-height:100%!important;margin:0 0 8px!important;padding:24px 10px!important;display:block!important;scroll-snap-align:start;scroll-snap-stop:always;border:0;background:transparent}
+  .paragraph-flow-status{position:fixed!important;z-index:11990;top:calc(env(safe-area-inset-top) + 48px)!important;left:50%!important;transform:translateX(-50%)!important;display:none!important;margin:0!important}.readCard.flow-active .paragraph-flow-status{display:flex!important}.paragraph-flow-nav{display:none!important}
+
+  /* Full-screen test. Questions never share or resize the reading screen. */
+  body.mobile-test-view{overflow-y:auto;padding-top:calc(var(--mobile-bar-h) + env(safe-area-inset-top))}
+  body.mobile-test-view .workspace-left{display:none!important}
+  body.mobile-test-view .workspace-right{display:block!important;position:static!important;width:100%!important;max-width:none!important;max-height:none!important;margin:0!important;padding:10px 4px 26px!important;overflow:visible!important}
+  body.mobile-test-view .question-header{display:none!important}body.mobile-test-view #questionProgress{margin:4px 2px 18px!important}body.mobile-test-view .option{min-height:54px;margin:9px 0;padding:14px 12px;border-radius:14px}body.mobile-test-view .question{font-size:calc(var(--quiz-font-size) + 2px)}body.mobile-test-view .nav{position:sticky;bottom:calc(6px + env(safe-area-inset-bottom));z-index:5;padding:8px;margin-top:18px;background:rgba(9,10,15,.9);border-radius:14px;backdrop-filter:blur(10px)}
+
+  /* Focus is reading only. It keeps one-column cards fitted to the viewport. */
+  body.focus-mode{overflow-y:auto!important;padding-top:calc(var(--mobile-bar-h) + env(safe-area-inset-top))!important}
+  body.focus-mode .app{padding:8px 8px calc(28px + env(safe-area-inset-bottom))!important}
+  body.focus-mode .readCard{min-height:calc(100dvh - var(--mobile-bar-h) - env(safe-area-inset-top) - 16px)!important;padding:16px 13px 22px!important;border-radius:16px!important}
+  body.focus-mode #quizStoryTitle{max-width:none!important;padding:0 2px 10px!important;font-size:19px!important}
+  body.focus-mode #quizStoryText{width:100%!important;max-width:none!important;height:auto!important;max-height:none!important;overflow:visible!important;margin-top:14px!important;padding:0 2px 30px!important}
+  body.focus-mode #quizStoryText.paragraph-flow{height:calc(100dvh - var(--mobile-bar-h) - env(safe-area-inset-top) - 84px)!important;overflow-y:auto!important}
+  body.focus-mode.mobile-quiz-open .workspace-right{display:none!important}
+
+  .mobile-context-backdrop{position:fixed;z-index:12100;inset:0;display:none;align-items:flex-end;background:rgba(0,0,0,.58)}body.mobile-context-open .mobile-context-backdrop{display:flex}.mobile-context-sheet{width:100%;padding:12px 14px calc(16px + env(safe-area-inset-bottom));background:#151923;border-top:1px solid rgba(255,255,255,.12);border-radius:22px 22px 0 0;box-shadow:0 -18px 48px rgba(0,0,0,.65)}.mobile-context-title{margin:0 0 10px;padding:0 3px;color:#bfdbfe;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mobile-context-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.mobile-context-action{min-height:48px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:#232936;color:#fff;font-weight:750}.mobile-context-cancel{width:100%;min-height:44px;margin-top:9px;border:0;border-radius:12px;background:#353c4c;color:#fff}
+  .word-audio-menu,.word-selection-popover,.sentence-tooltip,.word-translation-tooltip{max-width:calc(100vw - 20px)}
+}
+</style>
+<script id="mobile-clean-ux-script">
+(function(){
+  'use strict';
+  const phone=()=>matchMedia('(max-width:900px)').matches;
+  const $id=id=>document.getElementById(id);
+  let mobileView='read', longPressTimer=null, longPressStart=null, suppressClickUntil=0;
+
+  const appbar=document.createElement('header');
+  appbar.className='mobile-appbar';
+  appbar.innerHTML='<button class="mobile-menu-button" type="button" aria-label="Menüyü aç" aria-expanded="false"></button><div class="mobile-app-title"><strong>Almanca Portalı</strong><span>JSON yükleyerek başlayın</span></div><button class="mobile-test-button" type="button" aria-label="Teste geç"></button>';
+  document.body.prepend(appbar);
+
+  const drawerWrap=document.createElement('div');
+  drawerWrap.className='mobile-drawer-backdrop';drawerWrap.setAttribute('aria-hidden','true');
+  drawerWrap.innerHTML='<aside class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobil menü"><div class="mobile-drawer-head"><strong>Menü</strong><button class="mobile-drawer-close" type="button" aria-label="Menüyü kapat">×</button></div><section class="mobile-menu-section"><h3>Çalışma</h3><div class="mobile-menu-grid"><button class="mobile-menu-action" data-mobile-view="read">Oku</button><button class="mobile-menu-action" data-mobile-view="focus">Odak</button><button class="mobile-menu-action" data-mobile-view="test">Test</button><button class="mobile-menu-action" data-mobile-action="file">Dosya Aç</button></div></section><section class="mobile-menu-section"><h3>Okuma düzeni</h3><div class="mobile-menu-grid"><button class="mobile-menu-action" data-mobile-layout="text">Metin</button><button class="mobile-menu-action" data-mobile-layout="paragraph">Paragraf</button></div></section><section class="mobile-menu-section"><h3>Dil</h3><div class="mobile-menu-grid"><button class="mobile-menu-action" data-mobile-lang="de">DE</button><button class="mobile-menu-action" data-mobile-lang="tr">TR</button><button class="mobile-menu-action" data-mobile-lang="en">EN</button></div></section><section class="mobile-menu-section"><h3>Araçlar</h3><div class="mobile-menu-grid"><button class="mobile-menu-action" data-mobile-action="settings">Okuma Ayarları</button><button class="mobile-menu-action" data-mobile-action="words">Kelimelerim</button><button class="mobile-menu-action" data-mobile-action="timer">Sayaç</button><button class="mobile-menu-action" data-mobile-action="reset">Testi Sıfırla</button></div></section></aside>';
+  document.body.append(drawerWrap);
+
+  const contextWrap=document.createElement('div');contextWrap.className='mobile-context-backdrop';contextWrap.setAttribute('aria-hidden','true');contextWrap.innerHTML='<div class="mobile-context-sheet" role="dialog" aria-modal="true" aria-label="Metin işlemleri"><div class="mobile-context-title"></div><div class="mobile-context-grid"></div><button class="mobile-context-cancel" type="button">Kapat</button></div>';document.body.append(contextWrap);
+
+  const setDrawer=open=>{if(!phone())open=false;document.body.classList.toggle('mobile-drawer-open',open);drawerWrap.setAttribute('aria-hidden',String(!open));appbar.querySelector('.mobile-menu-button').setAttribute('aria-expanded',String(open))};
+  appbar.querySelector('.mobile-menu-button').addEventListener('click',()=>setDrawer(!document.body.classList.contains('mobile-drawer-open')));drawerWrap.querySelector('.mobile-drawer-close').addEventListener('click',()=>setDrawer(false));drawerWrap.addEventListener('click',e=>{if(e.target===drawerWrap)setDrawer(false)});
+
+  function updateTitle(){const title=$id('quizStoryTitleText')?.textContent?.trim()||'Almanca Portalı';const level=$id('quizStoryLevelBadge')?.textContent?.trim()||'JSON yükleyerek başlayın';appbar.querySelector('strong').textContent=title;appbar.querySelector('span').textContent=level}
+  function updateMenu(){drawerWrap.querySelectorAll('[data-mobile-view]').forEach(b=>b.classList.toggle('active',b.dataset.mobileView===mobileView));drawerWrap.querySelectorAll('[data-mobile-layout]').forEach(b=>b.classList.toggle('active',(b.dataset.mobileLayout==='paragraph')===typeof paragraphFlowEnabled!=='undefined'&&paragraphFlowEnabled));drawerWrap.querySelectorAll('[data-mobile-lang]').forEach(b=>b.classList.toggle('active',b.dataset.mobileLang===(typeof currentLanguage!=='undefined'?currentLanguage:'de')));}
+  function setMobileView(view){if(!phone())return;mobileView=view;document.body.classList.remove('mobile-test-view','mobile-quiz-open');if(view==='focus'){if(typeof setTestMode==='function')setTestMode(false);if(typeof setFocusMode==='function')setFocusMode(true)}else{if(typeof setFocusMode==='function')setFocusMode(false);if(typeof setTestMode==='function')setTestMode(false);document.body.classList.toggle('mobile-test-view',view==='test')}appbar.querySelector('.mobile-test-button').setAttribute('aria-label',view==='test'?'Okumaya dön':'Teste geç');appbar.querySelector('.mobile-test-button').innerHTML='';updateMenu();setDrawer(false);window.scrollTo({top:0,behavior:'instant'})}
+  appbar.querySelector('.mobile-test-button').addEventListener('click',()=>setMobileView(mobileView==='test'?'read':'test'));
+
+  drawerWrap.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.mobileView)setMobileView(b.dataset.mobileView);else if(b.dataset.mobileLayout){if(typeof setParagraphFlowEnabled==='function')setParagraphFlowEnabled(b.dataset.mobileLayout==='paragraph',true);updateMenu();setDrawer(false)}else if(b.dataset.mobileLang){if(typeof setLanguage==='function')setLanguage(b.dataset.mobileLang);updateMenu();setDrawer(false)}else if(b.dataset.mobileAction){const a=b.dataset.mobileAction;if(a==='file')$id('jsonFileInput')?.click();if(a==='settings')$id('readingSettingsButton')?.click();if(a==='words')$id('wordPoolButton')?.click();if(a==='reset')$id('clearProgressButton')?.click();if(a==='timer')$id('countdownInput')?.click();setDrawer(false)}});
+
+  const originalActivate=activateTopic;activateTopic=function(){const r=originalActivate.apply(this,arguments);requestAnimationFrame(()=>{updateTitle();if(phone())setMobileView('read')});return r};
+
+  function closeContext(){document.body.classList.remove('mobile-context-open');contextWrap.setAttribute('aria-hidden','true');contextWrap.querySelector('.mobile-context-grid').replaceChildren()}
+  contextWrap.addEventListener('click',e=>{if(e.target===contextWrap||e.target.closest('.mobile-context-cancel'))closeContext()});
+  function addContext(label,fn){const b=document.createElement('button');b.type='button';b.className='mobile-context-action';b.textContent=label;b.addEventListener('click',()=>{closeContext();requestAnimationFrame(fn)});contextWrap.querySelector('.mobile-context-grid').append(b)}
+  function openContext(sentence,wordNode=null){if(!phone())return;const sentenceText=[...sentence.childNodes].filter(n=>!n.classList?.contains?.('inline-sentence-speaker')).map(n=>n.textContent||'').join('').trim();const word=wordNode?.textContent?.trim()||'';contextWrap.querySelector('.mobile-context-title').textContent=word||sentenceText;const grid=contextWrap.querySelector('.mobile-context-grid');grid.replaceChildren();addContext('Dinle',()=>{if(typeof speakWordText==='function')speakWordText(sentenceText,(typeof speechRate!=='undefined'?speechRate:.9),1,sentenceText)});addContext('Çeviri',()=>{if(typeof showSentenceTooltip==='function')showSentenceTooltip(sentence,{force:true,pinned:true})});if(word){addContext('Kelimeyi Dinle',()=>speakWordText?.(word,(typeof speechRate!=='undefined'?speechRate:.9),1,sentenceText));addContext('Kelime Çevirisi',()=>{const info=findWordTranslation?.(word);if(info)showWordTranslationTooltip?.(wordNode,info,{pinned:true});else alert('Bu kelime için çeviri bulunamadı.')});addContext('Kelimelerime Ekle',()=>addWordToPool?.(word,sentenceText))}else addContext('Kelimelerime Ekle',()=>addWordToPool?.(sentenceText,sentenceText));addContext('Metni Seç',()=>{if(wordNode)selectElementText?.(wordNode);else selectSentenceText?.(sentence)});document.body.classList.add('mobile-context-open');contextWrap.setAttribute('aria-hidden','false')}
+
+  const reader=$id('quizStoryText');
+  reader?.addEventListener('pointerdown',e=>{if(!phone()||e.pointerType==='mouse')return;const word=e.target.closest('.selectable-word'),sentence=e.target.closest('.sentence');if(!sentence)return;longPressStart={x:e.clientX,y:e.clientY,sentence,word};clearTimeout(longPressTimer);longPressTimer=setTimeout(()=>{suppressClickUntil=Date.now()+650;navigator.vibrate?.(18);openContext(sentence,word)},520)},{passive:true});
+  reader?.addEventListener('pointermove',e=>{if(!longPressStart)return;if(Math.hypot(e.clientX-longPressStart.x,e.clientY-longPressStart.y)>9){clearTimeout(longPressTimer);longPressStart=null}},{passive:true});
+  ['pointerup','pointercancel','pointerleave'].forEach(type=>reader?.addEventListener(type,()=>{clearTimeout(longPressTimer);longPressStart=null},{passive:true}));
+  reader?.addEventListener('click',e=>{if(phone()&&Date.now()<suppressClickUntil){e.preventDefault();e.stopImmediatePropagation()}},true);
+  reader?.addEventListener('contextmenu',e=>{if(phone()){e.preventDefault();const word=e.target.closest('.selectable-word'),sentence=e.target.closest('.sentence');if(sentence)openContext(sentence,word)}},true);
+
+  addEventListener('resize',()=>{if(!phone()){setDrawer(false);closeContext();document.body.classList.remove('mobile-test-view');mobileView='read'}else updateMenu()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.body.classList.contains('mobile-context-open'))closeContext();else if(document.body.classList.contains('mobile-drawer-open'))setDrawer(false)}},true);
+  updateTitle();updateMenu();
+})();
+</script>
+
+</body>
 </html>
