@@ -1,2 +1,3 @@
-# Almanca Portalı v4
-GitHub Pages için hazır mobil paket. PC görünümü korunur.
+# Almanca Öğrenme Portalı v7
+
+Mobil ve tablet arayüzü, cihaz modeline değil ekran boyutu ve dokunmatik özelliğine göre çalışır. Masaüstü arayüzü değiştirilmemiştir.
