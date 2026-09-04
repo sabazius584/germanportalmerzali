@@ -1,12 +1,14 @@
-# Almanca Öğrenme Portalı v11 Final
+# Almanca Öğrenme Portalı - Güncel Paket
 
-## Bu sürümde
-- Samsung/Android üzerinde metin ve paragraf dikey kaydırması düzeltildi.
-- Uzun basma menüsündeki yazıların seçilmesi engellendi.
-- Cümle ve kelime çevirileri mobilde orijinal cümlenin altında, normal sayfa akışı içinde gösterilir.
-- Paragraf sayacı başlığın altında ve metin alanının dışındadır.
-- Aynı uygulama oturumunda sayfa yenilenirse yüklenen JSON dosyaları ve aktif konu geri gelir.
-- Uygulama veya sekme kapatılıp yeni oturum açıldığında ilk dosya yükleme ekranı açılır.
-- Kelime havuzu, test ilerlemesi ve kullanıcı tercihleri kalıcı kalır.
+Bu paket, kullanıcının gönderdiği tek dosyalı GitHub sürümünü içerir.
 
-GitHub Pages için ZIP içindeki bütün dosyaları deponun kök dizinine yükleyin.
+## Güncellemeler
+- Samsung/Android dokunmatik cihazlarda dikey metin kaydırma iyileştirildi.
+- Uzun basma menüsündeki Cümleyi Seç ve Kelimeyi Seç eylemleri kaldırıldı.
+- Cümle ve kelime çevirileri mobilde metnin altında, ayrı ve çakışmayan kartta gösterilir.
+- Paragraf sayacı metin alanının dışına, başlığın altına taşındı.
+
+## Kullanım
+`index.html` dosyasını mevcut GitHub deponuzdaki aynı adlı dosyayla değiştirin.
+
+Not: Kullanıcı tarafından yalnızca index.html sağlandığı için paket bu dosya ve bu açıklamayı içerir.
