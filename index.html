@@ -2,7 +2,14 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
+<meta name="theme-color" content="#13151c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Almanca Portalı">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
 <title>Almanca Öğrenme Portalı</title>
 <style>
 :root{--bg:#090a0f;--panel:#13151c;--panel-glass:rgba(19, 21, 28, 0.85);--panel2:#1a1d26;--text:#f8fafc;--muted:#94a3b8;--blue:#3b82f6;--blue-light:#60a5fa;--green:#22c55e;--green-bg:rgba(34, 197, 94, 0.15);--red:#ef4444;--red-bg:rgba(239, 68, 68, 0.15);--line:#272a37;--reader-font-size:16px;--quiz-font-size:16px}
@@ -280,6 +287,9 @@ body.focus-mode .resizer { display: none; }
 .word-audio-menu-title{padding:7px 9px 8px;color:#93c5fd;font-size:13px;font-weight:800;border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .word-audio-menu button{display:flex;align-items:center;width:100%;margin-top:4px;padding:8px 9px;border:0;border-radius:8px;background:transparent;color:#f1f5f9;text-align:left;cursor:pointer;font-size:12px}
 .word-audio-menu button:hover{background:rgba(59,130,246,.18)}
+.context-menu-divider{height:1px;margin:6px 7px 3px;background:rgba(255,255,255,.10)}
+#quizStoryText ::selection{background:#fde047;color:#111827}
+#quizStoryText ::-moz-selection{background:#fde047;color:#111827}
 @media(max-width:430px){.speech-rate-control button{width:20px}.word-audio-menu{display:none!important}}
 @media print{.word-audio-menu{display:none!important}}
 
@@ -356,6 +366,229 @@ body.focus-mode .resizer { display: none; }
 #s1-quizCard{padding-top:0}
 @media(max-width:900px){.workspace-right{position:static;max-height:none;overflow:visible;padding-top:18px!important}.question-header{min-height:38px}}
 
+
+/* Gelistirilmis Odak Modu: yalnizca konu basligi ve okuma metni */
+body.focus-mode{overflow:hidden}
+body.focus-mode .app{max-width:none!important;padding:12px 24px 24px!important}
+body.focus-mode .header-top,
+body.focus-mode #dropZone,
+body.focus-mode #topicTabs,
+body.focus-mode #errorBox,
+body.focus-mode #welcome,
+body.focus-mode .workspace-right,
+body.focus-mode .resizer,
+body.focus-mode .footer,
+body.focus-mode .reader-font-toolbar,
+body.focus-mode .reading-mode-buttons,
+body.focus-mode .toggle-dashboard,
+body.focus-mode .translation-controls,
+body.focus-mode .wordcount,
+body.focus-mode .paragraph-flow-status,
+body.focus-mode .paragraph-flow-nav{display:none!important}
+body.focus-mode .workspace-container{display:block!important;margin:0!important;width:100%!important}
+body.focus-mode .workspace-left{position:static!important;width:min(100%,1280px)!important;min-width:0!important;max-width:1280px!important;margin:0 auto!important}
+body.focus-mode .readCard{min-height:calc(100dvh - 24px);padding:30px clamp(24px,5vw,80px)!important;border-radius:20px}
+body.focus-mode .readCard>div:first-child{min-height:0!important;padding:0!important}
+body.focus-mode #quizStoryTitle,
+body.focus-mode #quizStoryText{width:100%;max-width:1050px;margin-left:auto!important;margin-right:auto!important}
+body.focus-mode #quizStoryTitle{font-size:clamp(20px,2vw,28px)!important;line-height:1.35;padding:0 56px 18px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+body.focus-mode #quizStoryText{height:calc(100dvh - 126px)!important;max-height:none!important;overflow-y:auto!important;margin-top:18px!important;padding:0 10px 36px 0!important;overscroll-behavior-y:contain}
+
+.focus-quick-menu,.focus-exit-button,.focus-tools-backdrop{display:none}
+body.focus-mode .focus-quick-menu{position:fixed;z-index:10300;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));display:flex;gap:8px;opacity:.38;transition:opacity .2s}
+body.focus-mode .focus-quick-menu:hover,body.focus-mode .focus-quick-menu:focus-within{opacity:1}
+.focus-quick-button,.focus-exit-button{align-items:center;justify-content:center;width:42px;height:42px;padding:0;border:1px solid rgba(255,255,255,.12);border-radius:50%;background:rgba(19,21,28,.86);color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.4);backdrop-filter:blur(14px);cursor:pointer;font-weight:800}
+body.focus-mode .focus-exit-button{position:fixed;z-index:10310;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));display:flex;font-size:24px}
+.focus-tools-backdrop.open{position:fixed;inset:0;z-index:10320;display:flex;justify-content:flex-end;background:rgba(0,0,0,.56);backdrop-filter:blur(4px)}
+.focus-tools-panel{width:min(390px,100%);height:100%;padding:22px;background:#13151c;border-left:1px solid rgba(255,255,255,.1);overflow-y:auto;box-shadow:-16px 0 45px rgba(0,0,0,.55)}
+.focus-tools-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.focus-tools-header h2{margin:0;font-size:20px}.focus-tools-close{width:38px;height:38px;border:0;border-radius:50%;background:var(--panel2);color:#fff;font-size:22px;cursor:pointer}
+.focus-tools-section{margin:0 0 16px;padding:14px;background:#191c25;border:1px solid rgba(255,255,255,.07);border-radius:15px}
+.focus-tools-section h3{margin:0 0 10px;color:#bfdbfe;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.focus-tools-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.focus-tools-grid .btn{width:100%;padding:10px 8px}
+.focus-tools-grid .wide{grid-column:1/-1}
+.focus-tools-status{display:block;margin-top:5px;color:#93c5fd;font-size:10px;font-weight:800}
+
+@media(max-width:650px){
+  body.focus-mode .app{padding:max(6px,env(safe-area-inset-top)) 6px calc(60px + env(safe-area-inset-bottom))!important}
+  body.focus-mode .workspace-left{width:100%!important;max-width:none!important;margin:0!important}
+  body.focus-mode .readCard{min-height:calc(100dvh - 12px);padding:18px 12px 22px!important;border-radius:15px}
+  body.focus-mode #quizStoryTitle{font-size:19px!important;padding:2px 48px 14px 48px!important}
+  body.focus-mode #quizStoryText{height:calc(100dvh - 93px)!important;margin-top:14px!important;padding:0 2px 30px!important;line-height:1.88}
+  body.focus-mode .reader-text.paragraph-flow{height:calc(100dvh - 93px)!important;max-height:calc(100dvh - 93px)!important}
+  body.focus-mode .reader-text.paragraph-flow>p{min-height:calc(100dvh - 93px)!important;padding:28px 12px!important}
+  body.focus-mode .focus-quick-menu{top:auto;left:50%;right:auto;bottom:max(8px,env(safe-area-inset-bottom));transform:translateX(-50%);opacity:.92;padding:5px;border:1px solid rgba(255,255,255,.1);border-radius:25px;background:rgba(13,15,20,.78);backdrop-filter:blur(14px)}
+  body.focus-mode .focus-quick-button{width:40px;height:40px;box-shadow:none}
+  body.focus-mode .focus-exit-button{width:38px;height:38px;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left))}
+  .focus-tools-backdrop.open{align-items:flex-end;justify-content:center}
+  .focus-tools-panel{width:100%;height:auto;max-height:min(78dvh,680px);padding:18px 16px calc(18px + env(safe-area-inset-bottom));border-left:0;border-top:1px solid rgba(255,255,255,.1);border-radius:22px 22px 0 0;box-shadow:0 -16px 45px rgba(0,0,0,.6)}
+}
+@media print{.focus-quick-menu,.focus-exit-button,.focus-tools-backdrop{display:none!important}}
+
+
+/* Duzenli normal okuma arayuzu */
+.readCard{padding:24px!important}
+.readCard>div:first-child{min-height:0!important;padding:0!important}
+.story-heading{display:flex;align-items:center;gap:10px;min-width:0;margin:0!important;font-size:21px!important;line-height:1.35;letter-spacing:-.25px}
+#quizStoryTitleText{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.story-level-badge{flex:none;padding:4px 9px;border:1px solid rgba(96,165,250,.23);border-radius:999px;background:rgba(59,130,246,.11);color:#93c5fd;font-size:11px;font-weight:850;letter-spacing:.25px}
+.reader-main-toolbar{position:relative;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;margin:17px 0 18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.065)}
+.reader-main-toolbar .translation-controls{grid-column:1;grid-row:1;margin:0!important}
+.reader-main-toolbar .reading-mode-buttons{grid-column:2;grid-row:1;display:flex!important;justify-content:flex-start;align-items:center;gap:6px!important;margin:0!important;flex-wrap:wrap!important}
+.reader-main-toolbar>.reading-settings-button{grid-column:3;grid-row:1}
+.reader-main-toolbar .btn,.reader-main-toolbar .language-tab{min-height:36px;padding:8px 13px!important;border-radius:10px;font-size:12.5px!important;box-shadow:none}
+.reader-main-toolbar .language-tabs{gap:5px}
+.reading-settings-button{white-space:nowrap;background:#202430!important}
+.reading-settings-button:hover{background:#2a3040!important}
+
+/* Ayarlar masaustunde sag cekmece, telefonda alt panel */
+.reading-settings-backdrop{display:none}
+.reading-settings-backdrop.open{position:fixed;inset:0;z-index:10350;display:flex;justify-content:flex-end;background:rgba(0,0,0,.58);backdrop-filter:blur(4px)}
+.reading-settings-panel{width:min(390px,100%);height:100%;padding:22px;background:#13151c;border-left:1px solid rgba(255,255,255,.09);overflow-y:auto;box-shadow:-18px 0 46px rgba(0,0,0,.58)}
+.reading-settings-header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:18px}
+.reading-settings-header h2{margin:0 0 4px;font-size:20px}.reading-settings-header p{margin:0;color:var(--muted);font-size:12px}
+.reading-settings-close{flex:none;width:38px;height:38px;border:1px solid rgba(255,255,255,.07);border-radius:50%;background:var(--panel2);color:#fff;font-size:22px;cursor:pointer}
+.reading-settings-panel .toggle-dashboard{position:static!important;display:grid!important;width:100%!important;max-width:none!important;grid-template-columns:1fr!important;gap:9px!important;margin:0!important}
+.reading-settings-panel .translation-control{display:grid!important;width:100%!important;min-width:0!important;max-width:none!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:10px!important;min-height:52px!important;padding:11px 12px!important;border-radius:13px!important;background:#191d27}
+.reading-settings-panel .translation-control-label{font-size:13px!important;color:#e2e8f0!important;font-weight:700!important;overflow:visible!important}
+.reading-settings-panel .toggle-state{display:none!important}
+.reading-settings-panel .audio-control-box{grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto auto!important}
+.reading-settings-panel .audio-control-box .speech-rate-control,.reading-settings-panel .audio-control-box .voice-source-control{grid-column:1/-1!important}
+.reading-settings-panel .speech-rate-control{justify-content:space-between!important;margin-top:6px;padding:9px 0 0!important}
+.reading-settings-panel .speech-rate-control button{width:32px;height:28px}
+.reading-settings-panel .speech-rate-control span{font-size:11px}
+.reading-settings-panel .voice-source-control{gap:7px!important;padding-top:9px!important}
+.reading-settings-panel .voice-source-control button{height:30px;font-size:11px}
+body.reading-settings-open{overflow:hidden}
+
+/* Odak modunda normal arac cubugu zaten gizlenir */
+body.focus-mode .reader-main-toolbar,body.focus-mode .reading-settings-backdrop{display:none!important}
+
+@media(max-width:900px){
+ .reader-main-toolbar{grid-template-columns:1fr auto;gap:9px}
+ .reader-main-toolbar .translation-controls{grid-column:1;grid-row:1}
+ .reader-main-toolbar>.reading-settings-button{grid-column:2;grid-row:1}
+ .reader-main-toolbar .reading-mode-buttons{grid-column:1/-1;grid-row:2}
+}
+@media(max-width:650px){
+ .readCard{padding:18px 14px!important;border-radius:18px}
+ .story-heading{font-size:18px!important;gap:7px}.story-level-badge{padding:3px 7px;font-size:10px}
+ .reader-main-toolbar{grid-template-columns:1fr;gap:8px;margin:13px 0 15px;padding-top:12px}
+ .reader-main-toolbar .translation-controls{grid-column:1;grid-row:1;width:100%}
+ .reader-main-toolbar .language-tabs{display:grid;width:100%;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible!important}
+ .reader-main-toolbar .language-tab{width:100%;padding:8px 5px!important}
+ .reader-main-toolbar .reading-mode-buttons{grid-column:1;grid-row:2;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+ .reader-main-toolbar .reading-mode-buttons .btn{width:100%;white-space:nowrap}
+ .reader-main-toolbar>.reading-settings-button{grid-column:1;grid-row:3;width:100%}
+ .reading-settings-backdrop.open{align-items:flex-end;justify-content:center}
+ .reading-settings-panel{width:100%;height:auto;max-height:min(82dvh,700px);padding:18px 16px calc(18px + env(safe-area-inset-bottom));border:0;border-top:1px solid rgba(255,255,255,.1);border-radius:22px 22px 0 0;box-shadow:0 -18px 46px rgba(0,0,0,.62)}
+}
+
+
+/* Okuma ayarlari katman duzeltmesi */
+body.reading-settings-open .workspace-left{z-index:10400!important}
+body.reading-settings-open .workspace-right{z-index:1!important}
+.reading-settings-backdrop.open{z-index:10500!important}
+.reading-settings-panel{position:relative;z-index:10501}
+
+/* Sadece Test modu */
+.test-mode-exit-button{display:none}
+body.test-mode{overflow:hidden}
+body.test-mode .header-top,body.test-mode #dropZone,body.test-mode #topicTabs,body.test-mode #errorBox,body.test-mode #welcome,body.test-mode .workspace-left,body.test-mode .resizer,body.test-mode .footer{display:none!important}
+body.test-mode .app{max-width:none!important;padding:12px 20px 24px!important}
+body.test-mode .workspace-container{display:block!important;margin:0!important;width:100%!important}
+body.test-mode .workspace-right{position:static!important;width:min(100%,920px)!important;max-width:920px!important;max-height:none!important;margin:0 auto!important;padding:0!important;overflow:visible!important}
+body.test-mode .question-header{display:none!important}
+body.test-mode #questionProgress{margin:0 52px 22px!important}
+body.test-mode #s1-quizCard{font-size:var(--quiz-font-size)}
+body.test-mode .test-mode-exit-button{position:fixed;z-index:10600;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border:1px solid rgba(255,255,255,.12);border-radius:50%;background:rgba(19,21,28,.9);color:#fff;font-size:25px;box-shadow:0 8px 24px rgba(0,0,0,.4);cursor:pointer;backdrop-filter:blur(14px)}
+body.test-mode .option{padding:18px 20px}
+body.test-mode .question{font-size:calc(var(--quiz-font-size) + 5px)}
+body.test-mode .nav{margin-top:24px}
+@media(max-width:650px){body.test-mode .app{padding:max(10px,env(safe-area-inset-top)) 10px 24px!important}body.test-mode .workspace-right{width:100%!important}body.test-mode #questionProgress{margin:52px 2px 18px!important}body.test-mode .option{padding:15px 13px;border-radius:14px}body.test-mode .test-mode-exit-button{width:38px;height:38px}}
+@media print{.test-mode-exit-button{display:none!important}}
+
+/* Quiz yanıtı kontrol edildikten sonra metindeki ilgili cümleyi vurgula */
+.sentence.quiz-evidence-highlight{
+  background:rgba(250,204,21,.22)!important;
+  color:#fffceb!important;
+  box-shadow:inset 4px 0 0 #facc15,0 0 0 1px rgba(250,204,21,.28);
+}
+@media print{.sentence.quiz-evidence-highlight{background:transparent!important;box-shadow:none!important;color:inherit!important}}
+@media(hover:none),(pointer:coarse){
+  .reading-settings-panel .translation-control:has(#contextWordSelectToggle),
+  .reading-settings-panel .translation-control:has(#contextSentenceSelectToggle){display:none!important}
+}
+/* Hizli ve akici bolme cubugu */
+body.resizing,body.resizing *{cursor:col-resize!important;user-select:none!important}
+body.resizing .workspace-left,body.resizing .workspace-right{transition:none!important}
+body.resizing .workspace-container{pointer-events:none}
+body.resizing .resizer{pointer-events:auto}
+.resizer{width:12px;margin:0 6px;will-change:background-color}
+
+</style>
+<style id="mobile-pwa-patch">
+/* Telefon optimizasyonu: iPhone 15, Galaxy A serisi ve benzer ekranlar */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+button,.btn,.language-tab,.reader-segment,.font-btn,.toggle{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+input,select,textarea{font-size:16px}
+@media(max-width:900px){
+  body{overflow-x:hidden;background-attachment:fixed}
+  .app{width:100%;max-width:none;padding:8px max(10px,env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+  .header-top{position:relative;min-height:0;margin-bottom:8px;padding:12px;border-radius:15px}
+  .head h1{font-size:20px;line-height:1.25}.head p{font-size:11px}
+  .header-top .btn,.reader-segment,.language-tab,.font-btn{min-height:44px}
+  .countdown-input{min-height:38px;font-size:16px}
+  .countdown-timer .btn{min-height:38px!important}
+  .workspace-container{display:block;margin-top:8px}
+  .workspace-left,.workspace-right{position:static!important;width:100%!important;max-width:none!important;min-width:0!important;max-height:none!important;overflow:visible!important}
+  .workspace-right{padding:18px 0 0!important}
+  .readCard{padding:16px 13px!important;border-radius:17px}
+  .story-title-row{align-items:flex-start}.story-heading{font-size:18px!important;line-height:1.35}
+  #quizStoryTitleText{white-space:normal;overflow:visible;text-overflow:clip}
+  .reader-main-toolbar{position:static;display:grid!important;grid-template-columns:minmax(0,1fr) 44px!important;gap:9px!important}
+  .reader-control-groups{min-width:0}
+  .reader-main-toolbar>.reading-settings-button.icon-only{width:44px;height:44px;min-height:44px!important}
+  #quizStoryText{max-height:none!important;overflow:visible!important;padding-right:0!important;font-size:var(--reader-font-size);line-height:1.82}
+  .reader-text.paragraph-flow{height:calc(100dvh - 210px)!important;min-height:420px;max-height:calc(100dvh - 210px)!important;overflow-y:auto!important;overscroll-behavior:contain}
+  .reader-text.paragraph-flow>p{min-height:100%!important;padding:28px 14px!important}
+  .question-header{position:static;min-height:44px;margin:0 0 8px}
+  .question-header h2{font-size:20px}
+  #questionProgress{position:static;margin:0 0 16px!important}
+  .progress{gap:9px}.score{font-size:12px}
+  .option{min-height:52px;padding:14px 12px;margin:9px 0;border-radius:14px}
+  .option input{flex:none;width:21px;height:21px;margin-right:11px}
+  .question{font-size:calc(var(--quiz-font-size) + 2px);line-height:1.45}
+  .nav{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:18px}
+  .nav .btn{width:100%;min-height:46px;margin:0}
+  .nav .btn:last-child:nth-child(3){grid-column:1/-1}
+  .paragraph-flow-nav{position:absolute;right:7px}.flow-nav-btn{width:42px;height:42px}
+  .word-selection-popover,.sentence-tooltip,.word-translation-tooltip{max-height:70dvh;overflow:auto}
+  .mobile-sentence-actions{left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));bottom:calc(8px + env(safe-area-inset-bottom));padding:9px;gap:6px}
+  .mobile-sentence-actions .btn{min-height:44px}
+  .pool-panel{padding:18px 14px calc(20px + env(safe-area-inset-bottom))}
+  .reading-settings-panel,.focus-tools-panel{padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+}
+@media(max-width:430px){
+  .header-actions-row:nth-child(2){grid-template-columns:1fr 1fr}
+  .header-actions-row:nth-child(2) .countdown-timer{grid-column:1/-1}
+  .reader-main-toolbar{grid-template-columns:minmax(0,1fr) 44px!important}
+  .reader-control-groups{grid-template-columns:1fr!important}
+  .reader-segment-group{grid-column:1!important;width:100%}
+  .reader-segments,.language-segment-group .language-tabs{width:100%!important}
+  .reader-segment,.reader-main-toolbar .language-tab{font-size:11px!important;padding-inline:6px!important}
+  .font-label{display:none}
+  .score{white-space:normal;text-align:right;line-height:1.5}
+}
+@media(hover:none),(pointer:coarse){
+  .btn:hover,.language-tab:hover,.option:hover:not(.disabled){transform:none;box-shadow:none}
+  .sentence{cursor:default}
+}
+@media(orientation:landscape) and (max-height:500px){
+  .reader-text.paragraph-flow{height:calc(100dvh - 150px)!important;min-height:260px;max-height:calc(100dvh - 150px)!important}
+}
 </style>
 </head>
 <body>
@@ -408,25 +641,54 @@ body.focus-mode .resizer { display: none; }
 <section id="s1-quiz" class="view hidden">
   <div class="workspace-container" id="workspaceContainer">
     <div class="workspace-left" id="workspaceLeft">
-      <div class="reader-font-toolbar"><div class="font-controls"><span class="font-label">Metin:</span><button class="font-btn" data-font-delta="-1">A-</button><button class="font-btn" data-font-delta="1">A+</button></div></div>
       <article class="readCard">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-          <h2 id="quizStoryTitle" style="font-size:18px;margin:0"></h2>
+        <div class="story-title-row">
+          <h2 id="quizStoryTitle" class="story-heading"><span id="quizStoryTitleText"></span><span id="quizStoryLevelBadge" class="story-level-badge"></span></h2>
+          <div class="reader-font-toolbar"><div class="font-controls" role="group" aria-label="Metin boyutu"><button class="font-btn" data-font-delta="-1" title="Metni küçült" aria-label="Metni küçült">A−</button><button class="font-btn" data-font-delta="1" title="Metni büyüt" aria-label="Metni büyüt">A+</button></div></div>
         </div>
 
-        <div style="display:flex;gap:8px;align-items:center;margin:12px 0;flex-wrap:wrap;">
-          <button id="focusModeBtn" class="btn secondary" type="button" style="font-size:12px;padding:6px 12px;" title="Sadece metne odaklan (Diğer panelleri gizle)">🧘 Odak Modu</button>
-          <button id="dimModeBtn" class="btn secondary" type="button" style="font-size:12px;padding:6px 12px;" title="İmlecin dışındaki satırları karart">💡 Satır Vurgu</button>
-          <button id="autoScrollBtn" class="btn secondary" type="button" style="font-size:12px;padding:6px 12px;" title="Paragrafları kaydırarak tek tek göster">▤ Paragraf Akışı</button>
+        <div class="reader-main-toolbar">
+        <div class="reader-control-groups">
+          <div class="reader-segment-group language-segment-group" role="group" aria-label="Okuma dili">
+            <span class="reader-group-label">Dil</span>
+            <div class="reader-segments language-tabs">
+              <button class="language-tab active" data-language="de" title="Deutsch">DE</button>
+              <button class="language-tab" data-language="tr" title="Türkçe">TR</button>
+              <button class="language-tab" data-language="en" title="English">EN</button>
+            </div>
+          </div>
+          <div class="reader-segment-group" role="group" aria-label="Görünüm">
+            <span class="reader-group-label">Görünüm</span>
+            <div class="reader-segments">
+              <button id="standardModeBtn" class="reader-segment active" type="button" title="Metin ve soruları birlikte göster">Standart</button>
+              <button id="focusModeBtn" class="reader-segment" type="button" title="Yalnızca okuma alanını göster">Odak</button>
+              <button id="testModeBtn" class="reader-segment" type="button" title="Yalnızca soruları göster">Test</button>
+            </div>
+          </div>
+          <div class="reader-segment-group" role="group" aria-label="Okuma düzeni">
+            <span class="reader-group-label">Düzen</span>
+            <div class="reader-segments">
+              <button id="readingLayoutTextBtn" class="reader-segment" type="button" title="Metnin tamamını normal düzende göster">Metin</button>
+              <button id="autoScrollBtn" class="reader-segment" type="button" title="Paragrafları tek tek göster">Paragraf</button>
+            </div>
+          </div>
         </div>
-
-        <div class="toggle-dashboard" aria-label="Okuma seçenekleri">
+        <button id="readingSettingsButton" class="btn secondary reading-settings-button icon-only" type="button" aria-haspopup="dialog" aria-expanded="false" aria-label="Okuma Ayarları" title="Okuma Ayarları">⚙</button>
+        <div id="readingSettingsBackdrop" class="reading-settings-backdrop" aria-hidden="true">
+          <aside class="reading-settings-panel" role="dialog" aria-modal="true" aria-labelledby="readingSettingsTitle">
+            <div class="reading-settings-header"><div><h2 id="readingSettingsTitle">Okuma Ayarları</h2><p>Çeviri, kelime ve ses özellikleri</p></div><button id="readingSettingsClose" class="reading-settings-close" type="button" aria-label="Okuma ayarlarını kapat">×</button></div>
+            <div class="toggle-dashboard" aria-label="Okuma seçenekleri">
           <div class="translation-control"><span class="translation-control-label">Cümle Çevirisi</span><button id="translationToggle" class="toggle" type="button" role="switch" aria-checked="false"></button><span id="translationToggleState" class="toggle-state">OFF</span></div>
+          <div class="translation-control"><span class="translation-control-label">Satır Vurgu</span><button id="dimModeToggle" class="toggle" type="button" role="switch" aria-checked="false"></button><span id="dimModeToggleState" class="toggle-state">OFF</span></div>
           <div id="wordTranslationControl" class="translation-control hidden"><span class="translation-control-label">Kelime Çevirisi</span><button id="wordTranslationToggle" class="toggle" type="button" role="switch" aria-checked="false"></button><span id="wordTranslationToggleState" class="toggle-state">OFF</span></div>
           <div class="translation-control"><span class="translation-control-label">Kelime Seçimi</span><button id="wordSelectionToggle" class="toggle" type="button" role="switch" aria-checked="true"></button><span id="wordSelectionToggleState" class="toggle-state">ON</span></div>
-          <div class="translation-control audio-control-box"><span class="translation-control-label">Ses Dinleme</span><button id="audioToggle" class="toggle" type="button" role="switch" aria-checked="true"></button><span id="audioToggleState" class="toggle-state">ON</span><div class="speech-rate-control" aria-label="Ses hızı"><button id="speechRateDown" type="button" aria-label="Sesi yavaşlat">−</button><span id="speechRateValue">0.90×</span><button id="speechRateUp" type="button" aria-label="Sesi hızlandır">+</button></div><div class="voice-source-control" role="group" aria-label="Ses kaynağı"><button id="voiceSourceGoogle" type="button" data-source="google">Google</button><button id="voiceSourceBrowser" type="button" data-source="browser">Browser</button></div></div>
+          <div class="translation-control"><span class="translation-control-label">Sağ Tık: Kelime Seç</span><button id="contextWordSelectToggle" class="toggle" type="button" role="switch" aria-checked="true"></button><span id="contextWordSelectToggleState" class="toggle-state">ON</span></div>
+          <div class="translation-control"><span class="translation-control-label">Sağ Tık: Cümle Seç</span><button id="contextSentenceSelectToggle" class="toggle" type="button" role="switch" aria-checked="true"></button><span id="contextSentenceSelectToggleState" class="toggle-state">ON</span></div>
+          <div class="translation-control audio-control-box"><span class="translation-control-label">Ses Dinleme</span><button id="audioToggle" class="toggle" type="button" role="switch" aria-checked="true"></button><span id="audioToggleState" class="toggle-state" aria-hidden="true">ON</span><div class="speech-rate-control" aria-label="Ses hızı"><button id="speechRateDown" type="button" aria-label="Sesi yavaşlat">−</button><span id="speechRateValue">0.90×</span><button id="speechRateUp" type="button" aria-label="Sesi hızlandır">+</button></div><div class="voice-source-control" role="group" aria-label="Ses kaynağı"><button id="voiceSourceGoogle" type="button" data-source="google">Google</button><button id="voiceSourceBrowser" type="button" data-source="browser">Browser</button></div></div>
+            </div>
+          </aside>
         </div>
-        <div class="translation-controls"><div class="language-tabs"><button class="language-tab active" data-language="de">Deutsch</button><button class="language-tab" data-language="tr">Türkçe</button><button class="language-tab" data-language="en">English</button></div></div>
+        </div>
         <div id="quizStoryText" class="reader-text" style="max-height:520px;overflow-y:auto;padding-right:5px;margin-top:2px"></div>
         <div id="paragraphFlowNav" class="paragraph-flow-nav" aria-label="Paragraf gezinme">
           <button id="paragraphPrevBtn" class="flow-nav-btn" type="button" aria-label="Önceki paragraf" title="Önceki paragraf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
@@ -445,6 +707,25 @@ body.focus-mode .resizer { display: none; }
     </div>
   </div>
 </section>
+
+
+<button id="testModeExitButton" class="test-mode-exit-button" type="button" aria-label="Test modundan çık" title="Test modundan çık">×</button>
+<button id="focusExitButton" class="focus-exit-button" type="button" aria-label="Odak modundan çık" title="Odak modundan çık">x</button>
+<div class="focus-quick-menu" aria-label="Odak modu hizli kontrolleri">
+  <button id="focusFontButton" class="focus-quick-button" type="button" aria-label="Yazı boyutu" title="Yazı boyutu">Aa</button>
+  <button id="focusToolsButton" class="focus-quick-button" type="button" aria-label="Okuma araçları" title="Okuma araçları">...</button>
+</div>
+<div id="focusToolsBackdrop" class="focus-tools-backdrop" aria-hidden="true">
+  <aside class="focus-tools-panel" role="dialog" aria-modal="true" aria-labelledby="focusToolsTitle">
+    <div class="focus-tools-header"><h2 id="focusToolsTitle">Okuma Araçları</h2><button id="focusToolsClose" class="focus-tools-close" type="button" aria-label="Araçları kapat">x</button></div>
+    <section class="focus-tools-section"><h3>Yazı boyutu</h3><div class="focus-tools-grid"><button id="focusFontDown" class="btn secondary" type="button">A-</button><button id="focusFontUp" class="btn secondary" type="button">A+</button></div></section>
+    <section class="focus-tools-section"><h3>Gorunum</h3><div class="focus-tools-grid"><button id="focusDimToggle" class="btn secondary" type="button">Satir Vurgu<span id="focusDimStatus" class="focus-tools-status"></span></button><button id="focusFlowToggle" class="btn secondary" type="button">Paragraf Akışı<span id="focusFlowStatus" class="focus-tools-status"></span></button></div></section>
+    <section class="focus-tools-section"><h3>Dil</h3><div class="focus-tools-grid"><button class="btn secondary" data-focus-language="de" type="button">Deutsch</button><button class="btn secondary" data-focus-language="tr" type="button">Türkçe</button><button class="btn secondary wide" data-focus-language="en" type="button">English</button></div></section>
+    <section class="focus-tools-section"><h3>Ceviri ve secim</h3><div class="focus-tools-grid"><button id="focusSentenceTranslation" class="btn secondary" type="button">Cümle Çevirisi<span id="focusSentenceStatus" class="focus-tools-status"></span></button><button id="focusWordTranslation" class="btn secondary" type="button">Kelime Çevirisi<span id="focusWordStatus" class="focus-tools-status"></span></button><button id="focusWordSelection" class="btn secondary wide" type="button">Kelime Seçimi<span id="focusSelectionStatus" class="focus-tools-status"></span></button></div></section>
+    <section class="focus-tools-section"><h3>Ses</h3><div class="focus-tools-grid"><button id="focusAudioToggle" class="btn secondary wide" type="button">Ses Dinleme<span id="focusAudioStatus" class="focus-tools-status"></span></button><button id="focusRateDown" class="btn secondary" type="button">Daha Yavaş</button><button id="focusRateUp" class="btn secondary" type="button">Daha Hızlı</button><button id="focusGoogleVoice" class="btn secondary" type="button">Google</button><button id="focusBrowserVoice" class="btn secondary" type="button">Browser</button></div></section>
+    <button id="focusExitPanelButton" class="btn danger" type="button" style="width:100%">Odak Modundan Çık</button>
+  </aside>
+</div>
 
 <section id="printArea" class="print-area" aria-hidden="true">
   <header class="print-header"><div class="print-header-accent"></div><h1 id="printTitle"></h1><div class="print-meta"><span id="printLevel"></span><span id="printWordCount"></span></div></header>
@@ -478,13 +759,16 @@ const OPTION_LABELS=["A","B","C","D"], ALLOWED_LANGUAGES=new Set(["de","tr","en"
 let portalData=null,topics=[],activeTopicId=null,state=createInitialState(10),currentFontSize=Number(safeGet("germanPortalFontSize"))||16,currentQuizFontSize=Number(safeGet("germanPortalQuizFontSize"))||16,currentLanguage=safeGet("germanPortalLanguage")||"de",translationEnabled=safeGet("germanPortalTranslationEnabled")==="true",wordTranslationEnabled=safeGet("germanPortalWordTranslationEnabled")==="true",wordSelectionEnabled=safeGet("germanPortalWordSelectionEnabled")!=="false",audioEnabled=safeGet("germanPortalAudioEnabled")!=="false",paragraphFlowEnabled=safeGet("germanPortalParagraphFlowEnabled")==="true";
 if(!ALLOWED_LANGUAGES.has(currentLanguage))currentLanguage="de";
 const $=id=>document.getElementById(id),jsonFileInput=$("jsonFileInput"),jsonFolderInput=$("jsonFolderInput"),selectFileButton=$("selectFileButton"),selectFolderButton=$("selectFolderButton"),printButton=$("printButton"),clearProgressButton=$("clearProgressButton"),errorBox=$("errorBox"),resizer=$("dragResizer"),leftSide=$("workspaceLeft"),workspaceContainer=$("workspaceContainer"),dropZone=$("dropZone"),topicTabs=$("topicTabs"),wordPoolButton=$("wordPoolButton"),wordPoolCount=$("wordPoolCount"),wordPoolOverlay=$("wordPoolOverlay"),wordPoolList=$("wordPoolList"),wordPoolImportInput=$("wordPoolImportInput"),translationToggle=$("translationToggle"),translationToggleState=$("translationToggleState"),wordTranslationControl=$("wordTranslationControl"),wordTranslationToggle=$("wordTranslationToggle"),wordTranslationToggleState=$("wordTranslationToggleState"),wordSelectionToggle=$("wordSelectionToggle"),wordSelectionToggleState=$("wordSelectionToggleState"),audioToggle=$("audioToggle"),audioToggleState=$("audioToggleState"),speechRateDown=$("speechRateDown"),speechRateUp=$("speechRateUp"),speechRateValue=$("speechRateValue"),voiceSourceGoogle=$("voiceSourceGoogle"),voiceSourceBrowser=$("voiceSourceBrowser");
+let contextWordSelectEnabled=safeGet("germanPortalContextWordSelectEnabled")!=="false",contextSentenceSelectEnabled=safeGet("germanPortalContextSentenceSelectEnabled")!=="false";
+const contextWordSelectToggle=$("contextWordSelectToggle"),contextWordSelectToggleState=$("contextWordSelectToggleState"),contextSentenceSelectToggle=$("contextSentenceSelectToggle"),contextSentenceSelectToggleState=$("contextSentenceSelectToggleState");
 document.documentElement.style.setProperty("--reader-font-size",currentFontSize+"px");document.documentElement.style.setProperty("--quiz-font-size",currentQuizFontSize+"px");
 
 const countdownInput=$("countdownInput"),countdownStartButton=$("countdownStartButton"),countdownResetButton=$("countdownResetButton");
 let countdownInterval=null,countdownRemaining=0,timePickerPopover=null;
 
 let focusModeActive = false;
-let dimModeActive = false;
+let testModeActive = false;
+let dimModeActive = safeGet("germanPortalDimModeEnabled")==="true";
 let autoScrollActive = false;
 let autoScrollInterval = null;
 
@@ -550,6 +834,11 @@ function showWordTranslationTooltip(node,info,options={}){if(!info)return;hideWo
 function updateWordTranslationToggle(){const available=hasWordData();wordTranslationControl.classList.toggle("hidden",!available);wordTranslationToggle.disabled=!available;wordTranslationToggle.classList.toggle("on",available&&wordTranslationEnabled);wordTranslationToggle.setAttribute("aria-checked",String(available&&wordTranslationEnabled));wordTranslationToggleState.textContent=available&&wordTranslationEnabled?"ON":"OFF";document.querySelectorAll(".selectable-word").forEach(w=>w.classList.toggle("word-translation-enabled",available&&wordTranslationEnabled&&!!findWordTranslation(w.textContent)))}function setWordTranslationEnabled(v){wordTranslationEnabled=Boolean(v);safeSet("germanPortalWordTranslationEnabled",String(v));hideWordTranslationTooltip();updateWordTranslationToggle()}
 function updateWordSelectionToggle(){wordSelectionToggle.classList.toggle("on",wordSelectionEnabled);wordSelectionToggle.setAttribute("aria-checked",String(wordSelectionEnabled));wordSelectionToggleState.textContent=wordSelectionEnabled?"ON":"OFF";document.querySelectorAll(".selectable-word").forEach(w=>{w.style.cursor=wordSelectionEnabled?"pointer":"text"})}
 function setWordSelectionEnabled(v){wordSelectionEnabled=Boolean(v);safeSet("germanPortalWordSelectionEnabled",String(wordSelectionEnabled));hideWordPopover();hideWordTranslationTooltip();const sel=getSelection();if(sel)sel.removeAllRanges();updateWordSelectionToggle()}
+function updateContextSelectionToggles(){
+  [[contextWordSelectToggle,contextWordSelectToggleState,contextWordSelectEnabled],[contextSentenceSelectToggle,contextSentenceSelectToggleState,contextSentenceSelectEnabled]].forEach(([button,stateNode,on])=>{button.classList.toggle("on",on);button.setAttribute("aria-checked",String(on));stateNode.textContent=on?"ON":"OFF"})
+}
+function setContextWordSelectEnabled(value){contextWordSelectEnabled=Boolean(value);safeSet("germanPortalContextWordSelectEnabled",String(contextWordSelectEnabled));updateContextSelectionToggles()}
+function setContextSentenceSelectEnabled(value){contextSentenceSelectEnabled=Boolean(value);safeSet("germanPortalContextSentenceSelectEnabled",String(contextSentenceSelectEnabled));updateContextSelectionToggles()}
 const WORD_POOL_KEY="germanPortalWordPool:v1";let activeWordPopover=null;function cleanSelectedText(v){return String(v||"").replace(/^[\s.,!?;:„“”"'()\[\]{}]+|[\s.,!?;:„“”"'()\[\]{}]+$/g,"").replace(/\s+/g," ").trim()}function wordPoolId(term,sentence,topic){const seed=[normalizeKey(term),normalizeKey(sentence),topic||""].join("|");let h=2166136261;for(let i=0;i<seed.length;i++){h^=seed.charCodeAt(i);h=Math.imul(h,16777619)}return"word-"+(h>>>0).toString(16)}
 function normalizePoolItem(x){if(typeof x.selectedText==="string")return x;if(typeof x.term==="string")return{id:x.id||wordPoolId(x.term,x.sentence||"",x.topicId||""),selectedText:x.term,normalizedText:normalizeKey(x.term),sentence:x.sentence||"",storyTitle:x.title||x.storyTitle||"",storyLevel:x.storyLevel||"",topicId:x.topicId||"",addedAt:x.addedAt||new Date().toISOString(),status:x.status||"new"};return null}
 function getWordPool(){const raw=safeGet(WORD_POOL_KEY)||safeGet("gp:wordPool");if(!raw)return{version:1,updatedAt:null,words:[]};try{const d=JSON.parse(raw);if(!d||!Array.isArray(d.words))throw Error();return{version:1,updatedAt:d.updatedAt||null,words:d.words.map(normalizePoolItem).filter(x=>x&&x.selectedText&&x.sentence)}}catch{return{version:1,updatedAt:null,words:[]}}}
@@ -764,6 +1053,21 @@ function speakWordText(text,rate=speechRate,repeats=1,contextSentence=""){
   };
   playNext();
 }
+function selectElementText(node){
+  if(!node||!node.isConnected)return;
+  const selection=window.getSelection(),range=document.createRange();
+  range.selectNodeContents(node);selection.removeAllRanges();selection.addRange(range);
+  node.scrollIntoView({block:"nearest",inline:"nearest"});
+}
+function selectSentenceText(sentenceNode){
+  if(!sentenceNode||!sentenceNode.isConnected)return;
+  const selection=window.getSelection(),range=document.createRange();
+  const speaker=sentenceNode.querySelector(".inline-sentence-speaker");
+  range.setStart(sentenceNode,0);
+  if(speaker)range.setEndBefore(speaker);else range.selectNodeContents(sentenceNode);
+  selection.removeAllRanges();selection.addRange(range);
+  sentenceNode.scrollIntoView({block:"nearest",inline:"nearest"});
+}
 function showWordAudioMenu(word,sentence,x,y){
   hideWordAudioMenu();hideWordPopover();hideSentenceTooltip();hideWordTranslationTooltip();
   const m=el("div","word-audio-menu"),title=el("div","word-audio-menu-title",word);
@@ -779,6 +1083,9 @@ function showWordAudioMenu(word,sentence,x,y){
   const sentenceNode=[...document.querySelectorAll(".sentence")].find(node=>node.textContent.replace(/\s+/g," ").trim()===sentence.replace(/\s+/g," ").trim());
   const wordNode=sentenceNode?[...sentenceNode.querySelectorAll(".selectable-word")].find(node=>normalizeKey(node.textContent)===normalizeKey(word)):null;
   m.append(title);
+  if(contextWordSelectEnabled)add("▣ Kelime Seç",()=>selectElementText(wordNode));
+  if(contextSentenceSelectEnabled)add("▤ Cümle Seç",()=>selectSentenceText(sentenceNode));
+  if(contextWordSelectEnabled||contextSentenceSelectEnabled){const divider=el("div","context-menu-divider");m.append(divider)}
   add("🗣️ Cümleyi dinle",()=>speakWordText(sentence,speechRate,1,sentence));
   add("🌐 Cümle çeviri",()=>{
     if(sentenceNode)showSentenceTooltip(sentenceNode,{force:true,pinned:true});
@@ -848,27 +1155,42 @@ function loadPortalData(data,fileName=""){const errors=validatePortalData(data);
 function activateTopic(id){const t=topics.find(x=>x.id===id);if(!t)return;activeTopicId=id;portalData=t.portalData;state=createInitialState(10);restoreProgress();initializeContent();$("fileInfo").textContent=t.fileName?`Yüklendi: ${t.fileName}`:`${portalData.storyTitle} yüklendi.`;printButton.disabled=false;clearProgressButton.disabled=false;$("welcome").classList.add("hidden");dropZone.classList.add("hidden");$("s1-quiz").classList.remove("hidden");renderQuiz();renderTopicTabs()}
 function closeTopic(id){const idx=topics.findIndex(x=>x.id===id);if(idx<0)return;const wasActive=id===activeTopicId;topics.splice(idx,1);if(!topics.length){activeTopicId=null;portalData=null;state=createInitialState(10);printButton.disabled=true;clearProgressButton.disabled=true;$("fileInfo").textContent="Güvenli JSON tabanlı dinamik öğrenme seti";$("s1-quiz").classList.add("hidden");$("welcome").classList.remove("hidden");dropZone.classList.remove("hidden");renderTopicTabs();return}if(wasActive)activateTopic((topics[idx]||topics[idx-1]||topics[0]).id);else renderTopicTabs()}
 function renderTopicTabs(){topicTabs.replaceChildren();topicTabs.classList.toggle("hidden",!topics.length);topics.forEach(t=>{const active=t.id===activeTopicId,tab=el("div",`topic-tab${active?" active":""}`);tab.setAttribute("role","tab");tab.setAttribute("aria-selected",String(active));tab.tabIndex=0;const label=el("span","",t.portalData.storyTitle||t.fileName||"Konu"),close=button("×","topic-tab-close",ev=>{ev.stopPropagation();closeTopic(t.id)});tab.append(label,close);tab.addEventListener("click",()=>{if(t.id!==activeTopicId)activateTopic(t.id)});topicTabs.append(tab)})}
-function initializeContent(){$("quizStoryTitle").textContent=`${portalData.storyTitle} (${portalData.storyLevel})`;$("quizWordCountContainer").textContent=`Kelime Sayısı: ${countWords(portalData.storyParagraphs.join(" "))} | Seviye: ${portalData.storyLevel}`;setLanguage(currentLanguage);updateTranslationToggle();updateWordTranslationToggle();requestAnimationFrame(syncQuestionAreaToText)}
+function initializeContent(){$("quizStoryTitleText").textContent=portalData.storyTitle;$("quizStoryLevelBadge").textContent=portalData.storyLevel;$("quizWordCountContainer").textContent=`Kelime Sayısı: ${countWords(portalData.storyParagraphs.join(" "))} | Seviye: ${portalData.storyLevel}`;setLanguage(currentLanguage);updateTranslationToggle();updateWordTranslationToggle();requestAnimationFrame(syncQuestionAreaToText)}
 function adjustFont(d){currentFontSize=Math.max(12,Math.min(28,currentFontSize+d));document.documentElement.style.setProperty("--reader-font-size",currentFontSize+"px");safeSet("germanPortalFontSize",String(currentFontSize));requestAnimationFrame(syncQuestionAreaToText)}
 function adjustQuizFont(d){currentQuizFontSize=Math.max(12,Math.min(28,currentQuizFontSize+d));document.documentElement.style.setProperty("--quiz-font-size",currentQuizFontSize+"px");safeSet("germanPortalQuizFontSize",String(currentQuizFontSize));requestAnimationFrame(syncQuestionAreaToText)}
 function syncQuestionAreaToText(){
-  const right=$("workspaceRight"),text=$("quizStoryText"),progress=$("questionProgress");
-  if(!right||!text||!progress)return;
-  if(innerWidth<=900){right.style.paddingTop="18px";return}
-  const align=()=>{
-    right.style.paddingTop="0px";
-    const naturalProgressTop=progress.getBoundingClientRect().top;
-    const textTop=text.getBoundingClientRect().top;
-    right.style.paddingTop=Math.max(0,Math.round(textTop-naturalProgressTop))+"px";
-  };
-  align();
-  requestAnimationFrame(()=>{
-    const delta=text.getBoundingClientRect().top-progress.getBoundingClientRect().top;
-    if(Math.abs(delta)>1)right.style.paddingTop=Math.max(0,Math.round(parseFloat(right.style.paddingTop||0)+delta))+"px"
-  });
+  const right=$("workspaceRight");
+  if(!right)return;
+  /* Sağ test alanı soldaki metin, dil, yazı boyutu veya düzen değişikliklerinden etkilenmez. */
+  right.style.paddingTop=innerWidth<=900?"18px":"0px";
 }
 function activeQ(){return state.retryMode?state.retryIndexes[state.index]:state.index}
-function renderQuiz(){if(!portalData)return;requestAnimationFrame(syncQuestionAreaToText);const total=state.retryMode?state.retryIndexes.length:10;if(!total||state.index>=total){renderResult();return}const qi=activeQ(),q=portalData.quizData[qi],sel=state.selected[qi],done=sel!==null,indexes=state.retryMode?state.retryIndexes:Array.from({length:10},(_,i)=>i),completed=indexes.filter(i=>state.selected[i]!==null).length;$("s1-pos").textContent=`${state.index+1} / ${total}`;$("s1-fill").style.width=`${completed/total*100}%`;$("s1-r").textContent=state.right;$("s1-w").textContent=state.wrong;const c=$("s1-quizCard");c.replaceChildren();c.append(el("div","qNo",`Frage ${state.index+1}`),el("div","qType",q.type),el("div","question",q.q));q.o.forEach((txt,i)=>{const label=el("label","option");if(done){label.classList.add("disabled");if(i===q.a)label.classList.add("correct");else if(i===sel)label.classList.add("wrong")}const input=document.createElement("input");input.type="radio";input.name="current_q";input.value=String(i);input.disabled=done;input.checked=sel===i;const span=el("span","option-text");span.append(el("strong","",`${OPTION_LABELS[i]}. `),document.createTextNode(txt));label.append(input,span);if(done&&(i===q.a||i===sel))label.append(el("span","badge",i===q.a?"✓ Doğru":"✕ Yanlış"));c.append(label)});if(done)c.append(el("div","feedback",q.e));const nav=el("div","nav"),prev=button("Zurück","btn",()=>{if(state.index>0){state.index--;saveProgress();renderQuiz()}}),check=button("Check","btn primary",checkAnswer),next=button(state.index===total-1?"Result":"Weiter","btn primary",()=>{if(state.selected[activeQ()]!==null){state.index++;saveProgress();renderQuiz()}});prev.disabled=state.index===0;check.disabled=done;next.hidden=!done;nav.append(prev,check,next);c.append(nav)}
+function clearQuizEvidenceHighlight(){
+  document.querySelectorAll("#quizStoryText .sentence.quiz-evidence-highlight").forEach(node=>node.classList.remove("quiz-evidence-highlight"));
+}
+function quizEvidenceTokens(value){
+  const stop=new Set(["aber","alle","als","also","am","an","auch","auf","aus","bei","bin","bis","bist","da","das","dass","dem","den","der","des","die","dies","diese","dieser","doch","du","durch","ein","eine","einem","einen","einer","eines","er","es","für","hat","haben","ich","im","in","ist","ja","mit","nicht","oder","sein","sich","sie","sind","so","und","vom","von","war","was","weil","welche","welcher","welches","werden","wie","wir","wo","zu","zum","zur"]);
+  return [...new Set(String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("de-DE").match(/[a-zäöüß]{3,}/g)||[])].filter(token=>!stop.has(token));
+}
+function highlightQuizEvidence(question){
+  clearQuizEvidenceHighlight();
+  if(!question||currentLanguage!=="de")return;
+  const source=[question.q,question.o?.[question.a],question.e].filter(Boolean).join(" ");
+  const tokens=quizEvidenceTokens(source);
+  if(!tokens.length)return;
+  let best=null,bestScore=0;
+  document.querySelectorAll("#quizStoryText .sentence").forEach(sentence=>{
+    const sentenceTokens=new Set(quizEvidenceTokens(sentence.textContent));
+    let score=0;
+    tokens.forEach(token=>{if(sentenceTokens.has(token))score+=token.length>=7?2:1});
+    if(score>bestScore){bestScore=score;best=sentence}
+  });
+  if(best&&bestScore>0){
+    best.classList.add("quiz-evidence-highlight");
+    best.scrollIntoView({behavior:"smooth",block:"center"});
+  }
+}
+function renderQuiz(){if(!portalData)return;requestAnimationFrame(syncQuestionAreaToText);const total=state.retryMode?state.retryIndexes.length:10;if(!total||state.index>=total){renderResult();return}const qi=activeQ(),q=portalData.quizData[qi],sel=state.selected[qi],done=sel!==null,indexes=state.retryMode?state.retryIndexes:Array.from({length:10},(_,i)=>i),completed=indexes.filter(i=>state.selected[i]!==null).length;$("s1-pos").textContent=`${state.index+1} / ${total}`;$("s1-fill").style.width=`${completed/total*100}%`;$("s1-r").textContent=state.right;$("s1-w").textContent=state.wrong;const c=$("s1-quizCard");c.replaceChildren();c.append(el("div","qNo",`Frage ${state.index+1}`),el("div","qType",q.type),el("div","question",q.q));q.o.forEach((txt,i)=>{const label=el("label","option");if(done){label.classList.add("disabled");if(i===q.a)label.classList.add("correct");else if(i===sel)label.classList.add("wrong")}const input=document.createElement("input");input.type="radio";input.name="current_q";input.value=String(i);input.disabled=done;input.checked=sel===i;const span=el("span","option-text");span.append(el("strong","",`${OPTION_LABELS[i]}. `),document.createTextNode(txt));label.append(input,span);if(done&&(i===q.a||i===sel))label.append(el("span","badge",i===q.a?"✓ Doğru":"✕ Yanlış"));c.append(label)});if(done)c.append(el("div","feedback",q.e));if(done)requestAnimationFrame(()=>highlightQuizEvidence(q));else clearQuizEvidenceHighlight();const nav=el("div","nav"),prev=button("Zurück","btn",()=>{if(state.index>0){state.index--;saveProgress();renderQuiz()}}),check=button("Check","btn primary",checkAnswer),next=button(state.index===total-1?"Result":"Weiter","btn primary",()=>{if(state.selected[activeQ()]!==null){state.index++;saveProgress();renderQuiz()}});prev.disabled=state.index===0;check.disabled=done;next.hidden=!done;nav.append(prev,check,next);c.append(nav)}
 function checkAnswer(){const qi=activeQ();if(state.selected[qi]!==null)return;const checked=document.querySelector('input[name="current_q"]:checked');if(!checked){alert("Lütfen seçenek seç.");return}const s=Number(checked.value);state.selected[qi]=s;s===portalData.quizData[qi].a?state.right++:state.wrong++;saveProgress();renderQuiz()}
 function renderResult(){const c=$("s1-quizCard");c.replaceChildren();const indexes=state.retryMode?state.retryIndexes:Array.from({length:10},(_,i)=>i),correct=indexes.filter(i=>state.selected[i]===portalData.quizData[i].a).length,wrong=[],result=el("div","result"),rate=el("div","",`Başarı: ${indexes.length?Math.round(correct/indexes.length*100):0}%`);rate.style.cssText="font-size:32px;font-weight:bold;margin-bottom:10px";result.append(rate,el("div","",`${correct} / ${indexes.length} doğru`),el("h2","","Quiz tamamlandı"));const details=el("div","result-details");indexes.forEach((qi,k)=>{const q=portalData.quizData[qi],s=state.selected[qi],ok=s===q.a;if(!ok)wrong.push(qi);const item=el("div",`result-item ${ok?"correct-result":"wrong-result"}`);item.append(el("p","",`${k+1}. ${q.q}`),el("p","",s===null?"Cevaplanmadı":`Senin cevabın: ${OPTION_LABELS[s]}. ${q.o[s]}`),el("p","",`Doğru: ${OPTION_LABELS[q.a]}. ${q.o[q.a]}`),el("p","",`Açıklama: ${q.e}`));details.append(item)});result.append(details);const nav=el("div","nav");nav.append(button("Yeniden Başlat","btn",restartQuiz));if(wrong.length)nav.append(button("Sadece Yanlışlar","btn primary",()=>startWrongAnswers(wrong)));result.append(nav);c.append(result)}
 function restartQuiz(){state=createInitialState(10);saveProgress();renderQuiz()}
@@ -915,22 +1237,57 @@ dropZone.addEventListener("drop",e=>{
   }
 });
 
-const focusModeBtn = $("focusModeBtn");
-const dimModeBtn = $("dimModeBtn");
+
+const readingSettingsButton=$("readingSettingsButton"),readingSettingsBackdrop=$("readingSettingsBackdrop"),readingSettingsClose=$("readingSettingsClose");
+function openReadingSettings(){readingSettingsBackdrop.classList.add("open");readingSettingsBackdrop.setAttribute("aria-hidden","false");readingSettingsButton.setAttribute("aria-expanded","true");document.body.classList.add("reading-settings-open");readingSettingsClose.focus()}
+function closeReadingSettings(){readingSettingsBackdrop.classList.remove("open");readingSettingsBackdrop.setAttribute("aria-hidden","true");readingSettingsButton.setAttribute("aria-expanded","false");document.body.classList.remove("reading-settings-open")}
+readingSettingsButton.addEventListener("click",openReadingSettings);readingSettingsClose.addEventListener("click",closeReadingSettings);
+readingSettingsBackdrop.addEventListener("click",e=>{if(e.target===readingSettingsBackdrop)closeReadingSettings()});
+
+const focusModeBtn = $("focusModeBtn"), standardModeBtn=$("standardModeBtn"), readingLayoutTextBtn=$("readingLayoutTextBtn");
+const dimModeToggle = $("dimModeToggle"), dimModeToggleState = $("dimModeToggleState");
 const autoScrollBtn = $("autoScrollBtn");
 
-focusModeBtn.addEventListener("click", () => {
-  focusModeActive = !focusModeActive;
-  document.body.classList.toggle("focus-mode", focusModeActive);
-  focusModeBtn.classList.toggle("active-mode", focusModeActive);
-  focusModeBtn.textContent = focusModeActive ? "🧘 Normal Mod" : "🧘 Odak Modu";
-});
+function setFocusMode(active){
+  focusModeActive=Boolean(active);
+  document.body.classList.toggle("focus-mode",focusModeActive);
+  updateViewModeUI();
+  if(!focusModeActive)closeFocusTools();
+  requestAnimationFrame(()=>$("quizStoryText")?.focus({preventScroll:true}));
+}
+function updateViewModeUI(){
+  standardModeBtn.classList.toggle("active",!focusModeActive&&!testModeActive);
+  focusModeBtn.classList.toggle("active",focusModeActive&&!testModeActive);
+  testModeBtn.classList.toggle("active",testModeActive);
+  standardModeBtn.setAttribute("aria-pressed",String(!focusModeActive&&!testModeActive));
+  focusModeBtn.setAttribute("aria-pressed",String(focusModeActive&&!testModeActive));
+  testModeBtn.setAttribute("aria-pressed",String(testModeActive));
+}
+standardModeBtn.addEventListener("click",()=>{if(focusModeActive)setFocusMode(false);if(testModeActive)setTestMode(false);updateViewModeUI()});
+focusModeBtn.addEventListener("click",()=>{if(testModeActive)setTestMode(false);setFocusMode(true);updateViewModeUI()});
+const testModeBtn=$("testModeBtn"),testModeExitButton=$("testModeExitButton");
+function setTestMode(active){
+  testModeActive=Boolean(active);
+  if(testModeActive&&focusModeActive)setFocusMode(false);
+  document.body.classList.toggle("test-mode",testModeActive);
+  updateViewModeUI();
+  if(testModeActive){closeReadingSettings();closeFocusTools();requestAnimationFrame(()=>$("s1-quizCard")?.focus({preventScroll:true}))}
+}
+testModeBtn.addEventListener("click",()=>{if(focusModeActive)setFocusMode(false);setTestMode(true);updateViewModeUI()});
+testModeExitButton.addEventListener("click",()=>setTestMode(false));
 
-dimModeBtn.addEventListener("click", () => {
-  dimModeActive = !dimModeActive;
-  $("quizStoryText").classList.toggle("dim-mode", dimModeActive);
-  dimModeBtn.classList.toggle("active-mode", dimModeActive);
-});
+function updateDimModeUI(){
+  $("quizStoryText").classList.toggle("dim-mode",dimModeActive);
+  dimModeToggle.classList.toggle("on",dimModeActive);
+  dimModeToggle.setAttribute("aria-checked",String(dimModeActive));
+  dimModeToggleState.textContent=dimModeActive?"ON":"OFF";
+}
+function setDimMode(active){
+  dimModeActive=Boolean(active);
+  safeSet("germanPortalDimModeEnabled",String(dimModeActive));
+  updateDimModeUI();
+}
+dimModeToggle.addEventListener("click",()=>setDimMode(!dimModeActive));
 
 function updateParagraphFlowStatus(){
   let badge=document.querySelector(".paragraph-flow-status");
@@ -947,22 +1304,51 @@ function applyParagraphFlow(reset=false){
   const c=$("quizStoryText");
   c.classList.toggle("paragraph-flow",paragraphFlowEnabled);
   c.closest(".readCard").classList.toggle("flow-active",paragraphFlowEnabled);
-  autoScrollBtn.classList.toggle("active-mode",paragraphFlowEnabled);
-  autoScrollBtn.textContent=paragraphFlowEnabled?"▦ Normal Metin":"▤ Paragraf Akışı";
-  autoScrollBtn.title=paragraphFlowEnabled?"Normal metin görünümüne dön":"Paragrafları kaydırarak tek tek göster";
+  autoScrollBtn.classList.toggle("active",paragraphFlowEnabled);
+  readingLayoutTextBtn.classList.toggle("active",!paragraphFlowEnabled);
+  autoScrollBtn.setAttribute("aria-pressed",String(paragraphFlowEnabled));
+  readingLayoutTextBtn.setAttribute("aria-pressed",String(!paragraphFlowEnabled));
   if(reset)c.scrollTop=0;
   requestAnimationFrame(()=>{updateParagraphFlowStatus();syncQuestionAreaToText();setTimeout(()=>{updateParagraphFlowStatus();syncQuestionAreaToText()},100)});
 }
-autoScrollBtn.addEventListener("click",()=>{
-  paragraphFlowEnabled=!paragraphFlowEnabled;
+function setParagraphFlowEnabled(active,reset=true){
+  paragraphFlowEnabled=Boolean(active);
   safeSet("germanPortalParagraphFlowEnabled",String(paragraphFlowEnabled));
-  applyParagraphFlow(true);
-});
+  applyParagraphFlow(reset);
+}
+autoScrollBtn.addEventListener("click",()=>setParagraphFlowEnabled(true,true));
+readingLayoutTextBtn.addEventListener("click",()=>setParagraphFlowEnabled(false,true));
 $("quizStoryText").addEventListener("scroll",()=>{if(paragraphFlowEnabled)updateParagraphFlowStatus()},{passive:true});
 function currentFlowParagraphIndex(){const c=$("quizStoryText"),ps=[...c.children].filter(x=>x.tagName==="P");let index=0,best=Infinity;ps.forEach((p,i)=>{const d=Math.abs(p.offsetTop-c.scrollTop);if(d<best){best=d;index=i}});return{c,ps,index}}
 function goToFlowParagraph(delta){if(!paragraphFlowEnabled)return;const {c,ps,index}=currentFlowParagraphIndex(),target=ps[Math.max(0,Math.min(ps.length-1,index+delta))];if(target)c.scrollTo({top:target.offsetTop,behavior:"smooth"})}
 $("paragraphPrevBtn").addEventListener("click",()=>goToFlowParagraph(-1));
 $("paragraphNextBtn").addEventListener("click",()=>goToFlowParagraph(1));
+
+const focusToolsBackdrop=$("focusToolsBackdrop");
+function openFocusTools(){focusToolsBackdrop.classList.add("open");focusToolsBackdrop.setAttribute("aria-hidden","false");updateFocusToolsUI();$("focusToolsClose").focus()}
+function closeFocusTools(){if(!focusToolsBackdrop)return;focusToolsBackdrop.classList.remove("open");focusToolsBackdrop.setAttribute("aria-hidden","true")}
+function updateFocusToolsUI(){
+  const set=(id,on,available=true)=>{const n=$(id);if(!n)return;n.textContent=available?(on?"AÇIK":"KAPALI"):"YOK"};
+  set("focusDimStatus",dimModeActive);set("focusFlowStatus",paragraphFlowEnabled);set("focusSentenceStatus",translationEnabled);
+  set("focusWordStatus",wordTranslationEnabled,hasWordData());set("focusSelectionStatus",wordSelectionEnabled);set("focusAudioStatus",audioEnabled);
+  document.querySelectorAll("[data-focus-language]").forEach(b=>b.classList.toggle("primary",b.dataset.focusLanguage===currentLanguage));
+  $("focusGoogleVoice").classList.toggle("primary",voiceSource==="google");$("focusBrowserVoice").classList.toggle("primary",voiceSource==="browser");
+}
+$("focusExitButton").addEventListener("click",()=>setFocusMode(false));
+$("focusExitPanelButton").addEventListener("click",()=>setFocusMode(false));
+$("focusToolsButton").addEventListener("click",openFocusTools);$("focusToolsClose").addEventListener("click",closeFocusTools);
+focusToolsBackdrop.addEventListener("click",e=>{if(e.target===focusToolsBackdrop)closeFocusTools()});
+$("focusFontButton").addEventListener("click",()=>adjustFont(1));$("focusFontDown").addEventListener("click",()=>adjustFont(-1));$("focusFontUp").addEventListener("click",()=>adjustFont(1));
+$("focusDimToggle").addEventListener("click",()=>{setDimMode(!dimModeActive);updateFocusToolsUI()});
+$("focusFlowToggle").addEventListener("click",()=>{setParagraphFlowEnabled(!paragraphFlowEnabled,true);updateFocusToolsUI()});
+document.querySelectorAll("[data-focus-language]").forEach(b=>b.addEventListener("click",()=>{setLanguage(b.dataset.focusLanguage);updateFocusToolsUI()}));
+$("focusSentenceTranslation").addEventListener("click",()=>{translationToggle.click();updateFocusToolsUI()});
+$("focusWordTranslation").addEventListener("click",()=>{if(hasWordData())wordTranslationToggle.click();updateFocusToolsUI()});
+$("focusWordSelection").addEventListener("click",()=>{wordSelectionToggle.click();updateFocusToolsUI()});
+$("focusAudioToggle").addEventListener("click",()=>{audioToggle.click();updateFocusToolsUI()});
+$("focusRateDown").addEventListener("click",()=>{speechRateDown.click();updateFocusToolsUI()});$("focusRateUp").addEventListener("click",()=>{speechRateUp.click();updateFocusToolsUI()});
+$("focusGoogleVoice").addEventListener("click",()=>{voiceSourceGoogle.click();updateFocusToolsUI()});$("focusBrowserVoice").addEventListener("click",()=>{voiceSourceBrowser.click();updateFocusToolsUI()});
+
 printButton.addEventListener("click",printPortal);
 clearProgressButton.addEventListener("click",clearCurrentProgress);
 document.querySelectorAll(".language-tab").forEach(b=>b.addEventListener("click",()=>setLanguage(b.dataset.language)));
@@ -971,6 +1357,8 @@ document.querySelectorAll("[data-quiz-font-delta]").forEach(b=>b.addEventListene
 translationToggle.addEventListener("click",()=>setTranslationEnabled(!translationEnabled));
 wordTranslationToggle.addEventListener("click",()=>setWordTranslationEnabled(!wordTranslationEnabled));
 wordSelectionToggle.addEventListener("click",()=>setWordSelectionEnabled(!wordSelectionEnabled));
+contextWordSelectToggle.addEventListener("click",()=>setContextWordSelectEnabled(!contextWordSelectEnabled));
+contextSentenceSelectToggle.addEventListener("click",()=>setContextSentenceSelectEnabled(!contextSentenceSelectEnabled));
 audioToggle.addEventListener("click",()=>setAudioEnabled(!audioEnabled));
 speechRateDown.addEventListener("click",()=>changeSpeechRate(-1));
 speechRateUp.addEventListener("click",()=>changeSpeechRate(1));
@@ -987,16 +1375,188 @@ $("wordPoolClearButton").addEventListener("click",clearWordPool);
 wordPoolImportInput.addEventListener("change",e=>{importWordPool(e.target.files[0]);e.target.value=""});
 wordPoolOverlay.addEventListener("click",e=>{if(e.target===wordPoolOverlay)closeWordPool()});
 $("quizStoryText").addEventListener("mouseup",()=>setTimeout(()=>{if(!wordSelectionEnabled||currentLanguage!=="de"||!portalData)return;const sel=getSelection();if(!sel||sel.isCollapsed||!sel.rangeCount)return;const range=sel.getRangeAt(0),container=$("quizStoryText");if(!container.contains(range.commonAncestorContainer))return;const term=cleanSelectedText(sel.toString());if(!term||term.length>120)return;const startEl=range.startContainer.nodeType===1?range.startContainer:range.startContainer.parentElement,endEl=range.endContainer.nodeType===1?range.endContainer:range.endContainer.parentElement,startSentence=startEl.closest(".sentence"),endSentence=endEl.closest(".sentence");if(!startSentence||startSentence!==endSentence)return;showWordPopover(term,startSentence.textContent,range.getBoundingClientRect());sel.removeAllRanges()},0));
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){hideSentenceTooltip();hideWordTranslationTooltip();hideWordPopover();hideWordAudioMenu();hideMobileSentenceActions();if(!wordPoolOverlay.classList.contains("hidden"))closeWordPool();hideTimePicker()}});
-let startX=0,startLeftWidth=0;function setLeftWidth(n){n=Math.max(20,Math.min(75,n));leftSide.style.width=n+"%";resizer.setAttribute("aria-valuenow",String(Math.round(n)));safeSet("germanPortalLeftWidth",n+"%")}
-resizer.addEventListener("pointerdown",e=>{if(innerWidth<=900)return;startX=e.clientX;startLeftWidth=leftSide.getBoundingClientRect().width;resizer.classList.add("dragging");resizer.setPointerCapture(e.pointerId)});
-resizer.addEventListener("pointermove",e=>{if(resizer.classList.contains("dragging"))setLeftWidth((startLeftWidth+e.clientX-startX)/workspaceContainer.getBoundingClientRect().width*100)});
-function pointerUp(e){resizer.classList.remove("dragging");if(resizer.hasPointerCapture(e.pointerId))resizer.releasePointerCapture(e.pointerId)}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){hideSentenceTooltip();hideWordTranslationTooltip();hideWordPopover();hideWordAudioMenu();hideMobileSentenceActions();if(!wordPoolOverlay.classList.contains("hidden"))closeWordPool();hideTimePicker();if(readingSettingsBackdrop?.classList.contains("open"))closeReadingSettings();else if(focusToolsBackdrop?.classList.contains("open"))closeFocusTools();else if(focusModeActive)setFocusMode(false);else if(testModeActive)setTestMode(false)}});
+let startX=0,startLeftWidth=0,resizeContainerWidth=0,resizeFrame=0,pendingLeftWidth=null;
+function setLeftWidth(n,persist=true){n=Math.max(20,Math.min(75,n));leftSide.style.width=n+"%";resizer.setAttribute("aria-valuenow",String(Math.round(n)));if(persist)safeSet("germanPortalLeftWidth",n+"%")}
+function flushResizeFrame(){resizeFrame=0;if(pendingLeftWidth!==null){setLeftWidth(pendingLeftWidth,false);pendingLeftWidth=null}}
+resizer.addEventListener("pointerdown",e=>{if(innerWidth<=900)return;startX=e.clientX;startLeftWidth=leftSide.getBoundingClientRect().width;resizeContainerWidth=workspaceContainer.getBoundingClientRect().width;resizer.classList.add("dragging");document.body.classList.add("resizing");resizer.setPointerCapture(e.pointerId)});
+resizer.addEventListener("pointermove",e=>{if(!resizer.classList.contains("dragging"))return;pendingLeftWidth=(startLeftWidth+e.clientX-startX)/resizeContainerWidth*100;if(!resizeFrame)resizeFrame=requestAnimationFrame(flushResizeFrame)});
+function pointerUp(e){if(resizeFrame){cancelAnimationFrame(resizeFrame);resizeFrame=0}if(pendingLeftWidth!==null){setLeftWidth(pendingLeftWidth,false);pendingLeftWidth=null}resizer.classList.remove("dragging");document.body.classList.remove("resizing");const finalWidth=parseFloat(leftSide.style.width||"45");safeSet("germanPortalLeftWidth",finalWidth+"%");if(resizer.hasPointerCapture(e.pointerId))resizer.releasePointerCapture(e.pointerId)}
 resizer.addEventListener("pointerup",pointerUp);resizer.addEventListener("pointercancel",pointerUp);
 resizer.addEventListener("keydown",e=>{if(!["ArrowLeft","ArrowRight"].includes(e.key))return;e.preventDefault();setLeftWidth(parseFloat(leftSide.style.width||safeGet("germanPortalLeftWidth")||"45")+(e.key==="ArrowRight"?2:-2))});
 const savedWidth=parseFloat(safeGet("germanPortalLeftWidth"));if(Number.isFinite(savedWidth))setLeftWidth(savedWidth);
 document.addEventListener("keydown",e=>{if(e.key!=="Enter"||$("s1-quiz").classList.contains("hidden")||["BUTTON","TEXTAREA","SELECT"].includes(e.target.tagName))return;const checked=document.querySelector('input[name="current_q"]:checked');if(checked&&!checked.disabled)checkAnswer()});
-updateWordPoolUI();updateTranslationToggle();updateWordTranslationToggle();updateWordSelectionToggle();updateAudioToggle();updateSpeechRateUI();updateVoiceSourceUI();applyParagraphFlow(false);
+updateWordPoolUI();updateTranslationToggle();updateWordTranslationToggle();updateWordSelectionToggle();updateContextSelectionToggles();updateDimModeUI();updateAudioToggle();updateSpeechRateUI();updateVoiceSourceUI();applyParagraphFlow(false);updateViewModeUI();
+</script>
+<!-- compact UI patch -->
+<style id="compact-ui-patch">
+/* Kompakt ust komuta merkezi */
+.app{padding-top:14px}
+.header-top{
+  display:grid;
+  grid-template-columns:minmax(260px,1fr) auto;
+  align-items:center;
+  gap:16px;
+  min-height:82px;
+  margin-bottom:10px;
+  padding:13px 16px 13px 20px;
+  border-radius:18px;
+}
+.head{min-width:0}
+.head h1{margin-bottom:2px;font-size:21px}
+.head p{max-width:520px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px}
+.header-actions{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+}
+.header-actions-row{
+  display:flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+}
+.header-actions-row:first-child{
+  padding-right:7px;
+  border-right:1px solid rgba(255,255,255,.08);
+}
+.header-top .btn{
+  min-height:34px;
+  padding:7px 11px;
+  border-radius:10px;
+  font-size:12px;
+  white-space:nowrap;
+  box-shadow:none;
+}
+.countdown-timer{
+  gap:4px;
+  min-height:36px;
+  padding:3px 5px 3px 8px;
+  border-radius:11px;
+}
+.countdown-input{width:75px;padding:4px 2px;font-size:12.5px}
+.countdown-timer .btn{min-height:27px!important;padding:4px 8px!important;font-size:10.5px!important;border-radius:8px!important}
+#clearProgressButton{padding-inline:10px}
+#wordPoolButton{padding-inline:11px}
+.pool-count{min-width:18px;height:18px;margin-left:4px;padding:0 5px;font-size:10px}
+.topic-tabs{
+  justify-content:flex-start;
+  gap:6px;
+  min-height:34px;
+  margin:6px 0 8px;
+  padding:0 2px;
+}
+.topic-tab{min-height:32px;max-width:220px;padding:6px 9px 6px 12px;border-radius:11px;font-size:12px}
+.topic-tab-close{width:18px;height:18px;font-size:12px}
+.workspace-container{margin-top:8px}
+
+/* Metin ve soru baslangiclarini kararlı biçimde hizala */
+.workspace-left,.workspace-right{scroll-margin-top:16px}
+#questionProgress{margin-bottom:20px}
+#s1-quizCard{padding-top:0}
+
+/* Dar ekranlarda komutlari iki temiz satira indir */
+@media(max-width:1120px){
+  .header-top{grid-template-columns:1fr;gap:9px}
+  .header-actions{width:100%;justify-content:space-between}
+  .head p{max-width:100%}
+}
+@media(max-width:760px){
+  .app{padding:8px 10px 40px}
+  .header-top{padding:12px;border-radius:15px}
+  .header-actions{display:grid;grid-template-columns:1fr;gap:6px}
+  .header-actions-row{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+  .header-actions-row:first-child{padding:0 0 6px;border-right:0;border-bottom:1px solid rgba(255,255,255,.08)}
+  .header-actions-row:nth-child(2){grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,1fr)}
+  .header-top .btn{width:100%;padding-inline:7px;font-size:11px}
+  .countdown-timer{width:100%;justify-content:center}
+  .topic-tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px}
+  .topic-tab{flex:none}
+}
+
+/* Kavramsal ve kompakt okuma menusu */
+.reader-main-toolbar{display:flex!important;align-items:flex-end!important;justify-content:space-between!important;gap:10px!important;margin:15px 0 18px!important;padding-top:13px!important}
+.reader-control-groups{display:flex;align-items:flex-end;gap:8px;min-width:0;flex-wrap:wrap}
+.reader-segment-group{display:flex;flex-direction:column;gap:4px;min-width:0}
+.reader-group-label{padding-left:4px;color:#94a3b8;font-size:9px;font-weight:800;line-height:1;text-transform:uppercase;letter-spacing:.55px}
+.reader-segments{display:inline-flex;align-items:center;padding:3px;border:1px solid rgba(255,255,255,.065);border-radius:11px;background:#191d27}
+.reader-segment,.reader-main-toolbar .language-tab{min-height:30px!important;margin:0!important;padding:6px 10px!important;border:0!important;border-radius:8px!important;background:transparent!important;color:#aeb8c8!important;box-shadow:none!important;font-size:11.5px!important;font-weight:750;white-space:nowrap;cursor:pointer;transition:background .16s,color .16s,box-shadow .16s}
+.reader-segment:hover,.reader-main-toolbar .language-tab:hover{background:#252b38!important;color:#fff!important;transform:none!important}
+.reader-segment.active,.reader-main-toolbar .language-tab.active{background:#2563eb!important;color:#fff!important;box-shadow:0 2px 8px rgba(37,99,235,.34)!important}
+.language-segment-group .language-tabs{display:inline-flex!important;width:auto!important;gap:0!important;overflow:visible!important}
+.reader-main-toolbar>.reading-settings-button.icon-only{flex:none;width:38px;height:38px;min-height:38px!important;padding:0!important;border-radius:11px!important;font-size:16px!important}
+body.test-mode #readingLayoutTextBtn,body.test-mode #autoScrollBtn{opacity:.38;pointer-events:none}
+@media(max-width:760px){
+ .reader-main-toolbar{display:grid!important;grid-template-columns:1fr auto!important;align-items:end!important}
+ .reader-control-groups{grid-column:1;display:grid;grid-template-columns:auto 1fr;gap:8px}
+ .reader-segment-group:nth-child(3){grid-column:1/-1}
+ .reader-segment-group:nth-child(2) .reader-segments,.reader-segment-group:nth-child(3) .reader-segments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
+ .reader-segment-group:nth-child(3) .reader-segments{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .reader-main-toolbar>.reading-settings-button.icon-only{grid-column:2;grid-row:1;align-self:end}
+ .reader-segment{padding-inline:7px!important}
+}
+@media(max-width:430px){
+ .reader-control-groups{grid-template-columns:1fr}
+ .reader-segment-group,.reader-segment-group:nth-child(3){grid-column:1}
+ .language-segment-group .language-tabs{width:100%!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important}
+ .reader-main-toolbar>.reading-settings-button.icon-only{grid-row:1}
+}
+
+/* Metin boyutu baslik satirinda */
+.story-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+.story-title-row .story-heading{flex:1;min-width:0}
+.story-title-row .reader-font-toolbar{display:flex;flex:none;margin:0}
+.story-title-row .font-controls{margin:0;padding:3px;gap:2px;border-radius:9px;background:#191d27}
+.story-title-row .font-btn{min-width:31px;height:28px;padding:3px 7px;border-radius:7px;font-size:12px}
+.reader-main-toolbar{margin-top:11px!important}
+@media(max-width:520px){
+ .story-title-row{gap:7px}
+ .story-title-row .font-btn{min-width:29px;padding:3px 5px}
+}
+
+/* Sağ test paneli soldaki okuma alanından bağımsız ve kararlı kalır */
+@media(min-width:901px){
+  .workspace-right{
+    top:20px;
+    padding-top:0!important;
+    scroll-behavior:auto;
+    overflow-anchor:none;
+  }
+  #questionProgress{margin-top:0!important}
+}
+</style>
+<script>
+/* Kompakt arayuz icin daha kisa, anlasilir etiketler ve yeniden hizalama */
+(function(){
+  const clearButton=document.getElementById('clearProgressButton');
+  const printButton=document.getElementById('printButton');
+  const folderButton=document.getElementById('selectFolderButton');
+  if(clearButton){clearButton.innerHTML='↻ Testi Sıfırla';clearButton.title='Bu konuya ait soru ilerlemesini sıfırla';}
+  if(printButton){printButton.innerHTML='▤ Yazdır';}
+  if(folderButton){folderButton.innerHTML='📂 Klasör';}
+  const resync=()=>{if(typeof syncQuestionAreaToText==='function')requestAnimationFrame(syncQuestionAreaToText)};
+  addEventListener('load',resync);
+  addEventListener('resize',resync);
+  document.querySelectorAll('.language-tab,[data-font-delta],[data-quiz-font-delta]').forEach(node=>node.addEventListener('click',resync));
+})();
+</script>
+
+<script>
+(function(){
+  if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+  let deferredInstallPrompt=null;
+  const installButton=document.createElement('button');
+  installButton.type='button';installButton.className='btn primary';installButton.textContent='⬇ Uygulamayı Kur';
+  installButton.hidden=true;installButton.setAttribute('aria-label','Uygulamayı telefona kur');
+  const actionRow=document.querySelector('.header-actions-row:first-child');
+  if(actionRow)actionRow.append(installButton);
+  addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;installButton.hidden=false;});
+  installButton.addEventListener('click',async()=>{if(!deferredInstallPrompt)return;deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;installButton.hidden=true;});
+  addEventListener('appinstalled',()=>{deferredInstallPrompt=null;installButton.hidden=true;});
+})();
 </script>
 </body>
 </html>
