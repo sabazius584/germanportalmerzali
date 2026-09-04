@@ -1,14 +1,12 @@
 {
   "name": "Almanca Öğrenme Portalı",
   "short_name": "Almanca Portalı",
-  "description": "JSON tabanlı Almanca okuma ve test portalı",
   "lang": "tr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#090a0f",
   "theme_color": "#13151c",
-  "orientation": "any",
   "icons": [
     {
       "src": "icon-192.png",
