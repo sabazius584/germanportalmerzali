@@ -562,6 +562,58 @@ body.resizing .resizer{pointer-events:auto}
   body.focus-mode.mobile-quiz-open .mobile-focus-quiz-close{bottom:calc(56dvh + env(safe-area-inset-bottom) - 38px)}
 }
 </style>
+<style id="mobile-ux-v4">
+/* Mobil UX v4. Tum kurallar yalnizca telefon ekranlarinda gecerlidir. */
+.mobile-header-toggle,.mobile-quiz-resizer{display:none}
+@media(max-width:900px){
+  /* Ust menu varsayilan olarak kapali, tek dokunusla acilir. */
+  .header-top{padding:calc(10px + env(safe-area-inset-top)) 10px 10px!important}
+  .head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;margin:0!important}
+  .head h1{font-size:18px!important;margin:0!important}.head p{grid-column:1/-1;margin-top:2px!important;font-size:10.5px!important}
+  .mobile-header-toggle{display:flex;align-items:center;justify-content:center;min-width:76px;height:38px;padding:0 11px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:#202635;color:#fff;font-weight:750;cursor:pointer}
+  .header-actions{display:none!important;margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.07)}
+  body.mobile-header-open .header-actions{display:grid!important}
+  .header-actions-row:first-child{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .header-actions-row:first-child .btn:last-child:nth-child(3){grid-column:auto!important}
+  .header-actions-row:nth-child(2){grid-template-columns:minmax(0,1.35fr) repeat(2,minmax(0,1fr))!important}
+  .countdown-timer{grid-column:auto!important;grid-template-columns:minmax(64px,1fr) 34px 34px!important;gap:3px!important;padding:3px 4px!important;min-width:0}
+  .countdown-input{font-size:12px!important;padding-left:4px!important;min-height:34px!important}
+  .countdown-timer .btn{min-width:34px!important;width:34px!important;min-height:34px!important;padding:0!important;font-size:0!important}
+  #countdownStartButton::after{content:'▶';font-size:13px}#countdownResetButton::after{content:'↻';font-size:15px}
+  .header-top .btn{min-height:40px!important;padding:6px 5px!important;font-size:10.5px!important}
+  #selectFileButton{font-size:0!important}#selectFileButton::after{content:'📁 Dosya';font-size:10.5px}
+  #selectFolderButton{font-size:0!important}#selectFolderButton::after{content:'📂 Klasör';font-size:10.5px}
+  #printButton{font-size:0!important}#printButton::after{content:'▤ Yazdır';font-size:10.5px}
+  #clearProgressButton{font-size:0!important}#clearProgressButton::after{content:'↻ Test';font-size:10.5px}
+  #wordPoolButton{font-size:0!important}#wordPoolButton::before{content:'Kelimeler ';font-size:10.5px}#wordPoolButton .pool-count{font-size:10px!important}
+
+  /* Paragraf sayaci metnin veya cumlenin uzerine binmez. */
+  .paragraph-flow-status,.readCard.flow-active .paragraph-flow-status{position:static!important;display:none!important;width:max-content;min-width:54px;height:26px;margin:0 auto 7px!important;transform:none!important;pointer-events:none}
+  .readCard.flow-active .paragraph-flow-status{display:flex!important}
+
+  /* Acilir quiz daha kucuk; baslik ve soru tipi telefonda gizli. */
+  body.focus-mode.mobile-quiz-open .workspace-right{height:var(--mobile-quiz-height,38dvh)!important;max-height:72dvh!important;min-height:210px!important;padding:30px 10px 10px!important;border-radius:18px 18px 12px 12px}
+  body.focus-mode.mobile-quiz-open .workspace-right .question-header{display:none!important}
+  body.focus-mode.mobile-quiz-open .workspace-right .qType{display:none!important}
+  body.focus-mode.mobile-quiz-open #questionProgress{margin:0 0 8px!important}
+  body.focus-mode.mobile-quiz-open .question{margin-bottom:12px;font-size:calc(var(--quiz-font-size) + 1px)}
+  body.focus-mode.mobile-quiz-open .qNo{margin-bottom:5px}
+  body.focus-mode.mobile-quiz-open .option{min-height:42px;margin:6px 0;padding:9px 10px}
+  body.focus-mode.mobile-quiz-open .feedback{margin-top:9px;padding:10px}
+  body.focus-mode.mobile-quiz-open .nav{margin-top:10px}
+  body.focus-mode.mobile-quiz-open .nav .btn{min-height:40px}
+  body.focus-mode.mobile-quiz-open .mobile-focus-quiz-close{display:none!important}
+  body.focus-mode.mobile-quiz-open .mobile-quiz-resizer{position:fixed;z-index:10635;left:50%;bottom:calc(var(--mobile-quiz-height,38dvh) + env(safe-area-inset-bottom) - 11px);display:flex;width:74px;height:24px;transform:translateX(-50%);align-items:center;justify-content:center;touch-action:none;cursor:ns-resize}
+  body.focus-mode.mobile-quiz-open .mobile-quiz-resizer::after{content:'';width:42px;height:5px;border-radius:5px;background:#64748b;box-shadow:0 0 0 1px rgba(255,255,255,.10)}
+}
+@media(max-width:390px){
+  .header-actions-row:first-child{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .header-actions-row:nth-child(2){grid-template-columns:1fr 1fr!important}
+  .countdown-timer{grid-column:1/-1!important}
+  body.focus-mode.mobile-quiz-open .workspace-right{height:var(--mobile-quiz-height,42dvh)!important}
+  body.focus-mode.mobile-quiz-open .mobile-quiz-resizer{bottom:calc(var(--mobile-quiz-height,42dvh) + env(safe-area-inset-bottom) - 11px)}
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -1514,6 +1566,35 @@ body.test-mode #readingLayoutTextBtn,body.test-mode #autoScrollBtn{opacity:.38;p
   const originalSetFocusMode=setFocusMode;
   setFocusMode=function(active){if(!active)setOpen(false);return originalSetFocusMode(active)};
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('mobile-quiz-open')){event.stopImmediatePropagation();setOpen(false)}},true);
+})();
+</script>
+
+<script>
+(function(){
+ const phone=()=>matchMedia('(max-width:900px)').matches;
+ /* Mobilde tek ses motoru ve tek oynatma: Samsung cift okumayi engeller. */
+ const normalPlay=playGermanSentence;
+ playGermanSentence=function(text,btn){
+   if(!phone())return normalPlay(text,btn);
+   if(!audioEnabled)return;stopSentenceAudio();text=String(text||'').trim();if(!text)return;
+   sentenceAudioButton=btn;btn.classList.add('playing','visible');
+   speakWithDeviceGerman(text,btn);
+ };
+ /* Kompakt ust menu. */
+ const head=document.querySelector('.head');
+ const menu=document.createElement('button');menu.type='button';menu.className='mobile-header-toggle';menu.textContent='Menü';menu.setAttribute('aria-expanded','false');
+ if(head)head.append(menu);
+ menu.addEventListener('click',()=>{const open=document.body.classList.toggle('mobile-header-open');menu.textContent=open?'Kapat':'Menü';menu.setAttribute('aria-expanded',String(open))});
+ /* Quiz panelini ust kenardan parmakla boyutlandir. */
+ const grip=document.createElement('div');grip.className='mobile-quiz-resizer';grip.setAttribute('role','separator');grip.setAttribute('aria-label','Soru paneli yüksekliğini ayarla');document.body.append(grip);
+ let dragging=false;
+ const resize=y=>{const min=210,max=innerHeight*.72;const h=Math.max(min,Math.min(max,innerHeight-y));document.documentElement.style.setProperty('--mobile-quiz-height',h+'px')};
+ grip.addEventListener('pointerdown',e=>{dragging=true;grip.setPointerCapture(e.pointerId);e.preventDefault()});
+ grip.addEventListener('pointermove',e=>{if(dragging)resize(e.clientY)});
+ const finish=e=>{dragging=false;if(grip.hasPointerCapture?.(e.pointerId))grip.releasePointerCapture(e.pointerId)};
+ grip.addEventListener('pointerup',finish);grip.addEventListener('pointercancel',finish);
+ /* Panel acikken ana metne dokunmak paneli kapatir. */
+ document.querySelector('.workspace-left')?.addEventListener('click',()=>{if(phone()&&document.body.classList.contains('mobile-quiz-open')){document.body.classList.remove('mobile-quiz-open');document.getElementById('mobileFocusQuizButton')?.setAttribute('aria-expanded','false')}});
 })();
 </script>
 </body>
