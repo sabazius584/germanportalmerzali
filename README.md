@@ -1,2 +1,2 @@
-# Almanca Portali
-GitHub Pages paketi. Masaustu korunur, mobil arayuz 900px altinda etkindir.
+# Almanca Portalı v4
+GitHub Pages için hazır mobil paket. PC görünümü korunur.
