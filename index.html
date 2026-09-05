@@ -3107,26 +3107,28 @@ addEventListener('load',simplifyThemeMenu,{once:true});
 </script>
 
 
-<!-- Mobile v28-v29: vertical flow, iPhone space correction and free controls -->
-<style id="mobile-v29-iphone-space-free-controls">
+<!-- Mobile v30: exact test-mode bottom line on iPhone -->
+<style id="mobile-v30-exact-test-bottom">
 @media (max-width:1024px){
-  .mobile-v10-font-controls{gap:8px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;background-color:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-  .mobile-v10-font-controls>button:not(.r7-topics),.mobile-v10-font-controls .r7-topics{box-shadow:0 10px 28px rgba(0,0,0,.52)!important}
-  body.r7-paragraph-view #quizStoryText.paragraph-flow{perspective:none!important;transform-style:flat!important;overflow:hidden!important;touch-action:pan-y!important}
-  body.r7-paragraph-view #quizStoryText.paragraph-flow>p,body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-active-paragraph{transform-origin:center center!important;backface-visibility:visible!important;filter:none!important;box-shadow:none!important;transition:transform 210ms cubic-bezier(.22,.75,.25,1),opacity 210ms cubic-bezier(.22,.75,.25,1)!important}
-  body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-card-leave{transform:translate3d(0,-14px,0)!important;opacity:0!important;filter:none!important;box-shadow:none!important}
-  body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-card-enter.mobile-card-from-next{transform:translate3d(0,14px,0)!important;transform-origin:center center!important;opacity:0!important;filter:none!important}
-  body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-card-enter.mobile-card-from-prev{transform:translate3d(0,-14px,0)!important;transform-origin:center center!important;opacity:0!important;filter:none!important}
-  body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-card-enter:not(.mobile-card-from-next):not(.mobile-card-from-prev),body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-active-paragraph:not(.mobile-card-leave){transform:translate3d(0,0,0)!important;opacity:1!important}
+  /* Ortak sol kutu tamamen yok. */
+  .mobile-v10-font-controls{left:calc(14px + env(safe-area-inset-left))!important;bottom:var(--r7-bottom)!important;gap:7px!important;padding:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .mobile-v10-font-controls>button:not(.r7-topics),.mobile-v10-font-controls .r7-topics{width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;margin:0!important;border-radius:50%!important}
+  body:not(.r7-test-view) .r7-fab{bottom:var(--r7-bottom)!important}
+  body.r7-paragraph-view #quizStoryText.paragraph-flow{perspective:none!important;transform-style:flat!important;touch-action:pan-y!important}
+  body.r7-paragraph-view #quizStoryText.paragraph-flow>p{filter:none!important;box-shadow:none!important;transition:transform 210ms cubic-bezier(.22,.75,.25,1),opacity 210ms cubic-bezier(.22,.75,.25,1)!important}
+  body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-card-leave{transform:translate3d(0,-14px,0)!important;opacity:0!important}
+  body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-card-enter.mobile-card-from-next{transform:translate3d(0,14px,0)!important;opacity:0!important}
+  body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-card-enter.mobile-card-from-prev{transform:translate3d(0,-14px,0)!important;opacity:0!important}
+  body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-active-paragraph:not(.mobile-card-leave){transform:translate3d(0,0,0)!important;opacity:1!important}
 }
+/* iPhone: kartı hesapla kısaltmak yerine test modu gibi gerçek ekran altına sabitle. */
 @media (max-width:1024px) and (-webkit-touch-callout:none){
-  :root{--mobile-reading-bottom:max(4px,calc(env(safe-area-inset-bottom) - 18px));--mobile-reading-control-space:18px}
-  body:not(.r7-test-view):not(.r7-paragraph-view) .readCard,body.r7-paragraph-view:not(.r7-test-view) .readCard{height:calc(100dvh - var(--r7-top,60px) - env(safe-area-inset-top) - 18px)!important;max-height:calc(100dvh - var(--r7-top,60px) - env(safe-area-inset-top) - 18px)!important;margin-bottom:0!important}
-  .mobile-v10-font-controls,body:not(.r7-test-view) .r7-fab{bottom:var(--mobile-reading-bottom)!important}
+  body:not(.r7-test-view) .app{padding-bottom:0!important}
+  body:not(.r7-test-view) .readCard{position:fixed!important;z-index:1!important;left:8px!important;right:8px!important;top:calc(var(--r7-top,60px) + env(safe-area-inset-top) + 8px)!important;bottom:6px!important;width:auto!important;height:auto!important;max-height:none!important;margin:0!important}
+  .mobile-v10-font-controls,body:not(.r7-test-view) .r7-fab{position:fixed!important;top:auto!important;bottom:calc(16px + env(safe-area-inset-bottom))!important;transform:none!important}
 }
-@media (max-width:1024px) and (prefers-reduced-motion:reduce){body.r7-paragraph-view #quizStoryText.paragraph-flow>p{transition:none!important}}
 </style>
-<script id="mobile-v29-theme-last-script">(function(){'use strict';function move(){const d=document.querySelector('.r7-drawer'),c=d?.querySelector('.r7-smart-theme-section');if(d&&c&&d.lastElementChild!==c)d.append(c)}function start(){move();const d=document.querySelector('.r7-drawer');if(!d)return;let q=false;new MutationObserver(()=>{if(q)return;q=true;requestAnimationFrame(()=>{q=false;move()})}).observe(d,{childList:true});setTimeout(move,100);setTimeout(move,500)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();addEventListener('load',move,{once:true})})();</script>
+<script id="mobile-v30-theme-last">(function(){function m(){const d=document.querySelector('.r7-drawer'),c=d&&d.querySelector('.r7-smart-theme-section');if(d&&c&&d.lastElementChild!==c)d.append(c)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',m,{once:true});else m();setTimeout(m,300)})();</script>
 
 </body>
 </html>

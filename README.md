@@ -1,3 +1,3 @@
-# GitHub Pages Paketi
+# Sürüm 119
 
-Tüm dosyaları depo köküne yükleyin. Settings > Pages altında main ve / (root) seçin.
+ZIP içeriğinin tamamını GitHub depo köküne yükleyin. Eski dosyaların üzerine yazın. iPhone Safari sayfasını tamamen kapatıp yeniden açın.
