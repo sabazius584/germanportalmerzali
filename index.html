@@ -670,6 +670,85 @@ body.resizing .resizer{pointer-events:auto}
 }
 
 </style>
+
+<style id="mobile-v12-bottom-controls-patch">
+/* Yalnızca dokunmatik telefon/tablet arayüzü. Masaüstü etkilenmez. */
+@media (max-width:1024px) and (pointer:coarse){
+  /* Hamburger menü: Kelime Seçme Modu metni tam ortada. */
+  .r7-word-mode{
+    justify-content:center!important;
+    text-align:center!important;
+  }
+
+  /* Sol altta tek, kompakt kontrol grubu: - Aa + ve Yüklü Metinler. */
+  .mobile-v10-font-controls{
+    align-items:center!important;
+    gap:4px!important;
+    padding:4px!important;
+    border-radius:15px!important;
+  }
+  .mobile-v10-font-controls > button:not(.r7-topics){
+    width:34px!important;
+    height:36px!important;
+    min-width:34px!important;
+    border-radius:9px!important;
+    font-size:18px!important;
+  }
+  .mobile-v12-font-label{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-width:25px;
+    height:36px;
+    color:#bfdbfe;
+    font-size:11px;
+    font-weight:850;
+    letter-spacing:-.2px;
+    user-select:none;
+    pointer-events:none;
+  }
+  .mobile-v10-font-controls .r7-topics{
+    position:static!important;
+    inset:auto!important;
+    display:flex!important;
+    width:40px!important;
+    height:40px!important;
+    min-width:40px!important;
+    margin-left:3px!important;
+    padding:0!important;
+    border:1px solid rgba(96,165,250,.55)!important;
+    border-radius:11px!important;
+    background:#243047!important;
+    box-shadow:none!important;
+    transform:none!important;
+  }
+  .mobile-v10-font-controls .r7-topics::before{
+    content:'📂'!important;
+    font-size:19px!important;
+    line-height:1!important;
+  }
+
+  /* Yüklü dosya adları tek satırda, uzun adlar üç nokta ile gösterilir. */
+  .r7-topic-item{
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    text-align:center!important;
+  }
+
+  /* Görünüm düğmesi dosya düğmesinden görsel olarak farklı kalır. */
+  .r7-layout-toggle::before{content:'¶'!important}
+  body.r7-paragraph-view .r7-layout-toggle::before{content:'☷'!important}
+
+  body.r7-drawer-open .mobile-v10-font-controls,
+  body.r7-actions-open .mobile-v10-font-controls,
+  body.r7-topics-open .mobile-v10-font-controls,
+  body.r7-timer-open .mobile-v10-font-controls{
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -1672,7 +1751,7 @@ function updateMenu(){drawer.querySelectorAll('[data-r7-mode]').forEach(b=>b.cla
 function setMobileMode(next){if(!touchLayout())return;mode=next;document.body.classList.remove('r7-test-view','mobile-quiz-open');setFocusMode(false);setTestMode(false);document.body.classList.toggle('r7-test-view',next==='test');testFab.setAttribute('aria-label',next==='test'?'Okumaya dön':'Test');updateMenu();lock('r7-drawer-open',false);scrollTo({top:0,behavior:'instant'})}
 bar.querySelector('.r7-menu').addEventListener('click',()=>lock('r7-drawer-open',true));drawer.querySelector('.r7-close').addEventListener('click',()=>lock('r7-drawer-open',false));drawer.addEventListener('click',e=>{if(e.target===drawer)lock('r7-drawer-open',false)});testFab.addEventListener('click',()=>setMobileMode(mode==='test'?'read':'test'));
 drawer.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.r7Mode)setMobileMode(b.dataset.r7Mode);if(b.dataset.r7Layout){setParagraphFlowEnabled(b.dataset.r7Layout==='paragraph',true);updateMenu();lock('r7-drawer-open',false)}if(b.dataset.r7Lang){setLanguage(b.dataset.r7Lang);updateMenu();lock('r7-drawer-open',false)}if(b.dataset.r7Action){lock('r7-drawer-open',false);if(b.dataset.r7Action==='file')jsonFileInput.click();if(b.dataset.r7Action==='words')wordPoolButton.click();if(b.dataset.r7Action==='timer')lock('r7-timer-open',true);if(b.dataset.r7Action==='reset')clearProgressButton.click()}},true);
-function renderTopics(){const list=topicView.querySelector('.r7-topic-list');list.replaceChildren();if(!topics.length){const n=el('div','');n.textContent='Henüz dosya yüklenmedi.';n.style.color='var(--muted)';list.append(n)}topics.forEach(t=>{const b=el('button','r7-topic-item'+(t.id===activeTopicId?' active':''));b.type='button';b.textContent=t.portalData.storyTitle;b.addEventListener('click',()=>{activateTopic(t.id);lock('r7-topics-open',false)});list.append(b)})}
+function renderTopics(){const list=topicView.querySelector('.r7-topic-list');list.replaceChildren();if(!topics.length){const n=el('div','');n.textContent='Henüz dosya yüklenmedi.';n.style.color='var(--muted)';list.append(n)}topics.forEach(t=>{const row=el('div','r7-topic-row'+(t.id===activeTopicId?' active':'')),b=el('button','r7-topic-item'),title=el('strong','r7-topic-title'),file=el('span','r7-topic-file'),close=el('button','r7-topic-remove');b.type='button';close.type='button';title.textContent=t.portalData.storyTitle||'Başlıksız konu';file.textContent=t.fileName||'Dosya adı bulunamadı';file.title=t.fileName||'';b.append(title,file);b.addEventListener('click',()=>{activateTopic(t.id);lock('r7-topics-open',false)});close.textContent='×';close.setAttribute('aria-label','Yüklü metni kapat');close.title='Yüklü metni kapat';close.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();closeTopic(t.id);renderTopics()});row.append(b,close);list.append(row)})}
 topicsFab.addEventListener('click',()=>{renderTopics();lock('r7-topics-open',true)});topicView.querySelector('.r7-close').addEventListener('click',()=>lock('r7-topics-open',false));topicView.querySelector('.r7-new-file').addEventListener('click',()=>{lock('r7-topics-open',false);jsonFileInput.click()});topicView.addEventListener('click',e=>{if(e.target===topicView)lock('r7-topics-open',false)});
 let seconds=1800,timerId=null;const timerValue=timerView.querySelector('.r7-timer-value');const formatTime=s=>[Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(v=>String(v).padStart(2,'0')).join(':');timerView.addEventListener('click',e=>{if(e.target===timerView)return lock('r7-timer-open',false);const b=e.target.closest('button');if(!b)return;if(b.dataset.r7Sec){seconds=Number(b.dataset.r7Sec);timerValue.textContent=formatTime(seconds)}if(b.dataset.r7Timer==='close')lock('r7-timer-open',false);if(b.dataset.r7Timer==='reset'){clearInterval(timerId);timerId=null;seconds=1800;timerValue.textContent=formatTime(seconds);timerView.querySelector('[data-r7-timer="start"]').textContent='Başlat'}if(b.dataset.r7Timer==='start'){if(timerId){clearInterval(timerId);timerId=null;b.textContent='Başlat'}else{b.textContent='Duraklat';timerId=setInterval(()=>{seconds=Math.max(0,seconds-1);timerValue.textContent=formatTime(seconds);if(!seconds){clearInterval(timerId);timerId=null;b.textContent='Başlat';navigator.vibrate?.([120,80,120]);alert('Süre doldu!')}},1000)}}});
 function actionButton(label,fn,disabled=false){const b=el('button','r7-action-button');b.type='button';b.textContent=label;b.disabled=disabled;b.addEventListener('click',()=>{if(fn)fn()});return b}
@@ -1729,6 +1808,393 @@ addEventListener('resize',()=>{if(touchLayout()&&paragraphFlowEnabled)requestAni
 addEventListener('orientationchange',()=>setTimeout(()=>{if(touchLayout()&&paragraphFlowEnabled)applyParagraphFlow(false)},180));
 })();
 </script>
+
+
+<style id="mobile-final-v9-style">
+@media (max-width:1024px) and (pointer:coarse){
+  body:not(.r7-test-view) .readCard{height:calc(100dvh - var(--r7-top,60px) - env(safe-area-inset-top) - 16px)!important;min-height:0!important;max-height:calc(100dvh - var(--r7-top,60px) - env(safe-area-inset-top) - 16px)!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+  body:not(.r7-test-view) .story-title-row{flex:0 0 auto!important}
+  body:not(.r7-test-view) .readCard.flow-active .story-title-row{display:none!important}
+  body:not(.r7-test-view) #quizStoryText:not(.paragraph-flow){flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important;overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch}
+  body:not(.r7-test-view) #quizStoryText.paragraph-flow{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;overflow:hidden!important;touch-action:none!important;scroll-behavior:auto!important;scroll-snap-type:none!important}
+  body:not(.r7-test-view) #quizStoryText.paragraph-flow>p{box-sizing:border-box!important;width:100%!important;height:100%!important;min-height:100%!important;max-height:100%!important;margin:0!important;padding:12px clamp(12px,4vw,34px)!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:stretch!important;scroll-snap-align:none!important}
+  .readCard.flow-active .paragraph-flow-status{position:static!important;display:flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:center!important;z-index:12!important;width:max-content!important;min-width:44px!important;height:20px!important;margin:0 auto 4px!important;padding:0 8px!important;transform:none!important;border-radius:10px!important;font-size:9.5px!important;line-height:20px!important;visibility:visible!important}
+  body.r7-test-view .workspace-right{display:block!important;position:static!important;box-sizing:border-box!important;width:100%!important;height:calc(100dvh - var(--r7-top,60px) - env(safe-area-inset-top) - 24px)!important;min-height:0!important;max-height:calc(100dvh - var(--r7-top,60px) - env(safe-area-inset-top) - 24px)!important;margin:0!important;padding:10px 6px 90px!important;overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important;overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch;border-radius:16px!important}
+  body.r7-test-view #s1-quizCard,body.r7-test-view .result,body.r7-test-view .result-details{height:auto!important;max-height:none!important;overflow:visible!important}
+  body.r7-test-view .result>.nav{margin:14px 0 18px!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  body.r7-test-view .result>.nav .btn{width:100%!important;margin:0!important;padding:10px 6px!important}
+  #quizStoryText,#quizStoryText *,.mobile-r7-action-wrap,.mobile-r7-action-wrap *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
+  #quizStoryText .sentence,#quizStoryText .selectable-word{pointer-events:auto!important}
+  .mobile-r7-action-wrap{background:rgba(0,0,0,.20)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .mobile-r7-action-wrap .r7-sheet-close{display:none!important}
+  .mobile-r7-action-wrap button{touch-action:manipulation!important}
+  .mobile-r7-action-wrap .r7-action-button,.mobile-r7-action-wrap .r7-rate button{transition:transform .09s ease,background-color .12s ease,border-color .12s ease,box-shadow .12s ease!important}
+  .mobile-r7-action-wrap .r7-action-button:active,.mobile-r7-action-wrap .r7-rate button:active,.mobile-r7-action-wrap .tap-confirm{transform:scale(.97)!important;background:#334e78!important;border-color:#60a5fa!important;box-shadow:0 0 0 2px rgba(96,165,250,.14) inset!important}
+  #quizStoryText .sentence.portal-longpress-sentence{background:rgba(59,130,246,.13)!important;box-shadow:inset 3px 0 0 rgba(96,165,250,.72)!important;color:inherit!important}
+  #quizStoryText .selectable-word.portal-longpress-word{background:rgba(34,197,94,.28)!important;color:#dcfce7!important;box-shadow:0 0 0 2px rgba(34,197,94,.18)!important;border-radius:5px!important}
+  .r7-layout-toggle{right:calc(138px + env(safe-area-inset-right))!important;background:#334155!important}
+  .r7-layout-toggle::before{content:'¶';font-size:21px;font-weight:900}
+  body.r7-paragraph-view .r7-layout-toggle::before{content:'☷';font-size:19px}
+  .r7-word-mode{grid-column:1/-1;display:flex!important;align-items:center;justify-content:space-between;gap:10px}
+  .r7-word-mode.active{background:#166534!important;border-color:#4ade80!important}
+  .mobile-v9-toast{position:fixed;z-index:30350;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));padding:10px 14px;border:1px solid rgba(74,222,128,.35);border-radius:13px;background:rgba(20,83,45,.96);color:#dcfce7;font-size:12px;font-weight:800;box-shadow:0 12px 30px rgba(0,0,0,.5);transform:translateX(-50%);pointer-events:none;white-space:nowrap}
+}
+</style>
+<script id="mobile-final-v9-script">
+(function(){'use strict';
+const mobile=()=>matchMedia('(max-width:1024px) and (pointer:coarse)').matches;
+const reader=document.getElementById('quizStoryText'),actionWrap=document.querySelector('.mobile-r7-action-wrap'),drawer=document.querySelector('.mobile-r7-drawer-wrap');
+if(!reader||!actionWrap)return;
+let startX=0,startY=0,startTime=0,moved=false,longTimer=0,pressedSentence=null,pressedWord=null,lastTap=0,lastTapWord=null,animating=false;
+let wordMode=safeGet('germanPortalMobileWordMode')==='true';
+const clearSelection=()=>{try{getSelection()?.removeAllRanges()}catch(_){}};
+function atPoint(x,y){const sentences=[...reader.querySelectorAll('.sentence')];let sentence=null,word=null;for(const s of sentences){const r=s.getBoundingClientRect();if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom){sentence=s;break}}if(sentence){for(const w of sentence.querySelectorAll('.selectable-word')){const r=w.getBoundingClientRect();if(x>=r.left-2&&x<=r.right+2&&y>=r.top-3&&y<=r.bottom+3){word=w;break}}}return{sentence,word}}
+function sentenceText(s){return [...s.childNodes].filter(n=>!n.classList?.contains?.('inline-sentence-speaker')).map(n=>n.textContent||'').join('').trim()}
+function clearMarks(){reader.querySelectorAll('.portal-longpress-sentence').forEach(n=>n.classList.remove('portal-longpress-sentence'));reader.querySelectorAll('.portal-longpress-word').forEach(n=>n.classList.remove('portal-longpress-word'))}
+function mark(s,w){clearMarks();s?.classList.add('portal-longpress-sentence');w?.classList.add('portal-longpress-word')}
+function closeActions(){document.body.classList.remove('r7-actions-open');document.body.classList.toggle('r7-locked',['r7-drawer-open','r7-actions-open','r7-topics-open','r7-timer-open'].some(c=>document.body.classList.contains(c)));clearMarks()}
+function toast(text){document.querySelectorAll('.mobile-v9-toast').forEach(n=>n.remove());const n=document.createElement('div');n.className='mobile-v9-toast';n.textContent=text;document.body.append(n);setTimeout(()=>n.remove(),1400)}
+/* Natural Text-mode scrolling stays native. Long press is detected without preventDefault. */
+reader.addEventListener('touchstart',e=>{if(!mobile()||e.touches.length!==1)return;const t=e.touches[0],hit=atPoint(t.clientX,t.clientY);startX=t.clientX;startY=t.clientY;startTime=Date.now();moved=false;pressedSentence=hit.sentence;pressedWord=hit.word;clearTimeout(longTimer);if(hit.sentence){longTimer=setTimeout(()=>{clearSelection();mark(hit.sentence,hit.word);navigator.vibrate?.(15);openActions(hit.sentence,hit.word)},500)}},{passive:true});
+reader.addEventListener('touchmove',e=>{if(!e.touches[0])return;if(Math.hypot(e.touches[0].clientX-startX,e.touches[0].clientY-startY)>9){moved=true;clearTimeout(longTimer)}},{passive:true});
+reader.addEventListener('touchend',e=>{clearTimeout(longTimer);if(!mobile()||moved)return;const t=e.changedTouches?.[0],hit=t?atPoint(t.clientX,t.clientY):{word:null,sentence:null};if(wordMode&&hit.word){const now=Date.now();if(lastTapWord===hit.word&&now-lastTap<300){lastTap=0;lastTapWord=null;clearSelection();showWordPopover(hit.word.textContent,sentenceText(hit.sentence),hit.word.getBoundingClientRect());toast('Kelimeyi kontrol edip ekleyebilirsin');e.preventDefault()}else{lastTap=now;lastTapWord=hit.word}}},{passive:false});
+reader.addEventListener('contextmenu',e=>{if(mobile()){e.preventDefault();e.stopImmediatePropagation();clearSelection()}},true);
+reader.addEventListener('selectstart',e=>{if(mobile()){e.preventDefault();e.stopImmediatePropagation()}},true);
+/* Keep native selection blocked inside the custom action sheet only. */
+actionWrap.addEventListener('touchstart',e=>{if(!mobile())return;clearSelection();e.preventDefault()},{capture:true,passive:false});
+actionWrap.addEventListener('contextmenu',e=>{if(mobile()){e.preventDefault();e.stopImmediatePropagation()}},true);
+actionWrap.addEventListener('pointerdown',e=>{if(mobile()&&e.target===actionWrap){e.preventDefault();closeActions()}},true);
+new MutationObserver(()=>{if(!document.body.classList.contains('r7-actions-open'))clearMarks()}).observe(document.body,{attributes:true,attributeFilter:['class']});
+/* One custom 160ms ease-out animation, no smooth-scroll/snap conflict. */
+function paras(){return [...reader.children].filter(n=>n.tagName==='P')}
+function currentIndex(a){let k=0,d=Infinity;a.forEach((p,i)=>{const x=Math.abs(p.offsetTop-reader.scrollTop);if(x<d){d=x;k=i}});return k}
+function ease(t){return 1-Math.pow(1-t,3)}
+function go(delta){const a=paras();if(!a.length||animating)return;const i=currentIndex(a),n=Math.max(0,Math.min(a.length-1,i+delta));if(n===i)return;const from=reader.scrollTop,to=a[n].offsetTop,start=performance.now();animating=true;function frame(now){const p=Math.min(1,(now-start)/160);reader.scrollTop=from+(to-from)*ease(p);if(p<1)requestAnimationFrame(frame);else{reader.scrollTop=to;animating=false;updateParagraphFlowStatus?.()}}requestAnimationFrame(frame)}
+reader.addEventListener('touchend',e=>{if(!mobile()||!reader.classList.contains('paragraph-flow')||!moved)return;const t=e.changedTouches?.[0];if(!t)return;const dy=t.clientY-startY,dx=t.clientX-startX;if(Math.abs(dy)>34&&Math.abs(dy)>Math.abs(dx)){e.preventDefault();go(dy<0?1:-1)}},{passive:false});
+function fitParas(){if(!mobile()||!reader.classList.contains('paragraph-flow'))return;const base=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--reader-font-size'))||16;paras().forEach(p=>{let size=base;p.style.fontSize=size+'px';p.style.lineHeight='1.75';while(size>12&&p.scrollHeight>p.clientHeight){size-=.5;p.style.fontSize=size+'px';p.style.lineHeight='1.68'}p.style.justifyContent='center'})}
+const oldApply=applyParagraphFlow;applyParagraphFlow=function(){const r=oldApply.apply(this,arguments);requestAnimationFrame(()=>requestAnimationFrame(fitParas));return r};const oldAdjust=adjustFont;adjustFont=function(){const r=oldAdjust.apply(this,arguments);requestAnimationFrame(fitParas);return r};
+/* Mobile header and Text/Paragraph bottom control. */
+const topicsFab=document.querySelector('.r7-topics');if(topicsFab&&!document.querySelector('.r7-layout-toggle')){const b=document.createElement('button');b.type='button';b.className='r7-fab r7-layout-toggle';topicsFab.insertAdjacentElement('afterend',b);b.addEventListener('click',()=>{setParagraphFlowEnabled(!paragraphFlowEnabled,true);syncLayout()})}
+function syncLayout(){document.body.classList.toggle('r7-paragraph-view',Boolean(paragraphFlowEnabled));const b=document.querySelector('.r7-layout-toggle');if(b){const label=paragraphFlowEnabled?'Metin moduna geç':'Paragraf moduna geç';b.setAttribute('aria-label',label);b.title=label}fitParas()}
+const oldSet=setParagraphFlowEnabled;setParagraphFlowEnabled=function(){const r=oldSet.apply(this,arguments);syncLayout();return r};
+function setHeader(){if(!mobile())return;const bar=document.querySelector('.mobile-r7-bar');if(!bar)return;bar.querySelector('strong').textContent='Almanca Öğrenme Portalı';if(portalData)bar.querySelector('span').textContent=[portalData.storyTitle,portalData.storyLevel,countWords(portalData.storyParagraphs.join(' '))+' kelime'].join(' · ')}const oldActivate=activateTopic;activateTopic=function(){const r=oldActivate.apply(this,arguments);requestAnimationFrame(()=>{setHeader();syncLayout()});return r};
+/* Simplify drawer, preserve Tools, add PDF and Word Selection Mode. */
+if(drawer){const sections=[...drawer.querySelectorAll('.r7-section')];sections.forEach(sec=>{const h=sec.querySelector('h3')?.textContent.trim();if(h==='Düzen')sec.remove();if(h==='Çalışma'){sec.querySelectorAll('[data-r7-mode]').forEach(n=>n.remove());sec.querySelector('[data-r7-action="file"]')?.classList.add('wide')}});const tools=[...drawer.querySelectorAll('.r7-section')].find(sec=>sec.querySelector('h3')?.textContent.trim()==='Araçlar');if(tools){const grid=tools.querySelector('.r7-grid');if(!grid.querySelector('[data-r7-action="pdf"]')){const p=document.createElement('button');p.type='button';p.className='r7-btn wide';p.dataset.r7Action='pdf';p.textContent='PDF / Yazdır';p.addEventListener('click',()=>{document.body.classList.remove('r7-drawer-open','r7-locked');portalData?printButton.click():alert('Önce bir JSON dosyası yükleyin.')});grid.append(p)}const wm=document.createElement('button');wm.type='button';wm.className='r7-btn r7-word-mode';grid.append(wm);function syncWordMode(){wm.classList.toggle('active',wordMode);wm.textContent='Kelime Seçme Modu: '+(wordMode?'AÇIK':'KAPALI')}wm.addEventListener('click',()=>{wordMode=!wordMode;safeSet('germanPortalMobileWordMode',String(wordMode));syncWordMode()});syncWordMode()}}
+/* Move result actions below summary. */
+const oldResult=renderResult;renderResult=function(){const r=oldResult.apply(this,arguments);const result=document.querySelector('#s1-quizCard .result');if(result){const nav=result.querySelector(':scope > .nav'),details=result.querySelector(':scope > .result-details');if(nav&&details)result.insertBefore(nav,details)}return r};
+/* Pinned translations close on any outside tap. */
+document.addEventListener('pointerdown',e=>{if(!mobile())return;if(!e.target.closest('.sentence-tooltip,.word-translation-tooltip')){hideSentenceTooltip(true);hideWordTranslationTooltip(true)}},true);
+addEventListener('load',()=>{setHeader();syncLayout()});addEventListener('resize',()=>requestAnimationFrame(fitParas));
+})();
+</script>
+
+<!-- Mobile action-sheet input controller: restores reliable button activation
+     while keeping Samsung native text selection blocked. -->
+<script id="mobile-action-sheet-controller-v11">
+(function(){
+'use strict';
+const mobile=()=>matchMedia('(max-width:1024px) and (pointer:coarse)').matches;
+const wrap=document.querySelector('.mobile-r7-action-wrap');
+if(!wrap)return;
+let gesture=null;
+function clearSelection(){try{window.getSelection()?.removeAllRanges()}catch(_){}}
+function targetControl(node){return node.closest('.r7-action-button,.r7-rate button')}
+wrap.addEventListener('touchstart',event=>{
+  if(!mobile()||event.touches.length!==1)return;
+  const control=targetControl(event.target),touch=event.touches[0];
+  clearSelection();
+  if(!control){gesture=null;return}
+  gesture={control,startX:touch.clientX,startY:touch.clientY,moved:false};
+  control.classList.add('tap-confirm');
+  event.preventDefault();
+  event.stopImmediatePropagation();
+},{capture:true,passive:false});
+wrap.addEventListener('touchmove',event=>{
+  if(!mobile()||!gesture)return;
+  const touch=event.touches[0];
+  if(!touch)return;
+  if(Math.hypot(touch.clientX-gesture.startX,touch.clientY-gesture.startY)>9){
+    gesture.moved=true;
+    gesture.control.classList.remove('tap-confirm');
+  }
+  event.preventDefault();
+  event.stopImmediatePropagation();
+},{capture:true,passive:false});
+wrap.addEventListener('touchend',event=>{
+  if(!mobile()||!gesture)return;
+  const current=gesture;gesture=null;clearSelection();
+  current.control.classList.remove('tap-confirm');
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  if(current.moved||current.control.disabled)return;
+  requestAnimationFrame(()=>current.control.click());
+},{capture:true,passive:false});
+wrap.addEventListener('touchcancel',()=>{
+  gesture?.control.classList.remove('tap-confirm');
+  gesture=null;clearSelection();
+},{capture:true,passive:true});
+})();
+</script>
+
+<script id="mobile-v12-bottom-controls-script">
+(function(){
+'use strict';
+const mobile=()=>matchMedia('(max-width:1024px) and (pointer:coarse)').matches;
+function arrangeBottomControls(){
+  if(!mobile())return;
+  const controls=document.querySelector('.mobile-v10-font-controls');
+  const topics=document.querySelector('.r7-topics');
+  if(!controls||!topics)return;
+  const fontButtons=[...controls.querySelectorAll(':scope > button:not(.r7-topics)')];
+  if(fontButtons[0]){
+    fontButtons[0].textContent='−';
+    fontButtons[0].title='Metni küçült';
+  }
+  if(fontButtons[1]){
+    fontButtons[1].textContent='+';
+    fontButtons[1].title='Metni büyüt';
+  }
+  let label=controls.querySelector('.mobile-v12-font-label');
+  if(!label){
+    label=document.createElement('span');
+    label.className='mobile-v12-font-label';
+    label.textContent='Aa';
+  }
+  if(fontButtons[0])fontButtons[0].insertAdjacentElement('afterend',label);
+  controls.append(topics);
+  topics.setAttribute('aria-label','Yüklü metinler');
+  topics.title='Yüklü metinler';
+}
+arrangeBottomControls();
+addEventListener('load',arrangeBottomControls,{once:true});
+addEventListener('resize',arrangeBottomControls);
+})();
+</script>
+
+<style id="mobile-v13-final-patch">
+/* Son mobil düzenleme. Tüm kurallar yalnızca dokunmatik telefon/tablet içindir. */
+@media (max-width:1024px) and (pointer:coarse){
+  /* Yazı boyutu kontrolü: Aa etiketi kaldırıldı, yalnızca küçük - ve + kaldı. */
+  .mobile-v10-font-controls{gap:3px!important;padding:3px!important;border-radius:13px!important}
+  .mobile-v10-font-controls > button:not(.r7-topics){width:30px!important;height:34px!important;min-width:30px!important;border-radius:8px!important;font-size:19px!important}
+  .mobile-v12-font-label{display:none!important}
+  .mobile-v10-font-controls .r7-topics{width:36px!important;height:36px!important;min-width:36px!important;margin-left:2px!important;border-radius:9px!important}
+  .mobile-v10-font-controls .r7-topics::before{font-size:18px!important}
+
+  /* Metin/Paragraf dönüşümü, Test düğmesinin hemen solunda. */
+  .r7-layout-toggle{right:calc(76px + env(safe-area-inset-right))!important}
+
+  /* Yüklü metinler: başlık + gerçek dosya adı + ayrı kapatma düğmesi. */
+  .r7-topic-list{gap:9px!important}
+  .r7-topic-row{display:grid;grid-template-columns:minmax(0,1fr) 34px;align-items:stretch;gap:6px;padding:5px;border:1px solid rgba(255,255,255,.08);border-radius:13px;background:#202633}
+  .r7-topic-row.active{border-color:#60a5fa;background:rgba(37,99,235,.22);box-shadow:0 0 0 1px rgba(96,165,250,.12) inset}
+  .r7-topic-row .r7-topic-item{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:3px!important;min-width:0!important;min-height:52px!important;padding:8px 9px!important;border:0!important;background:transparent!important;text-align:left!important;white-space:normal!important}
+  .r7-topic-title,.r7-topic-file{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .r7-topic-title{color:#f8fafc;font-size:12.5px;font-weight:800}
+  .r7-topic-file{color:#93c5fd;font-size:10px;font-weight:650}
+  .r7-topic-remove{align-self:center;width:32px;height:32px;padding:0;border:1px solid rgba(248,113,113,.25);border-radius:9px;background:rgba(127,29,29,.38);color:#fecaca;font-size:20px;line-height:1;cursor:pointer;touch-action:manipulation}
+  .r7-topic-remove:active{background:#b91c1c;color:#fff}
+
+  /* Paragraf kartı, alt sabit düğmeler için güvenli boşluk bırakır. */
+  body.r7-paragraph-view:not(.r7-test-view) .readCard{height:calc(100dvh - var(--r7-top,60px) - env(safe-area-inset-top) - 88px)!important;max-height:calc(100dvh - var(--r7-top,60px) - env(safe-area-inset-top) - 88px)!important;margin-bottom:72px!important;border:1px solid rgba(96,165,250,.28)!important;border-radius:22px!important;box-shadow:0 12px 34px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.035) inset!important}
+  body.r7-paragraph-view #quizStoryText.paragraph-flow{border-radius:17px!important;background:#10141d!important}
+  body.r7-paragraph-view #quizStoryText.paragraph-flow > p{border:1px solid rgba(96,165,250,.24)!important;border-radius:17px!important;background:linear-gradient(155deg,rgba(37,99,235,.13),rgba(30,41,59,.72))!important;box-shadow:0 8px 24px rgba(0,0,0,.24),0 0 0 1px rgba(255,255,255,.025) inset!important;padding:18px clamp(14px,4vw,34px)!important}
+}
+</style>
+<script id="mobile-v13-final-script">
+(function(){'use strict';
+const mobile=()=>matchMedia('(max-width:1024px) and (pointer:coarse)').matches;
+function finishMobileControls(){
+  if(!mobile())return;
+  const controls=document.querySelector('.mobile-v10-font-controls');
+  if(!controls)return;
+  const buttons=[...controls.querySelectorAll(':scope > button:not(.r7-topics)')];
+  if(buttons[0]){buttons[0].textContent='−';buttons[0].title='Metni küçült'}
+  if(buttons[1]){buttons[1].textContent='+';buttons[1].title='Metni büyüt'}
+}
+/* İlk oluşturulan mevcut dinleyiciler korunur; kontrol hem Metin hem Paragraf görünümünde görünür ve çalışır. */
+finishMobileControls();
+addEventListener('load',finishMobileControls,{once:true});
+})();
+</script>
+
+
+<!-- Mobile v15 base: one paragraph card with in-card counter -->
+<style id="mobile-v15-single-card-base">
+@media (max-width:1024px) and (pointer:coarse){
+ body.r7-paragraph-view #quizStoryText.paragraph-flow{position:relative!important;overflow:hidden!important;min-width:0!important}
+ body.r7-paragraph-view #quizStoryText.paragraph-flow>p{display:none!important;position:relative!important;box-sizing:border-box!important;width:100%!important;height:100%!important;min-width:0!important;min-height:100%!important;max-width:100%!important;max-height:100%!important;margin:0!important;overflow:hidden!important;overflow-wrap:anywhere!important;white-space:normal!important;transform:none}
+ body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-active-paragraph{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:stretch!important}
+ body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-card-scroll{justify-content:flex-start!important;overflow-y:auto!important;touch-action:pan-y!important}
+ body.r7-paragraph-view .readCard>.paragraph-flow-status{display:none!important}
+ body.r7-paragraph-view #quizStoryText.paragraph-flow>p>.paragraph-flow-status{position:absolute!important;z-index:20!important;top:8px!important;left:10px!important;display:flex!important;min-width:42px!important;width:auto!important;height:21px!important;margin:0!important;padding:0 8px!important;transform:none!important;border-radius:11px!important;font-size:9.5px!important;pointer-events:none!important}
+ .sentence-tooltip.mobile-safe-tooltip,.word-translation-tooltip.mobile-safe-tooltip{position:fixed!important;z-index:30450!important;max-height:calc(100dvh - 116px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important;overflow-y:auto!important}
+}
+</style>
+<script id="mobile-v15-single-card-script">
+(function(){'use strict';
+const mobile=()=>matchMedia('(max-width:1024px) and (pointer:coarse)').matches,reader=document.getElementById('quizStoryText');if(!reader)return;
+let active=0,sx=0,sy=0,track=false,animating=false;const ps=()=>[...reader.children].filter(n=>n.tagName==='P'),clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+function getBadge(){let b=document.querySelector('.paragraph-flow-status');if(!b){b=document.createElement('span');b.className='paragraph-flow-status'}return b}
+function fit(){const p=ps()[active];if(!p)return;p.classList.remove('mobile-card-scroll');p.scrollTop=0;let z=clamp(Number(currentFontSize)||16,12,28);p.style.setProperty('font-size',z+'px','important');p.style.setProperty('line-height','1.72','important');while(z>12&&p.scrollHeight>p.clientHeight){z-=.5;p.style.setProperty('font-size',z+'px','important');p.style.setProperty('line-height',z<=13?'1.58':'1.66','important')}if(p.scrollHeight>p.clientHeight+2)p.classList.add('mobile-card-scroll')}
+function show(i,animate=true){const a=ps();if(!a.length)return;const next=clamp(i,0,a.length-1),prev=active;if(animating&&next!==prev)return;active=next;const finish=()=>{a.forEach((p,k)=>{p.classList.toggle('mobile-active-paragraph',k===active);p.classList.remove('mobile-card-enter','mobile-card-leave','mobile-card-from-next','mobile-card-from-prev');if(k!==active)p.classList.remove('mobile-card-scroll')});const b=getBadge();b.textContent=(active+1)+' / '+a.length;a[active].prepend(b);reader.scrollTop=reader.scrollLeft=0;animating=false;requestAnimationFrame(()=>requestAnimationFrame(fit))};const dir=next>prev?1:next<prev?-1:0;if(!animate||!dir||!a[prev]||matchMedia('(prefers-reduced-motion:reduce)').matches){finish();return}animating=true;const old=a[prev],neu=a[next];neu.classList.add('mobile-active-paragraph','mobile-card-enter',dir>0?'mobile-card-from-next':'mobile-card-from-prev');old.classList.add('mobile-card-leave');const b=getBadge();b.textContent=(active+1)+' / '+a.length;neu.prepend(b);requestAnimationFrame(()=>requestAnimationFrame(()=>neu.classList.remove('mobile-card-from-next','mobile-card-from-prev')));setTimeout(finish,250)}
+function init(reset=false){if(!mobile())return;if(!paragraphFlowEnabled){ps().forEach(p=>p.classList.remove('mobile-active-paragraph','mobile-card-scroll'));return}show(reset?0:active,false)}
+const oa=applyParagraphFlow;applyParagraphFlow=function(reset=false){const r=oa.apply(this,arguments);if(mobile())requestAnimationFrame(()=>init(Boolean(reset)));return r};const of=adjustFont;adjustFont=function(){const r=of.apply(this,arguments);if(mobile()&&paragraphFlowEnabled)requestAnimationFrame(fit);return r};
+reader.addEventListener('touchstart',e=>{if(mobile()&&paragraphFlowEnabled&&e.touches.length===1){sx=e.touches[0].clientX;sy=e.touches[0].clientY;track=true}},{capture:true,passive:true});reader.addEventListener('touchend',e=>{if(!mobile()||!paragraphFlowEnabled||!track)return;track=false;const t=e.changedTouches?.[0];if(!t)return;const dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dy)>34&&Math.abs(dy)>Math.abs(dx)){e.preventDefault();e.stopImmediatePropagation();show(active+(dy<0?1:-1),true)}},{capture:true,passive:false});
+const op=positionFloating;positionFloating=function(node,tip){if(!mobile())return op(node,tip);if(!node||!tip)return;tip.classList.add('mobile-safe-tooltip');document.body.classList.remove('r7-actions-open','r7-locked');const m=10,reserve=86,r=node.getBoundingClientRect(),w=Math.min(tip.classList.contains('word-translation-tooltip')?320:440,innerWidth-m*2);tip.style.width=w+'px';tip.style.left=m+'px';tip.style.top=m+'px';const q=tip.getBoundingClientRect(),left=clamp(r.left+r.width/2-q.width/2,m,innerWidth-q.width-m),below=r.bottom+10,above=r.top-q.height-10,maxTop=innerHeight-reserve-q.height,top=below<=maxTop?below:above>=m?above:clamp(maxTop,m,innerHeight-reserve-q.height);tip.style.left=Math.round(left)+'px';tip.style.top=Math.round(top)+'px'};
+const os=showSentenceTooltip;showSentenceTooltip=function(){if(mobile())hideWordTranslationTooltip(true);return os.apply(this,arguments)};const ow=showWordTranslationTooltip;showWordTranslationTooltip=function(){if(mobile())hideSentenceTooltip(true);return ow.apply(this,arguments)};
+addEventListener('load',()=>requestAnimationFrame(()=>init(false)),{once:true});addEventListener('resize',()=>{if(mobile()&&paragraphFlowEnabled)requestAnimationFrame(()=>show(active,false))});if(mobile())requestAnimationFrame(()=>init(false));
+})();
+</script>
+<!-- Mobile v15: persistent archive, progress status, clean print and polished transitions -->
+<style id="mobile-v15-archive-print-transition">
+@media (max-width:1024px) and (pointer:coarse){
+  #quizStoryText.paragraph-flow>p.mobile-active-paragraph{transition:opacity 240ms cubic-bezier(.22,.75,.25,1),transform 240ms cubic-bezier(.22,.75,.25,1)!important;will-change:opacity,transform}
+  #quizStoryText.paragraph-flow>p.mobile-card-enter{opacity:1}
+  #quizStoryText.paragraph-flow>p.mobile-card-leave{display:flex!important;position:absolute!important;inset:0!important;z-index:1!important;pointer-events:none!important;opacity:0!important}
+  #quizStoryText.paragraph-flow>p.mobile-card-enter{z-index:2!important}
+  #quizStoryText.paragraph-flow>p.mobile-card-from-next{transform:translateY(15px)!important;opacity:0!important}
+  #quizStoryText.paragraph-flow>p.mobile-card-from-prev{transform:translateY(-15px)!important;opacity:0!important}
+  .r7-history-block{margin-top:15px;padding-top:13px;border-top:1px solid rgba(255,255,255,.10)}
+  .r7-history-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}.r7-history-head strong{font-size:13px;color:#bfdbfe}.r7-history-count{font-size:10px;color:#94a3b8}
+  .r7-history-list{display:grid;gap:8px;max-height:36dvh;overflow-y:auto;overscroll-behavior:contain}
+  .r7-history-item{padding:10px 11px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#1d2330}
+  .r7-history-title,.r7-history-file{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.r7-history-title{font-size:12px;font-weight:800}.r7-history-file{margin-top:2px;color:#93c5fd;font-size:9.5px}
+  .r7-progress-badge{display:inline-flex;align-items:center;margin-top:7px;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:850}
+  .r7-progress-badge.not-started{background:#303846;color:#cbd5e1}.r7-progress-badge.in-progress{background:#713f12;color:#fde68a}.r7-progress-badge.completed{background:#7c2d12;color:#fed7aa}.r7-progress-badge.successful{background:#14532d;color:#bbf7d0}
+  .r7-history-date{margin-top:5px;color:#94a3b8;font-size:9px}.r7-history-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.r7-history-actions button{min-height:40px;padding:7px;border:1px solid rgba(255,255,255,.09);border-radius:10px;background:#293142;color:#fff;font-size:10.5px;font-weight:750}
+  .r7-topic-row .r7-progress-badge{grid-column:1/2;margin:0 9px 7px;justify-self:start}
+}
+@media (prefers-reduced-motion:reduce){#quizStoryText.paragraph-flow>p.mobile-active-paragraph{transition:none!important}}
+@media print{
+  @page{size:A4 portrait;margin:10mm!important}
+  html,body,.app,.print-area{background:#fff!important;box-shadow:none!important;text-shadow:none!important}
+  .mobile-r7-bar,.mobile-v10-font-controls,.r7-fab,.mobile-r7-drawer-wrap,.mobile-r7-action-wrap,.mobile-r7-topic-wrap,.mobile-r7-timer-wrap,.mobile-v9-toast,.mobile-v10-toast,.browser-context-toast{display:none!important}
+  .print-document-footer{display:none!important}
+  .print-header{break-inside:avoid!important;page-break-inside:avoid!important}
+  .print-header h1{overflow-wrap:anywhere!important;word-break:normal!important;line-height:1.18!important;color:#15171c!important;background:none!important;-webkit-text-fill-color:#15171c!important}
+  .print-area h2{break-after:avoid-page!important;page-break-after:avoid!important;color:#263764!important;background:none!important;-webkit-text-fill-color:#263764!important}
+  .print-area *{filter:none!important}
+}
+</style>
+<script id="mobile-v15-archive-script">
+(function(){'use strict';
+const mobile=()=>matchMedia('(max-width:1024px) and (pointer:coarse)').matches;
+const DB='germanPortalArchive',STORE='studies',VERSION=1,BACKUP_VERSION=1;
+let dbPromise=null,switchBypass=false;
+function openDB(){if(dbPromise)return dbPromise;dbPromise=new Promise((resolve,reject)=>{const r=indexedDB.open(DB,VERSION);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains(STORE)){const st=db.createObjectStore(STORE,{keyPath:'topicId'});st.createIndex('updatedAt','updatedAt')}};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});return dbPromise}
+async function put(record){const db=await openDB();return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(record);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)})}
+async function all(){const db=await openDB();return new Promise((resolve,reject)=>{const r=db.transaction(STORE).objectStore(STORE).getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)})}
+function snapshot(data=portalData,fileName=''){if(!data)return null;const selected=Array.isArray(state?.selected)?state.selected:[],answered=selected.filter(v=>v!==null).length,total=data.quizData?.length||10,correct=selected.filter((v,i)=>v!==null&&v===data.quizData?.[i]?.a).length,score=total?Math.round(correct/total*100):0;let status='not-started';if(answered>0&&answered<total)status='in-progress';else if(answered===total)status=score>=80?'successful':'completed';const now=new Date().toISOString();return{topicId:data.id,fileName:fileName||topics.find(t=>t.id===data.id)?.fileName||'',title:data.storyTitle||'',level:data.storyLevel||'',answered,total,correct,wrong:Math.max(0,answered-correct),score,status,updatedAt:now,completedAt:answered===total?now:null}}
+async function saveCurrent(){const rec=snapshot();if(!rec)return;try{const existing=(await all()).find(x=>x.topicId===rec.topicId);if(existing){rec.firstOpenedAt=existing.firstOpenedAt||rec.updatedAt;if(!rec.completedAt)rec.completedAt=existing.completedAt||null}else rec.firstOpenedAt=rec.updatedAt;await put(rec)}catch(e){console.warn('Archive save failed',e)}}
+function statusText(r){if(!r||r.status==='not-started')return '○ Başlanmadı';if(r.status==='in-progress')return '◔ Devam ediyor · '+r.answered+'/'+r.total;if(r.status==='successful')return '★ Başarılı · '+r.correct+'/'+r.total+' · %'+r.score;return '✓ Tamamlandı · '+r.correct+'/'+r.total+' · %'+r.score}
+function naturalSort(a,b){return new Intl.Collator('tr',{numeric:true,sensitivity:'base'}).compare(a.fileName||a.title||'',b.fileName||b.title||'')}
+function fmtDate(v){if(!v)return'';try{return new Intl.DateTimeFormat('tr-TR',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(v))}catch{return''}}
+async function decorateTopics(){if(!mobile())return;const sheet=document.querySelector('.mobile-r7-topic-wrap .r7-sheet'),list=sheet?.querySelector('.r7-topic-list');if(!sheet||!list)return;let records=[];try{records=await all()}catch(e){console.warn(e)}const map=new Map(records.map(r=>[r.topicId,r]));[...list.querySelectorAll('.r7-topic-row')].forEach(row=>{row.querySelector('.r7-progress-badge')?.remove();const title=row.querySelector('.r7-topic-title')?.textContent||'',t=topics.find(x=>(x.portalData.storyTitle||'')===title),r=t?map.get(t.id):null,b=document.createElement('span');b.className='r7-progress-badge '+(r?.status||'not-started');b.textContent=statusText(r);row.append(b)});
+ let block=sheet.querySelector('.r7-history-block');if(block)block.remove();block=document.createElement('section');block.className='r7-history-block';const ids=new Set(topics.map(t=>t.id)),history=records.filter(r=>!ids.has(r.topicId)).sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt)));block.innerHTML='<div class="r7-history-head"><strong>Çalışma Geçmişi</strong><span class="r7-history-count">'+records.length+' kayıt</span></div><div class="r7-history-list"></div><div class="r7-history-actions"><button type="button" data-history="export">Geçmişi Yedekle</button><button type="button" data-history="import">Yedeği Geri Yükle</button></div><input type="file" accept=".json,application/json" data-history-file hidden>';
+ const hlist=block.querySelector('.r7-history-list');if(!history.length){const n=document.createElement('div');n.className='r7-history-item';n.textContent='Yüklü olmayan eski çalışma kaydı yok.';hlist.append(n)}history.forEach(r=>{const n=document.createElement('article');n.className='r7-history-item';n.innerHTML='<strong class="r7-history-title"></strong><span class="r7-history-file"></span><span class="r7-progress-badge '+r.status+'"></span><div class="r7-history-date"></div>';n.querySelector('.r7-history-title').textContent=r.title||'Başlıksız çalışma';n.querySelector('.r7-history-file').textContent=r.fileName||r.topicId;n.querySelector('.r7-progress-badge').textContent=statusText(r);n.querySelector('.r7-history-date').textContent=(r.completedAt?'Tamamlandı: ':'Son çalışma: ')+fmtDate(r.completedAt||r.updatedAt);hlist.append(n)});sheet.append(block);
+ block.querySelector('[data-history="export"]').onclick=async()=>{const data={version:BACKUP_VERSION,exportedAt:new Date().toISOString(),studies:await all()};const u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download='almanca-calisma-gecmisi-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
+ const input=block.querySelector('[data-history-file]');block.querySelector('[data-history="import"]').onclick=()=>input.click();input.onchange=async()=>{const f=input.files?.[0];input.value='';if(!f)return;try{const data=JSON.parse(await f.text());if(!Array.isArray(data.studies))throw Error('Geçersiz yedek');const current=new Map((await all()).map(x=>[x.topicId,x]));for(const r of data.studies){if(!r?.topicId)continue;const old=current.get(r.topicId);if(!old||String(r.updatedAt||'')>String(old.updatedAt||''))await put(r)}alert('Çalışma geçmişi birleştirildi.');decorateTopics()}catch(e){alert('Yedek yüklenemedi: '+e.message)}}
+}
+const oldLoad15=loadPortalData;loadPortalData=function(){const r=oldLoad15.apply(this,arguments);if(r){topics.sort((a,b)=>naturalSort({fileName:a.fileName,title:a.portalData.storyTitle},{fileName:b.fileName,title:b.portalData.storyTitle}));renderTopicTabs();setTimeout(saveCurrent,0)}return r};
+const oldActivate15=activateTopic;activateTopic=function(id){if(!switchBypass&&mobile()&&portalData&&id!==activeTopicId){const answered=state.selected.filter(v=>v!==null).length,total=portalData.quizData?.length||10;if(answered>0&&answered<total&&!confirm('Bu metnin testi henüz tamamlanmadı. İlerleme: '+answered+'/'+total+'\n\nYine de diğer metne geçilsin mi?'))return false}const r=oldActivate15.apply(this,arguments);setTimeout(saveCurrent,0);return r};
+const oldSave15=saveProgress;saveProgress=function(){const r=oldSave15.apply(this,arguments);setTimeout(saveCurrent,0);return r};
+const oldClear15=clearCurrentProgress;clearCurrentProgress=function(){const r=oldClear15.apply(this,arguments);setTimeout(saveCurrent,0);return r};
+document.querySelector('.r7-topics')?.addEventListener('click',()=>setTimeout(decorateTopics,40));
+const topicObserver=new MutationObserver(()=>{if(document.body.classList.contains('r7-topics-open'))setTimeout(decorateTopics,0)});topicObserver.observe(document.body,{attributes:true,attributeFilter:['class']});
+/* Clean print state. Browser/system headers still depend on the print dialog setting. */
+const oldPrint15=printPortal;printPortal=function(){document.body.classList.remove('r7-drawer-open','r7-actions-open','r7-topics-open','r7-timer-open','r7-locked');hideSentenceTooltip(true);hideWordTranslationTooltip(true);hideWordPopover();hideWordAudioMenu();try{getSelection()?.removeAllRanges()}catch(_){}document.documentElement.classList.add('printing-clean');const done=()=>document.documentElement.classList.remove('printing-clean');addEventListener('afterprint',done,{once:true});setTimeout(done,5000);return oldPrint15.apply(this,arguments)};
+addEventListener('load',()=>{if(portalData)setTimeout(saveCurrent,0)},{once:true});
+})();
+</script>
+
+
+<!-- Mobile v16: enlarge paragraph card and harden text flow only -->
+<style id="mobile-v16-paragraph-space-text-fix">
+@media (max-width:1024px) and (pointer:coarse){
+  /* Use almost all of the black outer card, without touching any controls or logic. */
+  body.r7-paragraph-view:not(.r7-test-view) .readCard{
+    padding:5px!important;
+    border-radius:18px!important;
+  }
+  body.r7-paragraph-view #quizStoryText.paragraph-flow{
+    width:100%!important;
+    height:100%!important;
+    margin:0!important;
+    padding:0!important;
+    border-radius:15px!important;
+    overflow:hidden!important;
+    direction:ltr!important;
+    writing-mode:horizontal-tb!important;
+    columns:auto!important;
+    column-count:1!important;
+    column-width:auto!important;
+  }
+  body.r7-paragraph-view #quizStoryText.paragraph-flow>p,
+  body.r7-paragraph-view #quizStoryText.paragraph-flow>p.mobile-active-paragraph{
+    inset:auto!important;
+    width:100%!important;
+    max-width:100%!important;
+    height:100%!important;
+    max-height:100%!important;
+    padding:34px 10px 12px!important;
+    border-radius:15px!important;
+    transform:none;
+    direction:ltr!important;
+    writing-mode:horizontal-tb!important;
+    text-align:left!important;
+    text-indent:0!important;
+    columns:auto!important;
+    column-count:1!important;
+    column-width:auto!important;
+    column-gap:0!important;
+    overflow-wrap:normal!important;
+    word-break:normal!important;
+    white-space:normal!important;
+  }
+  /* Every sentence owns one full row. Tokens remain inline and wrap normally. */
+  body.r7-paragraph-view #quizStoryText.paragraph-flow .sentence{
+    position:relative!important;
+    display:block!important;
+    float:none!important;
+    clear:both!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0 0 12px!important;
+    padding:0!important;
+    left:auto!important;
+    right:auto!important;
+    transform:none;
+    direction:ltr!important;
+    writing-mode:horizontal-tb!important;
+    text-align:left!important;
+    text-indent:0!important;
+    white-space:normal!important;
+    overflow:visible!important;
+    overflow-wrap:normal!important;
+    word-break:normal!important;
+  }
+  body.r7-paragraph-view #quizStoryText.paragraph-flow .sentence:last-child{margin-bottom:0!important}
+  body.r7-paragraph-view #quizStoryText.paragraph-flow .selectable-word{
+    position:static!important;
+    display:inline!important;
+    float:none!important;
+    width:auto!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+    transform:none!important;
+    white-space:normal!important;
+    overflow-wrap:normal!important;
+    word-break:normal!important;
+  }
+  body.r7-paragraph-view #quizStoryText.paragraph-flow>p>.paragraph-flow-status{
+    top:7px!important;
+    left:9px!important;
+  }
+}
+</style>
 
 </body>
 </html>
