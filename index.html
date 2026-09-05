@@ -3130,5 +3130,23 @@ addEventListener('load',simplifyThemeMenu,{once:true});
 </style>
 <script id="mobile-v30-theme-last">(function(){function m(){const d=document.querySelector('.r7-drawer'),c=d&&d.querySelector('.r7-smart-theme-section');if(d&&c&&d.lastElementChild!==c)d.append(c)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',m,{once:true});else m();setTimeout(m,300)})();</script>
 
+
+<!-- Mobile v31: iPhone bottom controls only; reading and paragraph layouts untouched -->
+<style id="mobile-v31-buttons-only-bottom-fix">
+@media (max-width:1024px) and (-webkit-touch-callout:none){
+  /*
+   * Only the fixed bottom controls are repositioned.
+   * No readCard, quizStoryText, paragraph, scrolling, sizing,
+   * fitting, transition or test-mode rule is changed here.
+   */
+  .mobile-v10-font-controls,
+  body:not(.r7-test-view) .r7-fab{
+    position:fixed!important;
+    top:auto!important;
+    bottom:10px!important;
+    transform:none!important;
+  }
+}
+</style>
 </body>
 </html>
