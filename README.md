@@ -1,13 +1,5 @@
-# Almanca Öğrenme Portalı
+# v122 GitHub Pages paketi
 
-GitHub Pages için hazırlanmış statik web paketi.
+Tüm dosyaları deponun kök dizinine yükleyin. Eski iPhone ana ekran simgesini silip siteyi yeniden ana ekrana ekleyin.
 
-## Yayınlama
-1. Bu ZIP dosyasını açın.
-2. İçindeki dosyaları GitHub repository kök dizinine yükleyin.
-3. Repository içinde **Settings > Pages** bölümüne gidin.
-4. **Deploy from a branch**, ardından `main` ve `/ (root)` seçin.
-
-Ana giriş dosyası: `index.html`
-
-Not: Portal içerikleri kullanıcı tarafından seçilen JSON dosyalarından yüklenir.
+Değişiklik yalnızca iPhone standalone modundaki alt kontrollerdir. Normal tarayıcı, test modu, masaüstü, metin/paragraf kartları ve 240 ms geçiş değiştirilmemiştir.

@@ -1,9 +1,21 @@
 {
   "name": "Almanca Öğrenme Portalı",
   "short_name": "Almanca Portalı",
-  "start_url": "./",
+  "start_url": "./index.html?v=122",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#090a0f",
   "theme_color": "#13151c",
-  "lang": "tr"
+  "icons": [
+    {
+      "src": "./icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }

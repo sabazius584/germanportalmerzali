@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
-<!-- 105 EDITOR PREVIEW: pointer:coarse requirement removed only in this copy so narrow desktop editors show the touch/mobile UI. --><meta name="theme-color" content="#13151c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Almanca Portalı"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
+<!-- 105 EDITOR PREVIEW: pointer:coarse requirement removed only in this copy so narrow desktop editors show the touch/mobile UI. --><meta name="theme-color" content="#13151c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Almanca Portalı"><link rel="manifest" href="manifest.webmanifest?v=122"><link rel="apple-touch-icon" href="icon-180.png">
 <title>Almanca Öğrenme Portalı</title>
 <style>
 :root{--bg:#090a0f;--panel:#13151c;--panel-glass:rgba(19, 21, 28, 0.85);--panel2:#1a1d26;--text:#f8fafc;--muted:#94a3b8;--blue:#3b82f6;--blue-light:#60a5fa;--green:#22c55e;--green-bg:rgba(34, 197, 94, 0.15);--red:#ef4444;--red-bg:rgba(239, 68, 68, 0.15);--line:#272a37;--reader-font-size:16px;--quiz-font-size:16px}
@@ -3131,19 +3131,14 @@ addEventListener('load',simplifyThemeMenu,{once:true});
 <script id="mobile-v30-theme-last">(function(){function m(){const d=document.querySelector('.r7-drawer'),c=d&&d.querySelector('.r7-smart-theme-section');if(d&&c&&d.lastElementChild!==c)d.append(c)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',m,{once:true});else m();setTimeout(m,300)})();</script>
 
 
-<!-- Mobile v31: iPhone bottom controls only; reading and paragraph layouts untouched -->
-<style id="mobile-v31-buttons-only-bottom-fix">
-@media (max-width:1024px) and (-webkit-touch-callout:none){
-  /*
-   * Only the fixed bottom controls are repositioned.
-   * No readCard, quizStoryText, paragraph, scrolling, sizing,
-   * fitting, transition or test-mode rule is changed here.
-   */
+<!-- Mobile v32: iPhone Home Screen standalone bottom controls only -->
+<style id="mobile-v32-ios-standalone-bottom-only">
+@media (max-width:1024px) and (-webkit-touch-callout:none) and (display-mode:standalone){
   .mobile-v10-font-controls,
   body:not(.r7-test-view) .r7-fab{
     position:fixed!important;
     top:auto!important;
-    bottom:10px!important;
+    bottom:max(8px, env(safe-area-inset-bottom, 0px))!important;
     transform:none!important;
   }
 }
