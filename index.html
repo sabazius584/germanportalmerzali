@@ -3144,44 +3144,21 @@ addEventListener('load',simplifyThemeMenu,{once:true});
 }
 </style>
 
-<!-- Mobile v33: iPhone Home Screen bottom controls use the real screen edge -->
-<style id="mobile-v33-ios-real-bottom-fix">
+<!-- v134: ONLY iPhone natural document scrolling -->
+<style id="v134-iphone-natural-scroll">
 @media (max-width:1024px) and (-webkit-touch-callout:none){
-  /*
-     iOS safe-area-inset-bottom yaklaşık 34 px olabilir. Önceki kural bunu
-     doğrudan bottom değerine verdiği için düğmeler Ana Ekran uygulamasında
-     gereğinden fazla yukarıda görünüyordu.
-  */
-  html.ios-home-screen .mobile-v10-font-controls,
-  html.ios-home-screen body:not(.r7-test-view) .r7-fab{
-    position:fixed!important;
-    top:auto!important;
-    bottom:8px!important;
-    transform:none!important;
-  }
-
-  /* Açılan panel varken mevcut gizleme davranışını koru. */
-  html.ios-home-screen body.r7-drawer-open .mobile-v10-font-controls,
-  html.ios-home-screen body.r7-actions-open .mobile-v10-font-controls,
-  html.ios-home-screen body.r7-topics-open .mobile-v10-font-controls,
-  html.ios-home-screen body.r7-timer-open .mobile-v10-font-controls{
-    visibility:hidden!important;
-    pointer-events:none!important;
-  }
+ html{height:auto!important;min-height:100%!important;overflow-y:auto!important}
+ body:not(.r7-test-view){position:static!important;inset:auto!important;width:100%!important;height:auto!important;min-height:100dvh!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:auto!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important}
+ body:not(.r7-test-view) .app{position:relative!important;height:auto!important;min-height:100dvh!important;max-height:none!important;overflow:visible!important;padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))!important}
+ body:not(.r7-test-view) .readCard{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;min-height:calc(100dvh - var(--r7-top,60px) - env(safe-area-inset-top,0px) - 92px)!important;max-height:none!important;margin:0 0 12px!important;overflow:visible!important;touch-action:pan-y!important}
+ body:not(.r7-test-view):not(.r7-paragraph-view) #quizStoryText{height:auto!important;min-height:calc(100dvh - 210px)!important;max-height:none!important;overflow:visible!important;overscroll-behavior-y:auto!important;touch-action:pan-y!important}
+ body.r7-paragraph-view:not(.r7-test-view) .readCard{height:calc(100dvh - var(--r7-top,60px) - env(safe-area-inset-top,0px) - 84px)!important;min-height:420px!important;overflow:hidden!important}
+ body.r7-paragraph-view:not(.r7-test-view) #quizStoryText.paragraph-flow{height:100%!important;min-height:0!important;max-height:none!important;overflow:hidden!important;touch-action:pan-y!important}
+ .mobile-v10-font-controls,body:not(.r7-test-view) .r7-fab{position:fixed!important;top:auto!important;bottom:max(8px,env(safe-area-inset-bottom,0px))!important;transform:none!important}
 }
 </style>
-<script id="mobile-v33-ios-real-bottom-fix-script">
-(function(){
-  'use strict';
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const isStandalone = window.navigator.standalone === true ||
-    window.matchMedia('(display-mode: standalone)').matches;
-
-  if(isIOS && isStandalone){
-    document.documentElement.classList.add('ios-home-screen');
-  }
-})();
+<script id="v134-iphone-natural-scroll-script">
+(function(){var ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);if(ios)document.documentElement.classList.add('iphone-natural-scroll')})();
 </script>
 
 </body>
