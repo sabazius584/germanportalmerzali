@@ -3161,5 +3161,145 @@ addEventListener('load',simplifyThemeMenu,{once:true});
 (function(){var ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);if(ios)document.documentElement.classList.add('iphone-natural-scroll')})();
 </script>
 
+
+<!-- PC-only Google listening fix. Mobile/iPhone behavior is untouched. -->
+<style id="pc-google-listening-fix-style">
+@media (min-width:1025px){
+  #voiceSourceBrowser{display:none!important}
+  .voice-source-control{grid-template-columns:1fr!important}
+  #voiceSourceGoogle{height:30px!important;font-size:11px!important}
+}
+</style>
+<script id="pc-google-listening-fix-script">
+(function(){
+'use strict';
+const desktop=()=>matchMedia('(min-width:1025px)').matches;
+const originalPlayGermanSentence=playGermanSentence;
+const originalSpeakWordText=speakWordText;
+const originalSetVoiceSource=setVoiceSource;
+let googleFailureShown=false;
+
+function googleUrls(text){
+  const q=encodeURIComponent(String(text||'').trim());
+  return [
+    'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de-DE&q='+q,
+    'https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=de-DE&q='+q,
+    'https://translate.google.de/translate_tts?ie=UTF-8&client=tw-ob&tl=de-DE&q='+q
+  ];
+}
+function showGoogleFailure(){
+  if(googleFailureShown)return;
+  googleFailureShown=true;
+  alert('Google sesi bu tarayıcı tarafından yüklenemedi. Tarayıcı sesine otomatik geçiş yapılmadı. İnternet bağlantısını veya reklam/gizlilik engelleyicisini kontrol edin.');
+  setTimeout(()=>{googleFailureShown=false},4000);
+}
+function playGoogleOnly(text,btn,onFinished){
+  text=String(text||'').trim();
+  if(!text)return;
+  const urls=googleUrls(text);
+  let index=0;
+  const tryNext=()=>{
+    if(index>=urls.length){
+      clearReadingTracking();
+      btn?.classList.remove('playing');
+      if(sentenceAudioButton===btn)sentenceAudioButton=null;
+      sentenceAudio=null;
+      showGoogleFailure();
+      onFinished?.(false);
+      return;
+    }
+    const audio=new Audio();
+    audio.preload='auto';
+    audio.crossOrigin='anonymous';
+    audio.src=urls[index++];
+    audio.playbackRate=speechRate;
+    audio.defaultPlaybackRate=speechRate;
+    sentenceAudio=audio;
+    let stopTrack=()=>{};
+    audio.addEventListener('playing',()=>{
+      stopTrack();
+      stopTrack=startAudioProgressTracking(audio,text,globalAudioOwner);
+    },{once:true});
+    audio.addEventListener('ended',()=>{
+      stopTrack();clearReadingTracking();
+      btn?.classList.remove('playing');
+      scheduleGlobalAudioHide();
+      sentenceAudio=null;
+      if(sentenceAudioButton===btn)sentenceAudioButton=null;
+      onFinished?.(true);
+    },{once:true});
+    audio.addEventListener('error',()=>{
+      stopTrack();
+      if(sentenceAudio===audio)sentenceAudio=null;
+      tryNext();
+    },{once:true});
+    audio.play().catch(()=>{
+      stopTrack();
+      if(sentenceAudio===audio)sentenceAudio=null;
+      tryNext();
+    });
+  };
+  tryNext();
+}
+
+setVoiceSource=function(source){
+  if(!desktop())return originalSetVoiceSource(source);
+  stopSentenceAudio();
+  voiceSource='google';
+  safeSet('germanPortalVoiceSource','google');
+  updateVoiceSourceUI();
+};
+
+playGermanSentence=function(text,btn){
+  if(!desktop())return originalPlayGermanSentence(text,btn);
+  if(!audioEnabled)return;
+  stopSentenceAudio();
+  text=String(text||'').trim();
+  if(!text)return;
+  voiceSource='google';
+  safeSet('germanPortalVoiceSource','google');
+  updateVoiceSourceUI();
+  sentenceAudioButton=btn;
+  if(globalAudioHideTimer)clearTimeout(globalAudioHideTimer);
+  globalAudioHideTimer=null;
+  btn?.classList.add('playing','visible');
+  playGoogleOnly(text,btn);
+};
+
+speakWordText=function(text,rate=speechRate,repeats=1,contextSentence=''){
+  if(!desktop())return originalSpeakWordText(text,rate,repeats,contextSentence);
+  stopSentenceAudio();
+  text=String(text||'').trim();
+  if(!text)return;
+  speechRate=rate;
+  let count=0;
+  const next=()=>{
+    if(count>=repeats)return;
+    globalAudioOwner=findReadingSentence(contextSentence||text);
+    playGoogleOnly(text,null,ok=>{
+      if(!ok)return;
+      count++;
+      if(count<repeats)setTimeout(next,350);
+    });
+  };
+  next();
+};
+
+function enforceDesktopGoogle(){
+  if(!desktop())return;
+  voiceSource='google';
+  safeSet('germanPortalVoiceSource','google');
+  updateVoiceSourceUI();
+  if(voiceSourceGoogle){
+    voiceSourceGoogle.textContent='Google Ses';
+    voiceSourceGoogle.title='PC dinleme yalnızca Google sesi kullanır';
+  }
+}
+enforceDesktopGoogle();
+addEventListener('load',enforceDesktopGoogle,{once:true});
+addEventListener('resize',enforceDesktopGoogle);
+})();
+</script>
+
 </body>
 </html>
