@@ -3190,7 +3190,7 @@ function googleUrls(text){
 function showGoogleFailure(){
   if(googleFailureShown)return;
   googleFailureShown=true;
-  alert('Google sesi bu tarayıcı tarafından yüklenemedi. Tarayıcı sesine otomatik geçiş yapılmadı. İnternet bağlantısını veya reklam/gizlilik engelleyicisini kontrol edin.');
+  console.warn('Google TTS yüklenemedi; Almanca cihaz sesine geçiliyor.');
   setTimeout(()=>{googleFailureShown=false},4000);
 }
 function playGoogleOnly(text,btn,onFinished){
@@ -3201,16 +3201,21 @@ function playGoogleOnly(text,btn,onFinished){
   const tryNext=()=>{
     if(index>=urls.length){
       clearReadingTracking();
-      btn?.classList.remove('playing');
-      if(sentenceAudioButton===btn)sentenceAudioButton=null;
       sentenceAudio=null;
-      showGoogleFailure();
-      onFinished?.(false);
+      /* Google TTS engellenirse sessizce en iyi Almanca cihaz sesine gec. */
+      if(btn){speakWithDeviceGerman(text,btn)}else{
+        try{
+          speechSynthesis.cancel();
+          const u=new SpeechSynthesisUtterance(text);u.lang='de-DE';u.rate=speechRate;
+          const voices=speechSynthesis.getVoices();
+          u.voice=voices.find(v=>/google/i.test(v.name)&&String(v.lang).toLowerCase().startsWith('de'))||voices.find(v=>/microsoft|samsung|apple/i.test(v.name)&&String(v.lang).toLowerCase().startsWith('de'))||voices.find(v=>String(v.lang).toLowerCase()==='de-de')||voices.find(v=>String(v.lang).toLowerCase().startsWith('de'))||null;
+          u.onend=u.onerror=()=>onFinished?.(true);speechSynthesis.speak(u);
+        }catch(_){btn?.classList.remove('playing');onFinished?.(false)}
+      }
       return;
     }
     const audio=new Audio();
     audio.preload='auto';
-    audio.crossOrigin='anonymous';
     audio.src=urls[index++];
     audio.playbackRate=speechRate;
     audio.defaultPlaybackRate=speechRate;
@@ -3457,6 +3462,80 @@ function removeDrawerLayout(){const control=document.querySelector('.r7-drawer [
 removeDrawerLayout();sync();setTimeout(sync,400);document.addEventListener('click',function(e){if(e.target.closest('.mobile-layout-toggle,[data-r7-layout]'))setTimeout(sync,0)},true);
 })();
 </script>
+
+
+<!-- Mobile v40: bottom controls spacing only. Audio and all application logic are untouched. -->
+<style id="mobile-v40-bottom-spacing-only">
+@media (max-width:1024px){
+  /* Eski ikinci Metin/Paragraf dugmesini gizle. Tek mor dugme kalir. */
+  .r7-layout-toggle{display:none!important}
+
+  /* Sol tarafta bes dugme: eksi, arti, klasor, bulut, not. */
+  .mobile-v10-font-controls{
+    left:calc(10px + env(safe-area-inset-left))!important;
+    gap:6px!important;
+  }
+  .mobile-v10-font-controls > button:not(.r7-topics),
+  .mobile-v10-font-controls .r7-topics,
+  .online-sync-fab,
+  .text-note-fab{
+    width:46px!important;
+    height:46px!important;
+    min-width:46px!important;
+    min-height:46px!important;
+    bottom:var(--r7-bottom)!important;
+  }
+  .mobile-v10-font-controls .r7-topics{
+    position:static!important;
+    inset:auto!important;
+  }
+  .online-sync-fab{
+    left:calc(166px + env(safe-area-inset-left))!important;
+    right:auto!important;
+  }
+  .text-note-fab{
+    left:calc(218px + env(safe-area-inset-left))!important;
+    right:auto!important;
+  }
+
+  /* Sag tarafta yalnizca Metin/Paragraf ve Test/Metne Don. */
+  .mobile-layout-toggle{
+    width:46px!important;
+    height:46px!important;
+    right:calc(66px + env(safe-area-inset-right))!important;
+    bottom:var(--r7-bottom)!important;
+  }
+  .r7-test{
+    width:46px!important;
+    height:46px!important;
+    min-width:46px!important;
+    min-height:46px!important;
+    right:calc(10px + env(safe-area-inset-right))!important;
+    bottom:var(--r7-bottom)!important;
+  }
+}
+@media (max-width:430px){
+  .mobile-v10-font-controls{
+    left:calc(8px + env(safe-area-inset-left))!important;
+    gap:4px!important;
+  }
+  .mobile-v10-font-controls > button:not(.r7-topics),
+  .mobile-v10-font-controls .r7-topics,
+  .online-sync-fab,
+  .text-note-fab,
+  .mobile-layout-toggle,
+  .r7-test{
+    width:42px!important;
+    height:42px!important;
+    min-width:42px!important;
+    min-height:42px!important;
+  }
+  .online-sync-fab{left:calc(146px + env(safe-area-inset-left))!important}
+  .text-note-fab{left:calc(192px + env(safe-area-inset-left))!important}
+  .mobile-layout-toggle{right:calc(56px + env(safe-area-inset-right))!important;font-size:8.5px!important}
+  .r7-test{right:calc(8px + env(safe-area-inset-right))!important}
+}
+</style>
 
 </body>
 </html>
