@@ -3301,5 +3301,43 @@ addEventListener('resize',enforceDesktopGoogle);
 })();
 </script>
 
+
+<!-- Online semi-automatic sync addon. Existing portal logic remains unchanged. -->
+<style id="online-sync-addon-style">
+.online-sync-fab{position:fixed;z-index:29970;right:18px;top:18px;min-height:40px;padding:8px 13px;border:1px solid rgba(96,165,250,.45);border-radius:12px;background:#1d4ed8;color:#fff;font:700 12px system-ui;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.38)}
+.online-sync-modal{position:fixed;z-index:40000;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.72);backdrop-filter:blur(5px)}
+.online-sync-panel{width:min(720px,100%);max-height:90dvh;overflow:auto;padding:20px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:#13151c;color:#f8fafc;box-shadow:0 22px 60px rgba(0,0,0,.65)}
+.online-sync-panel h2{margin:0 0 14px}.online-sync-panel label{display:block;margin:12px 0 5px;color:#bfdbfe;font-size:12px;font-weight:800}.online-sync-panel input,.online-sync-panel textarea{width:100%;padding:11px;border:1px solid #334155;border-radius:10px;background:#090a0f;color:#fff;font:13px ui-monospace,monospace}.online-sync-panel textarea{min-height:240px;resize:vertical}.online-sync-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.online-sync-actions button{min-height:40px;padding:8px 13px;border:0;border-radius:10px;background:#334155;color:#fff;font-weight:800;cursor:pointer}.online-sync-actions .primary{background:#2563eb}.online-sync-actions .success{background:#15803d}.online-sync-status{margin-top:12px;padding:10px;border-radius:10px;background:#0f172a;color:#cbd5e1;font-size:12px;white-space:pre-wrap}.online-badge{display:inline-flex;margin-left:7px;padding:2px 6px;border-radius:8px;background:#14532d;color:#bbf7d0;font-size:9px;font-weight:800}
+@media(max-width:1024px){.online-sync-fab{top:auto;right:calc(138px + env(safe-area-inset-right));bottom:var(--r7-bottom,16px);width:50px;height:50px;min-height:50px;padding:0;border-radius:50%;font-size:0}.online-sync-fab::before{content:'☁';font-size:21px}.online-sync-panel textarea{min-height:190px}}
+@media print{.online-sync-fab,.online-sync-modal{display:none!important}}
+</style>
+<script id="online-sync-addon-script">
+(function(){'use strict';
+const CFG_KEY='germanPortalOnlineConfig:v1';
+let onlineBusy=false,onlineTimer=0;
+const DEFAULT_CFG={url:'https://script.google.com/macros/s/AKfycbwdYyzqLVjKSryvZA0kjYzuii3I2e9pkXOs3NcC-bel-7z4oZuI2lnrG3g2-iw2Vweh/exec',readToken:'emre-read-2026-9X4K',adminToken:''};
+const cfg=()=>{try{return {...DEFAULT_CFG,...JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}}catch(_){return {...DEFAULT_CFG}}};
+const saveCfg=o=>{try{localStorage.setItem(CFG_KEY,JSON.stringify(o))}catch(_){}};
+function apiUrl(params={}){const c=cfg(),u=new URL(c.url);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));if(c.readToken)u.searchParams.set('token',c.readToken);return u.toString()}
+async function apiGet(params){const c=cfg();if(!c.url)throw Error('Önce Apps Script adresini kaydedin.');const r=await fetch(apiUrl(params),{cache:'no-store'});const j=await r.json();if(!j.ok)throw Error(j.error||'Sunucu hatası');return j}
+async function apiPost(action,payload,admin=false){const c=cfg();if(!c.url)throw Error('Önce Apps Script adresini kaydedin.');const body={action,payload,token:admin?c.adminToken:c.readToken};const r=await fetch(c.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});const j=await r.json();if(!j.ok)throw Error(j.error||'Sunucu hatası');return j}
+function status(msg){const n=document.querySelector('.online-sync-status');if(n)n.textContent=msg}
+function modal(){
+ const c=cfg(),wrap=document.createElement('div');wrap.className='online-sync-modal';wrap.innerHTML=`<section class="online-sync-panel"><h2>Online İçerik ve Senkronizasyon</h2><label>Apps Script Web App adresi</label><input data-os="url" placeholder="https://script.google.com/macros/s/.../exec"><label>Okuma anahtarı</label><input data-os="read" type="password" placeholder="READ_TOKEN"><label>Yayınlama anahtarı</label><input data-os="admin" type="password" placeholder="ADMIN_TOKEN"><label>Yeni hikâye JSON'u</label><textarea data-os="json" placeholder='{"storyTitle":"..."}'></textarea><div class="online-sync-actions"><button data-act="close">Kapat</button><button data-act="save" class="primary">Ayarları Kaydet</button><button data-act="refresh">Online Metinleri Getir</button><button data-act="publish" class="success">JSON'u Yayınla</button></div><div class="online-sync-status">Hazır.</div></section>`;
+ wrap.querySelector('[data-os="url"]').value=c.url||'';wrap.querySelector('[data-os="read"]').value=c.readToken||'';wrap.querySelector('[data-os="admin"]').value=c.adminToken||'';
+ wrap.addEventListener('click',async e=>{const a=e.target.dataset.act;if(!a)return;if(a==='close')wrap.remove();if(a==='save'){saveCfg({url:wrap.querySelector('[data-os="url"]').value.trim(),readToken:wrap.querySelector('[data-os="read"]').value.trim(),adminToken:wrap.querySelector('[data-os="admin"]').value.trim()});status('Ayarlar bu cihazda kaydedildi.');}
+ if(a==='refresh'){try{await loadOnlineContents(true);status('Online metinler güncellendi.')}catch(err){status('Hata: '+err.message)}}
+ if(a==='publish'){try{const data=JSON.parse(wrap.querySelector('[data-os="json"]').value);const errors=validatePortalData(data);if(errors.length)throw Error(errors.join('\n'));const j=await apiPost('publish',data,true);status('Yayınlandı: '+j.title+'\nID: '+j.id);await loadOnlineContents(true)}catch(err){status('Hata: '+err.message)}}});document.body.append(wrap)
+}
+const fab=document.createElement('button');fab.className='online-sync-fab';fab.type='button';fab.textContent='☁ Online';fab.title='Online içerik ve yayınlama';fab.addEventListener('click',modal);document.body.append(fab);
+async function loadOnlineContents(force=false){if(onlineBusy)return;const c=cfg();if(!c.url)return;onlineBusy=true;try{const list=await apiGet({action:'list',t:force?Date.now():''});for(const item of list.items||[]){if(topics.some(t=>t.id===item.id))continue;const one=await apiGet({action:'content',id:item.id});loadPortalData(one.content,item.fileName||('online-'+item.id+'.json'));const t=topics.find(x=>x.id===item.id||x.portalData.id===item.id);if(t)t.online=true;}renderTopicTabs();document.querySelectorAll('.topic-tab').forEach((tab,i)=>{if(topics[i]?.online&&!tab.querySelector('.online-badge')){const b=document.createElement('span');b.className='online-badge';b.textContent='ONLINE';tab.insertBefore(b,tab.lastElementChild)}})}finally{onlineBusy=false}}
+function progressPayload(){if(!portalData)return null;return{topicId:portalData.id,title:portalData.storyTitle,level:portalData.storyLevel,state:{index:state.index,selected:state.selected,right:state.right,wrong:state.wrong,retryMode:state.retryMode,retryIndexes:state.retryIndexes},updatedAt:new Date().toISOString()}}
+function scheduleProgress(){clearTimeout(onlineTimer);onlineTimer=setTimeout(async()=>{try{const p=progressPayload();if(p&&cfg().url)await apiPost('progress',p)}catch(err){console.warn('Online progress sync failed',err)}},700)}
+const oldSaveProgress=saveProgress;saveProgress=function(){const r=oldSaveProgress.apply(this,arguments);scheduleProgress();return r};
+const oldSaveWordPool=saveWordPool;saveWordPool=function(pool){const r=oldSaveWordPool.apply(this,arguments);if(cfg().url)apiPost('words',{words:pool.words||[],updatedAt:new Date().toISOString()}).catch(err=>console.warn('Online word sync failed',err));return r};
+addEventListener('load',()=>setTimeout(()=>loadOnlineContents(false).catch(err=>console.warn(err)),350),{once:true});
+})();
+</script>
+
 </body>
 </html>
